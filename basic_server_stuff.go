@@ -43,7 +43,7 @@ func (cfg *apiConfig) resetHandler(response http.ResponseWriter, request *http.R
 
 	err := cfg.dbQueries.ResetUsers(request.Context())
 	if err != nil {
-		respondWithError(response, request, "There was an error resetting the users table", nil, http.StatusBadRequest)
+		respondWithError(response, request, "There was an error resetting the users table", err, http.StatusBadRequest)
 		return
 	}
 

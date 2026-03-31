@@ -1,11 +1,11 @@
 -- +goose Up
-CREATE TABLE users (
+CREATE TABLE classes (
         id UUID PRIMARY KEY,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL,
         name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL
+        teacher_id UUID NOT NULL references users(id) ON DELETE CASCADE
 );
 
 -- +goose Down
-DROP TABLE users;
+DROP TABLE classes;
