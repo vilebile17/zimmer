@@ -16,6 +16,7 @@ import (
 type apiConfig struct {
 	server_hits atomic.Int32
 	dbQueries   *database.Queries
+	platform    string
 }
 
 func main() {
@@ -29,6 +30,7 @@ func main() {
 		log.Fatal(err)
 	}
 	cfg.dbQueries = database.New(db)
+	cfg.platform = os.Getenv("PLATFORM")
 
 	mux := http.NewServeMux()
 	server := http.Server{
@@ -39,6 +41,8 @@ func main() {
 	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(HandlerGetEndpointPath(""))))
 	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
+	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
+	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
 	fmt.Printf("Hosting Beste Zimmer at http://localhost:%s\n", port)
 	if err := server.ListenAndServe(); err != nil {
