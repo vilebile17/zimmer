@@ -1,29 +1,35 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"sync/atomic"
+
+	dotenv "github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	"github.com/vilebile17/beste_zimmer/internal/database"
 )
 
 type apiConfig struct {
 	server_hits atomic.Int32
-}
-
-func HandlerGetEndpointPath(url string) http.FileSystem {
-	return http.Dir("./app" + url)
-}
-
-func (cfg *apiConfig) middlewareIncServerHits(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
-		cfg.server_hits.Add(1)
-		next.ServeHTTP(response, request)
-	})
+	dbQueries   *database.Queries
 }
 
 func main() {
 	const port = "8080"
 	cfg := apiConfig{}
+
+	dotenv.Load()
+	dbURL := os.Getenv("DB_URL")
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cfg.dbQueries = database.New(db)
+
 	mux := http.NewServeMux()
 	server := http.Server{
 		Addr:    ":" + port,
