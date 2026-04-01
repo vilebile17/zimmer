@@ -1,4 +1,4 @@
-module github.com/vilebile17/beste_zimmer
+module github.com/vilebile17/zimmer
 
 go 1.25.4
 
