@@ -40,7 +40,7 @@ func main() {
 		Handler: mux,
 	}
 
-	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(HandlerGetEndpointPath(""))))
+	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(http.Dir("./app"))))
 	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)

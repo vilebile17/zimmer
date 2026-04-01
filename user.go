@@ -95,7 +95,7 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 	type Params struct {
 		Email            string `json:"email"`
 		Password         string `json:"password"`
-		ExpiresInSeconds int    `json:"expires_in_seconds"`
+		ExpiresInSeconds int    `json:"expires_in_seconds"` // optional
 	}
 
 	var params Params
