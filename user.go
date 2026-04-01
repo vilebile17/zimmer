@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/vilebile17/zimmer/internal/auth"
 	"github.com/vilebile17/zimmer/internal/database"
 )
 
@@ -21,26 +22,39 @@ type User struct {
 
 func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *http.Request) {
 	type Params struct {
-		Email string `json:"email"`
-		Name  string `json:"name"`
+		Email    string `json:"email"`
+		Name     string `json:"name"`
+		Password string `json:"password"`
 	}
 
 	var params Params
 	decoder := json.NewDecoder(request.Body)
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(response, request, "There was an error decoding the parameters (required {email:string, name:string})", err, http.StatusBadRequest)
+		respondWithError(response, request, "There was an error decoding the parameters (required {email:string, name:string, password:string})", err, http.StatusBadRequest)
 		return
 	}
 
-	if params.Email == "" || params.Name == "" {
-		respondWithError(response, request, "The email and name parameters can't be empty", nil, http.StatusBadRequest)
+	if params.Email == "" || params.Name == "" || params.Password == "" {
+		respondWithError(response, request, "The email, name and password parameters can't be empty", nil, http.StatusBadRequest)
+		return
+	}
+
+	if len(params.Password) < 8 {
+		respondWithError(response, request, "The password must be at least 8 characters long", nil, http.StatusBadRequest)
+		return
+	}
+
+	hashedPassword, err := auth.HashPassword(params.Password)
+	if err != nil {
+		respondWithError(response, request, "There was an error hashing the password", err, http.StatusBadRequest)
 		return
 	}
 
 	dbUser, err := cfg.dbQueries.CreateUser(request.Context(), database.CreateUserParams{
-		Name:  params.Name,
-		Email: params.Email,
+		Name:           params.Name,
+		Email:          params.Email,
+		HashedPassword: hashedPassword,
 	})
 	if err != nil {
 		handleErrorsFromCreatingUser(err, response, request)
@@ -48,6 +62,7 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 	}
 
 	fmt.Printf("Just made a user called '%v' with the email '%v'\n", dbUser.Name, dbUser.Email)
+	fmt.Printf("The user's hashed password is %v\n", dbUser.HashedPassword)
 	respondWithJSON(response, request, dbUser, http.StatusCreated)
 }
 

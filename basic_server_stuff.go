@@ -29,7 +29,7 @@ func (cfg *apiConfig) metricsHandler(response http.ResponseWriter, _ *http.Reque
 	response.Write([]byte(fmt.Sprintf(`
 <html>
 <body>
-    <h1>Welcome, Beste Zimmer Admin</h1>
+    <h1>Welcome, Bester Zimmer Admin</h1>
     <p>The home page has been visited %d times!</p>
   </body>
 </html>`, cfg.server_hits.Load())))

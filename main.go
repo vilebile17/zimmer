@@ -20,7 +20,7 @@ type apiConfig struct {
 }
 
 func main() {
-	const port = "8080"
+	const port = ":8080"
 	cfg := apiConfig{}
 
 	dotenv.Load()
@@ -34,7 +34,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	server := http.Server{
-		Addr:    ":" + port,
+		Addr:    port,
 		Handler: mux,
 	}
 
@@ -45,7 +45,7 @@ func main() {
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
-	fmt.Printf("Hosting Beste Zimmer at http://localhost:%s\n", port)
+	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", port)
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Println(err)
 	}
