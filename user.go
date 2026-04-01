@@ -63,7 +63,13 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 
 	fmt.Printf("Just made a user called '%v' with the email '%v'\n", dbUser.Name, dbUser.Email)
 	fmt.Printf("The user's hashed password is %v\n", dbUser.HashedPassword)
-	respondWithJSON(response, request, dbUser, http.StatusCreated)
+	respondWithJSON(response, request, User{
+		ID:        dbUser.ID,
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		Email:     dbUser.Email,
+		Name:      dbUser.Name,
+	}, http.StatusCreated)
 }
 
 func handleErrorsFromCreatingUser(err error, response http.ResponseWriter, request *http.Request) {
@@ -74,4 +80,45 @@ func handleErrorsFromCreatingUser(err error, response http.ResponseWriter, reque
 		}
 	}
 	respondWithError(response, request, "There was an error adding the user to the database", err, http.StatusBadRequest)
+}
+
+func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.Request) {
+	type Params struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	var params Params
+	decoder := json.NewDecoder(request.Body)
+	err := decoder.Decode(&params)
+	if err != nil {
+		respondWithError(response, request, "There was an error decoding the parameters (required {email:string, password:string})", err, http.StatusBadRequest)
+		return
+	}
+
+	dbUser, err := cfg.dbQueries.GetUserFromEmail(request.Context(), params.Email)
+	if err != nil {
+		respondWithError(response, request, "couldn't find an account with that email", err, http.StatusBadRequest)
+		return
+	}
+
+	passwordMatches, err := auth.CheckPasswordHash(params.Password, dbUser.HashedPassword)
+	if err != nil {
+		respondWithError(response, request, "There was an error validating the password", err, http.StatusBadRequest)
+		return
+	}
+
+	if !passwordMatches {
+		respondWithError(response, request, "Password doesn't match!", nil, http.StatusUnauthorized)
+		return
+	}
+
+	respondWithJSON(response, request, User{
+		ID:        dbUser.ID,
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		Email:     dbUser.Email,
+		Name:      dbUser.Name,
+	}, http.StatusOK)
+	fmt.Printf("User %v (%v) just logged in\n", dbUser.Name, dbUser.Email)
 }

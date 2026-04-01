@@ -42,6 +42,7 @@ func main() {
 	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
+	mux.HandleFunc("POST /api/login", cfg.loginHandler)
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
