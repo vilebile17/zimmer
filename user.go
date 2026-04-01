@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
-	"github.com/vilebile17/beste_zimmer/internal/database"
+	"github.com/vilebile17/zimmer/internal/database"
 )
 
 type User struct {

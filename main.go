@@ -10,7 +10,7 @@ import (
 
 	dotenv "github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"github.com/vilebile17/beste_zimmer/internal/database"
+	"github.com/vilebile17/zimmer/internal/database"
 )
 
 type apiConfig struct {
