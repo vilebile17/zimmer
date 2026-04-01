@@ -32,7 +32,7 @@ func main() {
 	}
 	cfg.dbQueries = database.New(db)
 	cfg.platform = os.Getenv("PLATFORM")
-	cfg.platform = os.Getenv("JWT_SECRET")
+	cfg.JWTSecret = os.Getenv("JWT_SECRET")
 
 	mux := http.NewServeMux()
 	server := http.Server{

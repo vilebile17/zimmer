@@ -106,6 +106,11 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 		return
 	}
 
+	if params.Email == "" || params.Password == "" {
+		respondWithError(response, request, "Email and password can't be empty (required {email:string, password:string})", nil, http.StatusBadRequest)
+		return
+	}
+
 	dbUser, err := cfg.dbQueries.GetUserFromEmail(request.Context(), params.Email)
 	if err != nil {
 		respondWithError(response, request, "couldn't find an account with that email", err, http.StatusBadRequest)
