@@ -4,19 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/vilebile17/zimmer/internal/database"
 )
-
-type Class struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Email     string    `json:"email"`
-	TeacherID uuid.UUID `json:"teacher_id"`
-}
 
 func (cfg *apiConfig) createClassHandler(response http.ResponseWriter, request *http.Request) {
 	type Params struct {
