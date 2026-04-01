@@ -17,6 +17,7 @@ type apiConfig struct {
 	server_hits atomic.Int32
 	dbQueries   *database.Queries
 	platform    string
+	JWTSecret   string
 }
 
 func main() {
@@ -31,6 +32,7 @@ func main() {
 	}
 	cfg.dbQueries = database.New(db)
 	cfg.platform = os.Getenv("PLATFORM")
+	cfg.platform = os.Getenv("JWT_SECRET")
 
 	mux := http.NewServeMux()
 	server := http.Server{

@@ -20,6 +20,15 @@ type User struct {
 	Name      string    `json:"name"`
 }
 
+type UserAndJWT struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Email     string    `json:"email"`
+	Name      string    `json:"name"`
+	Token     string    `json:"token"`
+}
+
 func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *http.Request) {
 	type Params struct {
 		Email    string `json:"email"`
@@ -84,8 +93,9 @@ func handleErrorsFromCreatingUser(err error, response http.ResponseWriter, reque
 
 func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.Request) {
 	type Params struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email            string `json:"email"`
+		Password         string `json:"password"`
+		ExpiresInSeconds int    `json:"expires_in_seconds"`
 	}
 
 	var params Params
@@ -113,12 +123,23 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 		return
 	}
 
-	respondWithJSON(response, request, User{
+	expiresIn := time.Hour
+	if params.ExpiresInSeconds != 0 {
+		expiresIn = time.Second * time.Duration(params.ExpiresInSeconds)
+	}
+	token, err := auth.MakeJWT(dbUser.ID, cfg.JWTSecret, expiresIn)
+	if err != nil {
+		respondWithError(response, request, "Failed to make the JWT token", nil, http.StatusUnauthorized)
+		return
+	}
+
+	respondWithJSON(response, request, UserAndJWT{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
 		Email:     dbUser.Email,
 		Name:      dbUser.Name,
+		Token:     token,
 	}, http.StatusOK)
 	fmt.Printf("User %v (%v) just logged in\n", dbUser.Name, dbUser.Email)
 }
