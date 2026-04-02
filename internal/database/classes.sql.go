@@ -41,6 +41,24 @@ func (q *Queries) CreateClass(ctx context.Context, arg CreateClassParams) (Class
 	return i, err
 }
 
+const getClassFromClassID = `-- name: GetClassFromClassID :one
+SELECT id, created_at, updated_at, name, teacher_id FROM classes
+WHERE id = $1
+`
+
+func (q *Queries) GetClassFromClassID(ctx context.Context, id uuid.UUID) (Class, error) {
+	row := q.db.QueryRowContext(ctx, getClassFromClassID, id)
+	var i Class
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.TeacherID,
+	)
+	return i, err
+}
+
 const getClassesAsStudent = `-- name: GetClassesAsStudent :many
 SELECT id, created_at, updated_at, name, teacher_id FROM classes
 WHERE id IN (
@@ -100,43 +118,6 @@ func (q *Queries) GetClassesAsTeacher(ctx context.Context, teacherID uuid.UUID) 
 			&i.Name,
 			&i.TeacherID,
 		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getStudentsForClass = `-- name: GetStudentsForClass :many
-SELECT id,name FROM users
-WHERE id IN (
-        SELECT student_id
-        FROM students_classes
-        WHERE class_id = $1
-)
-`
-
-type GetStudentsForClassRow struct {
-	ID   uuid.UUID
-	Name string
-}
-
-func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([]GetStudentsForClassRow, error) {
-	rows, err := q.db.QueryContext(ctx, getStudentsForClass, classID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetStudentsForClassRow
-	for rows.Next() {
-		var i GetStudentsForClassRow
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

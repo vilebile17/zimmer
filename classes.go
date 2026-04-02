@@ -119,11 +119,33 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 
-	users, err := cfg.dbQueries.GetStudentsForClass(request.Context(), classID)
+	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "There was an error retreiving that class", err, http.StatusBadRequest)
+		return
+	}
+	teacherFull, err := cfg.dbQueries.GetUserFromID(request.Context(), class.TeacherID)
+	if err != nil {
+		respondWithError(response, request, "There was an error retreiving the class teacher", err, http.StatusBadRequest)
+		return
+	}
+	teacher := database.GetStudentsForClassRow{
+		ID:   teacherFull.ID,
+		Name: teacherFull.Name,
+	}
+
+	students, err := cfg.dbQueries.GetStudentsForClass(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "There was an error finding users for that class", err, http.StatusBadRequest)
 		return
 	}
 
-	respondWithJSON(response, request, users, http.StatusOK)
+	type responseJSON struct {
+		Teacher  database.GetStudentsForClassRow   `json:"teacher"`
+		Students []database.GetStudentsForClassRow `json:"students"`
+	}
+	respondWithJSON(response, request, responseJSON{
+		Teacher:  teacher,
+		Students: students,
+	}, http.StatusOK)
 }

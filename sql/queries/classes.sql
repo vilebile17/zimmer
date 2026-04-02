@@ -32,10 +32,6 @@ WHERE id IN (
 SELECT * FROM classes
 WHERE teacher_id = $1;
 
--- name: GetStudentsForClass :many
-SELECT id,name FROM users
-WHERE id IN (
-        SELECT student_id
-        FROM students_classes
-        WHERE class_id = $1
-);
+-- name: GetClassFromClassID :one
+SELECT * FROM classes
+WHERE id = $1;

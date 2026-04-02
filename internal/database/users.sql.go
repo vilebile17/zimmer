@@ -7,6 +7,8 @@ package database
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -42,6 +44,43 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const getStudentsForClass = `-- name: GetStudentsForClass :many
+SELECT id,name FROM users
+WHERE id IN (
+        SELECT student_id
+        FROM students_classes
+        WHERE class_id = $1
+)
+`
+
+type GetStudentsForClassRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([]GetStudentsForClassRow, error) {
+	rows, err := q.db.QueryContext(ctx, getStudentsForClass, classID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetStudentsForClassRow
+	for rows.Next() {
+		var i GetStudentsForClassRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserFromEmail = `-- name: GetUserFromEmail :one
 SELECT id, created_at, updated_at, name, email, hashed_password FROM users
 WHERE email = $1
@@ -49,6 +88,25 @@ WHERE email = $1
 
 func (q *Queries) GetUserFromEmail(ctx context.Context, email string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserFromEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.Email,
+		&i.HashedPassword,
+	)
+	return i, err
+}
+
+const getUserFromID = `-- name: GetUserFromID :one
+SELECT id, created_at, updated_at, name, email, hashed_password FROM users
+WHERE id = $1
+`
+
+func (q *Queries) GetUserFromID(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserFromID, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
