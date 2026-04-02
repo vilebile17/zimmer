@@ -10,7 +10,7 @@ VALUES (
 RETURNING *;
 
 -- name: JoinClass :one
-INSERT INTO users_classes (id, joined_at, updated_at, user_id, class_id)
+INSERT INTO students_classes (id, joined_at, updated_at, student_id, class_id)
 VALUES (
         gen_random_uuid(),
         NOW(),
@@ -20,6 +20,14 @@ VALUES (
 )
 RETURNING *;
 
--- name: GetClassesForUserID :many
-SELECT * FROM users_classes
-WHERE user_id = $1;
+-- name: GetClassesAsStudent :many
+SELECT * FROM classes
+WHERE id IN (
+        SELECT class_id
+        FROM students_classes
+       WHERE student_id = $1
+);
+
+-- name: GetClassesAsTeacher :many
+SELECT * FROM classes
+WHERE teacher_id = $1;

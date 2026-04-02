@@ -41,26 +41,64 @@ func (q *Queries) CreateClass(ctx context.Context, arg CreateClassParams) (Class
 	return i, err
 }
 
-const getClassesForUserID = `-- name: GetClassesForUserID :many
-SELECT id, user_id, class_id, joined_at, updated_at FROM users_classes
-WHERE user_id = $1
+const getClassesAsStudent = `-- name: GetClassesAsStudent :many
+SELECT id, created_at, updated_at, name, teacher_id FROM classes
+WHERE id IN (
+        SELECT class_id
+        FROM students_classes
+       WHERE student_id = $1
+)
 `
 
-func (q *Queries) GetClassesForUserID(ctx context.Context, userID uuid.UUID) ([]UsersClass, error) {
-	rows, err := q.db.QueryContext(ctx, getClassesForUserID, userID)
+func (q *Queries) GetClassesAsStudent(ctx context.Context, studentID uuid.UUID) ([]Class, error) {
+	rows, err := q.db.QueryContext(ctx, getClassesAsStudent, studentID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []UsersClass
+	var items []Class
 	for rows.Next() {
-		var i UsersClass
+		var i Class
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
-			&i.ClassID,
-			&i.JoinedAt,
+			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.Name,
+			&i.TeacherID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getClassesAsTeacher = `-- name: GetClassesAsTeacher :many
+SELECT id, created_at, updated_at, name, teacher_id FROM classes
+WHERE teacher_id = $1
+`
+
+func (q *Queries) GetClassesAsTeacher(ctx context.Context, teacherID uuid.UUID) ([]Class, error) {
+	rows, err := q.db.QueryContext(ctx, getClassesAsTeacher, teacherID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Class
+	for rows.Next() {
+		var i Class
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.TeacherID,
 		); err != nil {
 			return nil, err
 		}
@@ -76,7 +114,7 @@ func (q *Queries) GetClassesForUserID(ctx context.Context, userID uuid.UUID) ([]
 }
 
 const joinClass = `-- name: JoinClass :one
-INSERT INTO users_classes (id, joined_at, updated_at, user_id, class_id)
+INSERT INTO students_classes (id, joined_at, updated_at, student_id, class_id)
 VALUES (
         gen_random_uuid(),
         NOW(),
@@ -84,23 +122,23 @@ VALUES (
         $1,
         $2
 )
-RETURNING id, user_id, class_id, joined_at, updated_at
+RETURNING id, joined_at, updated_at, student_id, class_id
 `
 
 type JoinClassParams struct {
-	UserID  uuid.UUID
-	ClassID uuid.UUID
+	StudentID uuid.UUID
+	ClassID   uuid.UUID
 }
 
-func (q *Queries) JoinClass(ctx context.Context, arg JoinClassParams) (UsersClass, error) {
-	row := q.db.QueryRowContext(ctx, joinClass, arg.UserID, arg.ClassID)
-	var i UsersClass
+func (q *Queries) JoinClass(ctx context.Context, arg JoinClassParams) (StudentsClass, error) {
+	row := q.db.QueryRowContext(ctx, joinClass, arg.StudentID, arg.ClassID)
+	var i StudentsClass
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
-		&i.ClassID,
 		&i.JoinedAt,
 		&i.UpdatedAt,
+		&i.StudentID,
+		&i.ClassID,
 	)
 	return i, err
 }

@@ -70,17 +70,17 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		return
 	}
 
-	users_classes, err := cfg.dbQueries.JoinClass(request.Context(), database.JoinClassParams{
-		UserID:  userID,
-		ClassID: classID,
+	students_classes, err := cfg.dbQueries.JoinClass(request.Context(), database.JoinClassParams{
+		StudentID: userID,
+		ClassID:   classID,
 	})
 	if err != nil {
 		respondWithError(response, request, "There was an error finding that class...", err, http.StatusBadRequest)
 		return
 	}
 
-	fmt.Printf("User %v just joined a class %v\n", users_classes.UserID, classID)
-	respondWithJSON(response, request, users_classes, http.StatusCreated)
+	fmt.Printf("User %v just joined a class %v\n", students_classes.StudentID, classID)
+	respondWithJSON(response, request, students_classes, http.StatusCreated)
 }
 
 func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, request *http.Request) {
@@ -95,14 +95,20 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 		return
 	}
 
-	classes, err := cfg.dbQueries.GetClassesForUserID(request.Context(), userID)
+	classesAsStudent, err := cfg.dbQueries.GetClassesAsStudent(request.Context(), userID)
 	if err != nil {
-		respondWithError(response, request, "There was an error finding any classes for that user", err, http.StatusBadRequest)
+		respondWithError(response, request, "There was an error finding classes where that user is a student", err, http.StatusBadRequest)
+		return
+	}
+
+	classesAsTeacher, err := cfg.dbQueries.GetClassesAsTeacher(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "There was an error finding classes where that user is a student", err, http.StatusBadRequest)
 		return
 	}
 
 	fmt.Printf("User %v just got their classes\n", userID)
-	if len(classes) == 0 {
+	if len(classesAsStudent) == 0 && len(classesAsTeacher) == 0 {
 		type NoClasses struct {
 			Message string `json:"message"`
 		}
@@ -110,5 +116,13 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 		return
 	}
 
-	respondWithJSON(response, request, classes, http.StatusOK)
+	type Classes struct {
+		ClassesAsStudent []database.Class `json:"classes_as_student"`
+		ClassesAsTeacher []database.Class `json:"classes_as_teacher"`
+	}
+
+	respondWithJSON(response, request, Classes{
+		ClassesAsStudent: classesAsStudent,
+		ClassesAsTeacher: classesAsTeacher,
+	}, http.StatusOK)
 }

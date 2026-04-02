@@ -18,6 +18,14 @@ type Class struct {
 	TeacherID uuid.UUID
 }
 
+type StudentsClass struct {
+	ID        uuid.UUID
+	JoinedAt  time.Time
+	UpdatedAt time.Time
+	StudentID uuid.UUID
+	ClassID   uuid.UUID
+}
+
 type User struct {
 	ID             uuid.UUID
 	CreatedAt      time.Time
@@ -25,12 +33,4 @@ type User struct {
 	Name           string
 	Email          string
 	HashedPassword string
-}
-
-type UsersClass struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	ClassID   uuid.UUID
-	JoinedAt  time.Time
-	UpdatedAt time.Time
 }
