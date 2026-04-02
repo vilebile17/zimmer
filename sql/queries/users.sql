@@ -25,3 +25,13 @@ WHERE id IN (
         FROM students_classes
         WHERE class_id = $1
 );
+
+-- name: UpdateUser :one
+UPDATE users
+SET
+        name = $2,
+        email = $3,
+        hashed_password = $4,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING *;

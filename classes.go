@@ -165,5 +165,5 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		Teacher:  teacher,
 		Students: students,
 	}, http.StatusOK)
-	fmt.Printf("Just got all of the users in class %v", classID)
+	fmt.Printf("Just got all of the users in class %v\n", classID)
 }

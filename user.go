@@ -148,3 +148,96 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 	}, http.StatusOK)
 	fmt.Printf("User %v (%v) just logged in\n", dbUser.Name, dbUser.Email)
 }
+
+func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "unable to get the userID from the auth header", err, http.StatusBadRequest)
+		return
+	}
+
+	dbUser, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get a user from the database with that ID", err, http.StatusBadRequest)
+		return
+	}
+
+	type Params struct {
+		OldPassword string `json:"old_password"`
+		NewName     string `json:"new_name"`     //optional
+		NewEmail    string `json:"new_email"`    //optional
+		NewPassword string `json:"new_password"` //optional
+	}
+
+	var params Params
+	decoder := json.NewDecoder(request.Body)
+	err = decoder.Decode(&params)
+	if err != nil {
+		respondWithError(response, request, "There was an error decoding the parameters (required {old_password:string)", err, http.StatusBadRequest)
+		return
+	}
+
+	if params.OldPassword == "" {
+		respondWithError(response, request, "You must supply the old_password", nil, http.StatusUnauthorized)
+		return
+	}
+	passwordMatches, err := auth.CheckPasswordHash(params.OldPassword, dbUser.HashedPassword)
+	if err != nil {
+		respondWithError(response, request, "There was an error validating the password", err, http.StatusBadRequest)
+		return
+	}
+	if !passwordMatches {
+		respondWithError(response, request, "Old password doesn't match!", nil, http.StatusUnauthorized)
+		return
+	}
+
+	if params.NewPassword != "" && len(params.NewPassword) < 8 {
+		respondWithError(response, request, "The password must be at least 8 characters long", nil, http.StatusBadRequest)
+		return
+	}
+
+	hashedPassword, err := auth.HashPassword(params.NewPassword)
+	if err != nil {
+		respondWithError(response, request, "There was an error hashing the new password", err, http.StatusBadRequest)
+		return
+	}
+
+	var newPassword string
+	var newName string
+	var newEmail string
+	if params.NewPassword != "" {
+		newPassword = hashedPassword
+	} else {
+		newPassword = dbUser.HashedPassword
+	}
+	if params.NewName != "" {
+		newName = params.NewName
+	} else {
+		newName = dbUser.Name
+	}
+	if params.NewEmail != "" {
+		newEmail = params.NewEmail
+	} else {
+		newEmail = dbUser.Email
+	}
+
+	newUser, err := cfg.dbQueries.UpdateUser(request.Context(), database.UpdateUserParams{
+		ID:             userID,
+		Name:           newName,
+		Email:          newEmail,
+		HashedPassword: newPassword,
+	})
+	if err != nil {
+		respondWithError(response, request, "couldn't update user's information in the database", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, User{
+		ID:        newUser.ID,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+		Name:      newUser.Name,
+		Email:     newUser.Email,
+	}, http.StatusCreated)
+	fmt.Printf("Just updated user %v to have a name of %v, an email of %v and the hashed password is a secret :)\n", userID, newName, newEmail)
+}

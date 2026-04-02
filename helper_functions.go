@@ -47,7 +47,6 @@ func respondWithError(response http.ResponseWriter, _ *http.Request, message str
 func respondWithJSON(response http.ResponseWriter, request *http.Request, payload any, statusCode int) {
 	data, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println(err)
 		respondWithError(response, request, "an error occured while marshalling the payload", err, http.StatusBadRequest)
 		return
 	}
