@@ -46,7 +46,7 @@ SELECT id, created_at, updated_at, name, teacher_id FROM classes
 WHERE id IN (
         SELECT class_id
         FROM students_classes
-       WHERE student_id = $1
+        WHERE student_id = $1
 )
 `
 
@@ -100,6 +100,43 @@ func (q *Queries) GetClassesAsTeacher(ctx context.Context, teacherID uuid.UUID) 
 			&i.Name,
 			&i.TeacherID,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getStudentsForClass = `-- name: GetStudentsForClass :many
+SELECT id,name FROM users
+WHERE id IN (
+        SELECT student_id
+        FROM students_classes
+        WHERE class_id = $1
+)
+`
+
+type GetStudentsForClassRow struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([]GetStudentsForClassRow, error) {
+	rows, err := q.db.QueryContext(ctx, getStudentsForClass, classID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetStudentsForClassRow
+	for rows.Next() {
+		var i GetStudentsForClassRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

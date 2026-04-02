@@ -2,8 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/vilebile17/zimmer/internal/auth"
 )
 
 func (cfg *apiConfig) middlewareIncServerHits(next http.Handler) http.Handler {
@@ -51,4 +55,16 @@ func respondWithJSON(response http.ResponseWriter, request *http.Request, payloa
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(statusCode)
 	response.Write(data)
+}
+
+func (cfg *apiConfig) getUserIDFromHeader(header http.Header) (uuid.UUID, error) {
+	bearer, err := auth.GetBearerToken(header)
+	if err != nil {
+		return uuid.Nil, errors.New("there was an error getting the bearer token")
+	}
+	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
+	if err != nil {
+		return uuid.Nil, errors.New("couldn't find a user with that JWT token")
+	}
+	return userID, nil
 }

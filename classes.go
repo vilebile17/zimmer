@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/vilebile17/zimmer/internal/auth"
 	"github.com/vilebile17/zimmer/internal/database"
 )
 
@@ -28,14 +27,9 @@ func (cfg *apiConfig) createClassHandler(response http.ResponseWriter, request *
 		return
 	}
 
-	bearer, err := auth.GetBearerToken(request.Header)
+	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {
-		respondWithError(response, request, "There was an error finding the Authorization header", err, http.StatusUnauthorized)
-		return
-	}
-	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
-	if err != nil {
-		respondWithError(response, request, "There was an error finding the user ID with that JWT", err, http.StatusUnauthorized)
+		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
 	}
 
@@ -59,14 +53,9 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		return
 	}
 
-	bearer, err := auth.GetBearerToken(request.Header)
+	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {
-		respondWithError(response, request, "There was an error finding the Authorization header", err, http.StatusUnauthorized)
-		return
-	}
-	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
-	if err != nil {
-		respondWithError(response, request, "There was an error finding the user ID with that JWT", err, http.StatusUnauthorized)
+		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
 	}
 
@@ -84,14 +73,9 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 }
 
 func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, request *http.Request) {
-	bearer, err := auth.GetBearerToken(request.Header)
+	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {
-		respondWithError(response, request, "There was an error finding the Authorization header", err, http.StatusUnauthorized)
-		return
-	}
-	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
-	if err != nil {
-		respondWithError(response, request, "There was an error finding the user ID with that JWT", err, http.StatusUnauthorized)
+		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
 	}
 
@@ -125,4 +109,21 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 		ClassesAsStudent: classesAsStudent,
 		ClassesAsTeacher: classesAsTeacher,
 	}, http.StatusOK)
+}
+
+func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, request *http.Request) {
+	// Future me, add authorization to this so that you can only view the users for classes that you are in
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		return
+	}
+
+	users, err := cfg.dbQueries.GetStudentsForClass(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "There was an error finding users for that class", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, users, http.StatusOK)
 }
