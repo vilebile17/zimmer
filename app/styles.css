@@ -4,25 +4,45 @@ html {
 
 h1 {
         color: #c6d0f5;
-        margin-top: 96px;
-        text-shadow: 2px 2px 4px #838ba7;
+        margin-top: 7%;
+        text-shadow: 3px 3px #838ba7;
         font-size: 4.5em;
         text-align: center;
 }
 
 h2 {
         color: #b4befe;
-        text-shadow: 2px 2px 4px #838ba7;
         font-size: 2.5em;
         text-align: center;
 }
 
 .landing_page_subheading {
-        margin-top: -20px;
+        margin-top: -2%px;
 }
 
 .landing_page_subheading_italics {
         color: #94e2d5;
+        text-shadow: 2px 2px 4px #94e2d5;
+}
+
+.signup {
+        display: block;
+        margin: auto;
+        margin-top: 5%;
+        width: 25%;
+        font-size: 2em;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        padding-top: 0.3em;
+        padding-bottom: 0.3em;
+        border-radius: 15px;
+        color: #94e2d5;
+        background-color: #313244;
+        text-shadow: 2px 2px #838ba7;
+}
+
+.signup:hover {
+        color: #89dceb;
 }
 
 p {

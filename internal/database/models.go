@@ -26,3 +26,11 @@ type User struct {
 	Email          string
 	HashedPassword string
 }
+
+type UsersClass struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	ClassID   uuid.UUID
+	JoinedAt  time.Time
+	UpdatedAt time.Time
+}

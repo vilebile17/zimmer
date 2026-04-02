@@ -46,6 +46,8 @@ func main() {
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
 	mux.HandleFunc("POST /api/login", cfg.loginHandler)
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
+	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
+	mux.HandleFunc("POST /api/classes/{classID}", cfg.joinClassHandler)
 	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", port)
