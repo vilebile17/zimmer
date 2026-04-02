@@ -112,7 +112,6 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 }
 
 func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, request *http.Request) {
-	// Future me, add authorization to this so that you can only view the users for classes that you are in
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
 		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
@@ -140,6 +139,24 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		return
+	}
+	if userID != teacher.ID {
+		isStudent := false
+		for _, student := range students {
+			if student.ID == userID {
+				isStudent = true
+			}
+		}
+		if !isStudent {
+			respondWithError(response, request, "you can only get the users for a class that you are in", err, http.StatusUnauthorized)
+			return
+		}
+	}
+
 	type responseJSON struct {
 		Teacher  database.GetStudentsForClassRow   `json:"teacher"`
 		Students []database.GetStudentsForClassRow `json:"students"`
@@ -148,4 +165,5 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		Teacher:  teacher,
 		Students: students,
 	}, http.StatusOK)
+	fmt.Printf("Just got all of the users in class %v", classID)
 }
