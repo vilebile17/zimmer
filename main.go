@@ -45,6 +45,7 @@ func main() {
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
 	mux.HandleFunc("PUT /api/users", cfg.updateUserHandler)
+	mux.HandleFunc("GET /api/users/{userID}", cfg.getUserHandler)
 	mux.HandleFunc("POST /api/login", cfg.loginHandler)
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)

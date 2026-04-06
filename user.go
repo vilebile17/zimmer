@@ -228,7 +228,7 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 		HashedPassword: newPassword,
 	})
 	if err != nil {
-		respondWithError(response, request, "couldn't update user's information in the database", err, http.StatusBadRequest)
+		respondWithError(response, request, "couldn't update user's information in the database. it's possible that you chose the same name or email as another user", err, http.StatusBadRequest)
 		return
 	}
 
@@ -239,5 +239,46 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 		Name:      newUser.Name,
 		Email:     newUser.Email,
 	}, http.StatusCreated)
-	fmt.Printf("Just updated user %v to have a name of %v, an email of %v and the hashed password is a secret :)\n", userID, newName, newEmail)
+	fmt.Printf("Just updated user %v to have a name of %v, an email of %v and a hashed password of... Wait, that's a secret :)\n", userID, newName, newEmail)
+}
+
+func (cfg *apiConfig) getUserHandler(response http.ResponseWriter, request *http.Request) {
+	notLoggedIn := false
+	requesterID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		notLoggedIn = true
+	}
+
+	userID, err := uuid.Parse(request.PathValue("userID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error getting and parsing the user ID from the URL", err, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "Couldn't get the user from the database", err, http.StatusUnauthorized)
+		return
+	}
+
+	type UserNotEqualToRequester struct {
+		ID        uuid.UUID `json:"id"`
+		CreatedAt time.Time `json:"created_at"`
+		Name      string    `json:"name"`
+	}
+	if notLoggedIn || userID != requesterID {
+		respondWithJSON(response, request, UserNotEqualToRequester{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			Name:      user.Name,
+		}, http.StatusOK)
+	} else {
+		respondWithJSON(response, request, User{
+			ID:        user.ID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			Email:     user.Email,
+			Name:      user.Name,
+		}, http.StatusOK)
+	}
 }
