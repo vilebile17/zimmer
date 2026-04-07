@@ -1,28 +1,27 @@
+@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+
 html {
-        background-color: #1e1e2e;
+        background-color: var(--ctp-mocha-base);
 }
 
 h1 {
-        color: #c6d0f5;
+        color: var(--ctp-mocha-text);
         margin-top: 7%;
-        text-shadow: 3px 3px #838ba7;
+        margin-bottom: 0%;
+        text-shadow: 3px 3px var(--ctp-mocha-overlay1);
         font-size: 4.5em;
         text-align: center;
 }
 
 h2 {
-        color: #b4befe;
+        color: var(--ctp-mocha-subtext0);
         font-size: 2.5em;
         text-align: center;
 }
 
-.landing_page_subheading {
-        margin-top: -2%px;
-}
-
 .landing_page_subheading_italics {
-        color: #94e2d5;
-        text-shadow: 2px 2px 4px #94e2d5;
+        color: var(--ctp-mocha-teal);
+        text-shadow: 2px 2px 4px var(--ctp-mocha-teal);
 }
 
 .signup {
@@ -36,17 +35,17 @@ h2 {
         padding-top: 0.3em;
         padding-bottom: 0.3em;
         border-radius: 15px;
-        color: #94e2d5;
-        background-color: #313244;
-        text-shadow: 2px 2px #838ba7;
+        color: var(--ctp-mocha-teal);
+        background-color: var(--ctp-mocha-surface0);
+        text-shadow: 2px 2px var(--ctp-mocha-surface1);
 }
 
 .signup:hover {
-        color: #89dceb;
+        color: var(--ctp-mocha-blue);
 }
 
 p {
-        color: #fff;
+        color: var(--ctp-mocha-text);
         max-width: 500px;
         padding: 20px;
 }
