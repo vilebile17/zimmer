@@ -282,3 +282,28 @@ func (cfg *apiConfig) getUserHandler(response http.ResponseWriter, request *http
 		}, http.StatusOK)
 	}
 }
+
+func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "unable to get the userID from the auth header", err, http.StatusBadRequest)
+		return
+	}
+
+	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "unable to retrieve the user", err, http.StatusBadRequest)
+		return
+	}
+
+	err = cfg.dbQueries.DeleteUser(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "unable to delete the user", err, http.StatusBadRequest)
+		return
+	}
+
+	type Farewell struct {
+		Message string `json:"message"`
+	}
+	respondWithJSON(response, request, Farewell{fmt.Sprintf("Goodbye %v, it's a shame to see you go :(", user.Name)}, http.StatusOK)
+}
