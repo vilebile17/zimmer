@@ -12,7 +12,7 @@ import (
 
 func (cfg *apiConfig) middlewareIncServerHits(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
-		cfg.server_hits.Add(1)
+		cfg.homePageViews.Add(1)
 		next.ServeHTTP(response, request)
 	})
 }

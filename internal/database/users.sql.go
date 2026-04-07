@@ -91,6 +91,17 @@ func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([
 	return items, nil
 }
 
+const getTotalUserCount = `-- name: GetTotalUserCount :one
+SELECT COUNT(*) FROM users
+`
+
+func (q *Queries) GetTotalUserCount(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getTotalUserCount)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getUserFromEmail = `-- name: GetUserFromEmail :one
 SELECT id, created_at, updated_at, name, email, hashed_password FROM users
 WHERE email = $1

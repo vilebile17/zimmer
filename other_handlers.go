@@ -18,9 +18,10 @@ func (cfg *apiConfig) metricsHandler(response http.ResponseWriter, _ *http.Reque
 <html>
 <body>
     <h1>Welcome, Bester Zimmer Admin</h1>
-    <p>The home page has been visited %d times!</p>
+    <p>The home page has been visited %d times</p>
+    <p>There are currently %v active users</p>
   </body>
-</html>`, cfg.server_hits.Load())))
+</html>`, cfg.homePageViews.Load(), cfg.activeUsers.Load())))
 }
 
 func (cfg *apiConfig) resetHandler(response http.ResponseWriter, request *http.Request) {

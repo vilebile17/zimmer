@@ -39,3 +39,6 @@ RETURNING *;
 -- name: DeleteUser :exec
 DELETE FROM users
 WHERE id = $1;
+
+-- name: GetTotalUserCount :one
+SELECT COUNT(*) FROM users;

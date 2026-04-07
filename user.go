@@ -71,7 +71,7 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 	}
 
 	fmt.Printf("Just made a user called '%v' with the email '%v'\n", dbUser.Name, dbUser.Email)
-	fmt.Printf("The user's hashed password is %v\n", dbUser.HashedPassword)
+	fmt.Println("The user's hashed password is... a secret :)")
 	respondWithJSON(response, request, User{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
@@ -79,6 +79,7 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 		Email:     dbUser.Email,
 		Name:      dbUser.Name,
 	}, http.StatusCreated)
+	cfg.activeUsers.Add(1)
 }
 
 func handleErrorsFromCreatingUser(err error, response http.ResponseWriter, request *http.Request) {
@@ -306,4 +307,5 @@ func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *h
 		Message string `json:"message"`
 	}
 	respondWithJSON(response, request, Farewell{fmt.Sprintf("Goodbye %v, it's a shame to see you go :(", user.Name)}, http.StatusOK)
+	cfg.activeUsers.Add(-1)
 }

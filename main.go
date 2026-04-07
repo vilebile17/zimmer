@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -14,10 +15,11 @@ import (
 )
 
 type apiConfig struct {
-	server_hits atomic.Int32
-	dbQueries   *database.Queries
-	platform    string
-	JWTSecret   string
+	homePageViews atomic.Int32
+	activeUsers   atomic.Int32
+	dbQueries     *database.Queries
+	platform      string
+	JWTSecret     string
 }
 
 func main() {
@@ -33,6 +35,12 @@ func main() {
 	cfg.dbQueries = database.New(db)
 	cfg.platform = os.Getenv("PLATFORM")
 	cfg.JWTSecret = os.Getenv("JWT_SECRET")
+
+	activeUsers, err := cfg.dbQueries.GetTotalUserCount(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	cfg.activeUsers.Add(int32(activeUsers))
 
 	mux := http.NewServeMux()
 	server := http.Server{
