@@ -174,7 +174,7 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 	decoder := json.NewDecoder(request.Body)
 	err = decoder.Decode(&params)
 	if err != nil {
-		respondWithError(response, request, "There was an error decoding the parameters (required {old_password:string)", err, http.StatusBadRequest)
+		respondWithError(response, request, "There was an error decoding the parameters (required: {old_password:string} optional: {new_name:string, new_email:string, new_password:string})", err, http.StatusBadRequest)
 		return
 	}
 

@@ -5,10 +5,22 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type Assignment struct {
+	ID           uuid.UUID
+	ClassID      uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DueAt        sql.NullTime
+	Title        string
+	Instructions sql.NullString
+	AllowLate    sql.NullBool
+}
 
 type Class struct {
 	ID        uuid.UUID

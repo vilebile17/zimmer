@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/vilebile17/zimmer/internal/auth"
+	"github.com/vilebile17/zimmer/internal/database"
 )
 
 func (cfg *apiConfig) middlewareIncServerHits(next http.Handler) http.Handler {
@@ -66,4 +67,27 @@ func (cfg *apiConfig) getUserIDFromHeader(header http.Header) (uuid.UUID, error)
 		return uuid.Nil, errors.New("couldn't find a user with that JWT token")
 	}
 	return userID, nil
+}
+
+func (cfg *apiConfig) isUserInThisClass(request *http.Request, userID, classID uuid.UUID) (bool, error) {
+	var classes []database.Class
+
+	classesAsStudent, err := cfg.dbQueries.GetClassesAsStudent(request.Context(), userID)
+	if err != nil {
+		return false, err
+	}
+	classes = append(classes, classesAsStudent...)
+
+	classesAsTeacher, err := cfg.dbQueries.GetClassesAsTeacher(request.Context(), userID)
+	if err != nil {
+		return false, err
+	}
+	classes = append(classes, classesAsTeacher...)
+
+	for _, class := range classes {
+		if class.ID == classID {
+			return true, nil
+		}
+	}
+	return false, nil
 }

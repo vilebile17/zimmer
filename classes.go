@@ -118,6 +118,20 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		return
+	}
+
+	if inClass, err := cfg.isUserInThisClass(request, userID, classID); err != nil {
+		respondWithError(response, request, "couldn't get figure out if you are in the class", err, http.StatusUnauthorized)
+		return
+	} else if !inClass {
+		respondWithError(response, request, "you can only view the user for a class that you are in", nil, http.StatusUnauthorized)
+		return
+	}
+
 	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "There was an error retreiving that class", err, http.StatusBadRequest)
@@ -129,32 +143,15 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 	teacher := database.GetStudentsForClassRow{
-		ID:   teacherFull.ID,
-		Name: teacherFull.Name,
+		ID:        teacherFull.ID,
+		Name:      teacherFull.Name,
+		CreatedAt: teacherFull.CreatedAt,
 	}
 
 	students, err := cfg.dbQueries.GetStudentsForClass(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "There was an error finding users for that class", err, http.StatusBadRequest)
 		return
-	}
-
-	userID, err := cfg.getUserIDFromHeader(request.Header)
-	if err != nil {
-		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
-		return
-	}
-	if userID != teacher.ID {
-		isStudent := false
-		for _, student := range students {
-			if student.ID == userID {
-				isStudent = true
-			}
-		}
-		if !isStudent {
-			respondWithError(response, request, "you can only get the users for a class that you are in", err, http.StatusUnauthorized)
-			return
-		}
 	}
 
 	type responseJSON struct {

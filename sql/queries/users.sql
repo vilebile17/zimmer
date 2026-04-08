@@ -19,7 +19,7 @@ SELECT * FROM users
 WHERE id = $1;
 
 -- name: GetStudentsForClass :many
-SELECT id,name FROM users
+SELECT id,name,created_at FROM users
 WHERE id IN (
         SELECT student_id
         FROM students_classes

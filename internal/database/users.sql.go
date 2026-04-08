@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -55,7 +56,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getStudentsForClass = `-- name: GetStudentsForClass :many
-SELECT id,name FROM users
+SELECT id,name,created_at FROM users
 WHERE id IN (
         SELECT student_id
         FROM students_classes
@@ -64,8 +65,9 @@ WHERE id IN (
 `
 
 type GetStudentsForClassRow struct {
-	ID   uuid.UUID
-	Name string
+	ID        uuid.UUID
+	Name      string
+	CreatedAt time.Time
 }
 
 func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([]GetStudentsForClassRow, error) {
@@ -77,7 +79,7 @@ func (q *Queries) GetStudentsForClass(ctx context.Context, classID uuid.UUID) ([
 	var items []GetStudentsForClassRow
 	for rows.Next() {
 		var i GetStudentsForClassRow
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
