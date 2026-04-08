@@ -128,7 +128,7 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		respondWithError(response, request, "couldn't get figure out if you are in the class", err, http.StatusUnauthorized)
 		return
 	} else if !inClass {
-		respondWithError(response, request, "you can only view the user for a class that you are in", nil, http.StatusUnauthorized)
+		respondWithError(response, request, "you can only view the users for a class that you are in", nil, http.StatusUnauthorized)
 		return
 	}
 

@@ -19,7 +19,7 @@ type Assignment struct {
 	DueAt        sql.NullTime
 	Title        string
 	Instructions sql.NullString
-	AllowLate    sql.NullBool
+	AllowLate    bool
 }
 
 type Class struct {

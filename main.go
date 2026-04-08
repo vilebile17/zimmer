@@ -60,6 +60,7 @@ func main() {
 	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
 	mux.HandleFunc("POST /api/classes/{classID}/members", cfg.joinClassHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/members", cfg.getUsersForClassHandler)
+	mux.HandleFunc("POST /api/classes/{classID}/assignments", cfg.createAssignmentHandler)
 	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", port)
