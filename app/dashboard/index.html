@@ -6,37 +6,27 @@
                         name="viewport"
                         content="width=device-width, initial-scale=1"
                 />
-                <title>Bester Zimmer</title>
+                <title>Your Dashboard</title>
                 <link
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
                 />
-                <link href="/styles.css" rel="stylesheet" />
+                <link href="/dashboard/styles.css" rel="stylesheet" />
         </head>
 
         <body>
-                <article>
-                        <h1>Welcome to Bester Zimmer,</h1>
-                        <h2 class="landing_page_subheading">
-                                The best
-                                <i class="landing_page_subheading_italics"
-                                        >Online Classroom</i
-                                >
-                                platform
-                        </h2>
-                </article>
-                <button class="signup" type="button">
+                <div class="top-info-section">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
+                                width="240"
+                                height="240"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
-                                stroke-width="3"
+                                stroke-width="2"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-user icon-signup"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-user"
                         >
                                 <path
                                         stroke="none"
@@ -48,7 +38,11 @@
                                         d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"
                                 />
                         </svg>
-                        <b>Sign Up</b>
-                </button>
+                        <div class="user-info">
+                                <p>name: <b>Mr. User</b></p>
+                                <p>number of classes: <b>4</b></p>
+                                <p>assignments to do: <b>infinity</b></p>
+                        </div>
+                </div>
         </body>
 </html>

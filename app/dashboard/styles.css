@@ -1,0 +1,28 @@
+@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+
+html {
+        font-family: Inter;
+        background-color: var(--ctp-mocha-base);
+}
+
+.user-info {
+        font-size: 1.5em;
+        color: var(--ctp-mocha-subtext0);
+}
+
+b {
+        color: var(--ctp-mocha-text);
+}
+
+.top-info-section {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 5%;
+        text-align: left;
+        padding-left: 15%;
+}
+
+.icon-tabler-user {
+        color: var(--ctp-mocha-text);
+}
