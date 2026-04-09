@@ -33,10 +33,10 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 	}
 
 	type Params struct {
-		Title        string    `json:"title"`
-		DueAt        time.Time `json:"due_at"`
-		Instructions string    `json:"instructions"`
-		AllowLate    bool      `json:"allow_late"`
+		Title        string `json:"title"`
+		DueAt        string `json:"due_at"`
+		Instructions string `json:"instructions"`
+		AllowLate    bool   `json:"allow_late"`
 	}
 
 	var params Params
@@ -52,12 +52,22 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 		return
 	}
 
+	var dueAt time.Time
+	if params.DueAt != "" {
+		fmt.Println(params.DueAt)
+		dueAt, err = time.Parse(time.RFC3339, params.DueAt)
+		if err != nil {
+			respondWithError(response, request, "couldn't parse the due_at parameter (it uses RFC3339)", err, http.StatusBadRequest)
+			return
+		}
+	}
+
 	assignment, err := cfg.dbQueries.CreateAssignment(request.Context(), database.CreateAssignmentParams{
 		ClassID: classID,
 		Title:   params.Title,
 		DueAt: sql.NullTime{
-			Time:  params.DueAt,
-			Valid: !params.DueAt.IsZero(),
+			Time:  dueAt,
+			Valid: !dueAt.IsZero(),
 		},
 		Instructions: sql.NullString{
 			String: params.Instructions,
@@ -68,4 +78,35 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 
 	respondWithJSON(response, request, assignment, http.StatusCreated)
 	fmt.Printf("just made an assignment for class %v, with the title '%v'. It has a due date of %v, instructions of '%v' and the statement 'it allows late submissions' is %v\n", classID, params.Title, params.DueAt, params.Instructions, assignment.AllowLate)
+}
+
+func (cfg *apiConfig) getAssignmentsForAClassHandler(response http.ResponseWriter, request *http.Request) {
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		return
+	}
+
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		return
+	}
+
+	if isInClass, err := cfg.isUserInThisClass(request.Context(), userID, classID); err != nil {
+		respondWithError(response, request, "couldn't find all users for this class", err, http.StatusUnauthorized)
+		return
+	} else if !isInClass {
+		respondWithError(response, request, "you can only view assignments for classes which you are in", err, http.StatusUnauthorized)
+		return
+	}
+
+	assignments, err := cfg.dbQueries.GetAssignmentsForAClass(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "couldn't retrieve the assignments from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, assignments, http.StatusOK)
+	fmt.Printf("user %v, just got their assignments for class %v\n", userID, classID)
 }

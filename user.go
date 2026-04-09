@@ -308,4 +308,5 @@ func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *h
 	}
 	respondWithJSON(response, request, Farewell{fmt.Sprintf("Goodbye %v, it's a shame to see you go :(", user.Name)}, http.StatusOK)
 	cfg.activeUsers.Add(-1)
+	fmt.Printf("User %v (%v) just left :(", user.Name, user.Email)
 }

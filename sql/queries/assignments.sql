@@ -11,3 +11,8 @@ VALUES (
         $5
 )
 RETURNING *;
+
+-- name: GetAssignmentsForAClass :many
+SELECT * FROM assignments
+WHERE class_id = $1
+ORDER BY created_at DESC;

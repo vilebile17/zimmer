@@ -56,3 +56,41 @@ func (q *Queries) CreateAssignment(ctx context.Context, arg CreateAssignmentPara
 	)
 	return i, err
 }
+
+const getAssignmentsForAClass = `-- name: GetAssignmentsForAClass :many
+SELECT id, class_id, created_at, updated_at, due_at, title, instructions, allow_late FROM assignments
+WHERE class_id = $1
+ORDER BY created_at DESC
+`
+
+func (q *Queries) GetAssignmentsForAClass(ctx context.Context, classID uuid.UUID) ([]Assignment, error) {
+	rows, err := q.db.QueryContext(ctx, getAssignmentsForAClass, classID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Assignment
+	for rows.Next() {
+		var i Assignment
+		if err := rows.Scan(
+			&i.ID,
+			&i.ClassID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueAt,
+			&i.Title,
+			&i.Instructions,
+			&i.AllowLate,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

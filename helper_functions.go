@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -69,16 +70,16 @@ func (cfg *apiConfig) getUserIDFromHeader(header http.Header) (uuid.UUID, error)
 	return userID, nil
 }
 
-func (cfg *apiConfig) isUserInThisClass(request *http.Request, userID, classID uuid.UUID) (bool, error) {
+func (cfg *apiConfig) isUserInThisClass(context context.Context, userID, classID uuid.UUID) (bool, error) {
 	var classes []database.Class
 
-	classesAsStudent, err := cfg.dbQueries.GetClassesAsStudent(request.Context(), userID)
+	classesAsStudent, err := cfg.dbQueries.GetClassesAsStudent(context, userID)
 	if err != nil {
 		return false, err
 	}
 	classes = append(classes, classesAsStudent...)
 
-	classesAsTeacher, err := cfg.dbQueries.GetClassesAsTeacher(request.Context(), userID)
+	classesAsTeacher, err := cfg.dbQueries.GetClassesAsTeacher(context, userID)
 	if err != nil {
 		return false, err
 	}
