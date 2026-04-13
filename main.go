@@ -51,18 +51,23 @@ func main() {
 	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(http.Dir("./app"))))
 	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
+	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
+
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
 	mux.HandleFunc("PUT /api/users", cfg.updateUserHandler)
 	mux.HandleFunc("GET /api/users/{userID}", cfg.getUserHandler)
 	mux.HandleFunc("DELETE /api/users", cfg.deleteUserHandler)
 	mux.HandleFunc("POST /api/login", cfg.loginHandler)
+
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
+
 	mux.HandleFunc("POST /api/classes/{classID}/members", cfg.joinClassHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/members", cfg.getUsersForClassHandler)
+
 	mux.HandleFunc("POST /api/classes/{classID}/assignments", cfg.createAssignmentHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/assignments", cfg.getAssignmentsForAClassHandler)
-	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}", cfg.getAssignmentHandler)
 
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", port)
 	if err := server.ListenAndServe(); err != nil {

@@ -16,3 +16,7 @@ RETURNING *;
 SELECT * FROM assignments
 WHERE class_id = $1
 ORDER BY created_at DESC;
+
+-- name: GetAssignmentFromID :one
+SELECT * FROM assignments
+WHERE id = $1;

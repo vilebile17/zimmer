@@ -110,3 +110,39 @@ func (cfg *apiConfig) getAssignmentsForAClassHandler(response http.ResponseWrite
 	respondWithJSON(response, request, assignments, http.StatusOK)
 	fmt.Printf("user %v, just got their assignments for class %v\n", userID, classID)
 }
+
+func (cfg *apiConfig) getAssignmentHandler(response http.ResponseWriter, request *http.Request) {
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		return
+	}
+	AssignmentID, err := uuid.Parse(request.PathValue("assignmentID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that assignmentID", err, http.StatusBadRequest)
+		return
+	}
+
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		return
+	}
+
+	if isInClass, err := cfg.isUserInThisClass(request.Context(), userID, classID); err != nil {
+		respondWithError(response, request, "couldn't find all users for this class", err, http.StatusUnauthorized)
+		return
+	} else if !isInClass {
+		respondWithError(response, request, "you can only view assignments for classes which you are in", err, http.StatusUnauthorized)
+		return
+	}
+
+	Assignment, err := cfg.dbQueries.GetAssignmentFromID(request.Context(), AssignmentID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get that assignment from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, Assignment, http.StatusOK)
+	fmt.Printf("Just got info about assignment %v: %v\n", AssignmentID, Assignment.Title)
+}
