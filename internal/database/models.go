@@ -38,6 +38,15 @@ type StudentsClass struct {
 	ClassID   uuid.UUID
 }
 
+type Submission struct {
+	ID           uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	AssignmentID uuid.UUID
+	UserID       uuid.UUID
+	Answers      sql.NullString
+}
+
 type User struct {
 	ID             uuid.UUID
 	CreatedAt      time.Time
