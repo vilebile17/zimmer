@@ -59,6 +59,22 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		return
 	}
 
+	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "couldn't retrieve the class from the database", err, http.StatusUnauthorized)
+		return
+	}
+
+	if class.TeacherID == userID {
+		respondWithError(response, request, "you're the teacher mate, why are ya joining your own class as a student", err, http.StatusUnauthorized)
+		return
+	}
+
+	if !class.AllowJoining {
+		respondWithError(response, request, "the class doesn't allow new users to join :(", err, http.StatusUnauthorized)
+		return
+	}
+
 	students_classes, err := cfg.dbQueries.JoinClass(request.Context(), database.JoinClassParams{
 		StudentID: userID,
 		ClassID:   classID,

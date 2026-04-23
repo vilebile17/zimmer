@@ -1,11 +1,12 @@
 -- name: CreateClass :one
-INSERT INTO classes (id, created_at, updated_at, name, teacher_id)
+INSERT INTO classes (id, created_at, updated_at, name, teacher_id, allow_joining)
 VALUES (
         gen_random_uuid(),
         NOW(),
         NOW(),
         $1,
-        $2
+        $2,
+        true
 )
 RETURNING *;
 
@@ -35,3 +36,13 @@ WHERE teacher_id = $1;
 -- name: GetClassFromClassID :one
 SELECT * FROM classes
 WHERE id = $1;
+
+-- name: UpdateClass :one
+UPDATE classes
+SET
+        name = $2,
+        teacher_id = $3,
+        allow_joining = $4,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING *;

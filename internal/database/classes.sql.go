@@ -12,15 +12,16 @@ import (
 )
 
 const createClass = `-- name: CreateClass :one
-INSERT INTO classes (id, created_at, updated_at, name, teacher_id)
+INSERT INTO classes (id, created_at, updated_at, name, teacher_id, allow_joining)
 VALUES (
         gen_random_uuid(),
         NOW(),
         NOW(),
         $1,
-        $2
+        $2,
+        true
 )
-RETURNING id, created_at, updated_at, name, teacher_id
+RETURNING id, created_at, updated_at, name, teacher_id, allow_joining
 `
 
 type CreateClassParams struct {
@@ -37,12 +38,13 @@ func (q *Queries) CreateClass(ctx context.Context, arg CreateClassParams) (Class
 		&i.UpdatedAt,
 		&i.Name,
 		&i.TeacherID,
+		&i.AllowJoining,
 	)
 	return i, err
 }
 
 const getClassFromClassID = `-- name: GetClassFromClassID :one
-SELECT id, created_at, updated_at, name, teacher_id FROM classes
+SELECT id, created_at, updated_at, name, teacher_id, allow_joining FROM classes
 WHERE id = $1
 `
 
@@ -55,12 +57,13 @@ func (q *Queries) GetClassFromClassID(ctx context.Context, id uuid.UUID) (Class,
 		&i.UpdatedAt,
 		&i.Name,
 		&i.TeacherID,
+		&i.AllowJoining,
 	)
 	return i, err
 }
 
 const getClassesAsStudent = `-- name: GetClassesAsStudent :many
-SELECT id, created_at, updated_at, name, teacher_id FROM classes
+SELECT id, created_at, updated_at, name, teacher_id, allow_joining FROM classes
 WHERE id IN (
         SELECT class_id
         FROM students_classes
@@ -83,6 +86,7 @@ func (q *Queries) GetClassesAsStudent(ctx context.Context, studentID uuid.UUID) 
 			&i.UpdatedAt,
 			&i.Name,
 			&i.TeacherID,
+			&i.AllowJoining,
 		); err != nil {
 			return nil, err
 		}
@@ -98,7 +102,7 @@ func (q *Queries) GetClassesAsStudent(ctx context.Context, studentID uuid.UUID) 
 }
 
 const getClassesAsTeacher = `-- name: GetClassesAsTeacher :many
-SELECT id, created_at, updated_at, name, teacher_id FROM classes
+SELECT id, created_at, updated_at, name, teacher_id, allow_joining FROM classes
 WHERE teacher_id = $1
 `
 
@@ -117,6 +121,7 @@ func (q *Queries) GetClassesAsTeacher(ctx context.Context, teacherID uuid.UUID) 
 			&i.UpdatedAt,
 			&i.Name,
 			&i.TeacherID,
+			&i.AllowJoining,
 		); err != nil {
 			return nil, err
 		}
@@ -157,6 +162,43 @@ func (q *Queries) JoinClass(ctx context.Context, arg JoinClassParams) (StudentsC
 		&i.UpdatedAt,
 		&i.StudentID,
 		&i.ClassID,
+	)
+	return i, err
+}
+
+const updateClass = `-- name: UpdateClass :one
+UPDATE classes
+SET
+        name = $2,
+        teacher_id = $3,
+        allow_joining = $4,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING id, created_at, updated_at, name, teacher_id, allow_joining
+`
+
+type UpdateClassParams struct {
+	ID           uuid.UUID
+	Name         string
+	TeacherID    uuid.UUID
+	AllowJoining bool
+}
+
+func (q *Queries) UpdateClass(ctx context.Context, arg UpdateClassParams) (Class, error) {
+	row := q.db.QueryRowContext(ctx, updateClass,
+		arg.ID,
+		arg.Name,
+		arg.TeacherID,
+		arg.AllowJoining,
+	)
+	var i Class
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.TeacherID,
+		&i.AllowJoining,
 	)
 	return i, err
 }

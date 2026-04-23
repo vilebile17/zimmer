@@ -23,11 +23,12 @@ type Assignment struct {
 }
 
 type Class struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Name      string
-	TeacherID uuid.UUID
+	ID           uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Name         string
+	TeacherID    uuid.UUID
+	AllowJoining bool
 }
 
 type StudentsClass struct {
