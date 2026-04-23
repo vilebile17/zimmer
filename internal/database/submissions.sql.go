@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -43,4 +44,71 @@ func (q *Queries) CreateSubmission(ctx context.Context, arg CreateSubmissionPara
 		&i.Answers,
 	)
 	return i, err
+}
+
+const getSubmission = `-- name: GetSubmission :one
+SELECT id, created_at, updated_at, assignment_id, user_id, answers FROM submissions
+WHERE id = $1
+`
+
+func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (Submission, error) {
+	row := q.db.QueryRowContext(ctx, getSubmission, id)
+	var i Submission
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.AssignmentID,
+		&i.UserID,
+		&i.Answers,
+	)
+	return i, err
+}
+
+const getSubmissionsForAssignment = `-- name: GetSubmissionsForAssignment :many
+SELECT submissions.id, submissions.created_at, submissions.updated_at,
+        submissions.user_id, submissions.answers, users.name
+FROM submissions
+INNER JOIN users
+        ON submissions.user_id = users.id
+WHERE assignment_id = $1
+`
+
+type GetSubmissionsForAssignmentRow struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	UserID    uuid.UUID
+	Answers   sql.NullString
+	Name      string
+}
+
+func (q *Queries) GetSubmissionsForAssignment(ctx context.Context, assignmentID uuid.UUID) ([]GetSubmissionsForAssignmentRow, error) {
+	rows, err := q.db.QueryContext(ctx, getSubmissionsForAssignment, assignmentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetSubmissionsForAssignmentRow
+	for rows.Next() {
+		var i GetSubmissionsForAssignmentRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.Answers,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
