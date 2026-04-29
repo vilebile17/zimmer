@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -46,6 +47,11 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 
 	if params.Email == "" || params.Name == "" || params.Password == "" {
 		respondWithError(response, request, "The email, name and password parameters can't be empty", nil, http.StatusBadRequest)
+		return
+	}
+
+	if !strings.Contains(params.Email, "@") && !strings.Contains(params.Email, ".") {
+		respondWithError(response, request, "The email must contain an '@' as well as a '.'", nil, http.StatusBadRequest)
 		return
 	}
 

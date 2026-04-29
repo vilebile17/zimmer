@@ -26,7 +26,11 @@ func main() {
 	const port = ":8080"
 	cfg := apiConfig{}
 
-	dotenv.Load()
+	err := dotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	dbURL := os.Getenv("DB_URL")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
