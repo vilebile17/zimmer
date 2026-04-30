@@ -21,6 +21,14 @@ VALUES (
 )
 RETURNING *;
 
+-- name: GetClass :one
+SELECT classes.id, classes.created_at, classes.updated_at,
+        classes.name, classes.teacher_id, classes.allow_joining, users.name as teacher_name
+FROM classes
+INNER JOIN users
+        ON classes.teacher_id = users.id
+WHERE classes.id = $1;
+
 -- name: GetClassesAsStudent :many
 SELECT * FROM classes
 WHERE id IN (

@@ -127,6 +127,37 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 	}, http.StatusOK)
 }
 
+func (cfg *apiConfig) getClassHandler(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
+		return
+	}
+
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error getting and parsing the class ID from the URL", err, http.StatusBadRequest)
+		return
+	}
+
+	b, err := cfg.isUserInThisClass(request.Context(), userID, classID)
+	if err != nil {
+		respondWithError(response, request, "couldn't validate that you're in this class", err, http.StatusUnauthorized)
+		return
+	}
+	if !b {
+		respondWithError(response, request, "you can't get a class' info if you aren't in it :)", err, http.StatusUnauthorized)
+		return
+	}
+
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get the class data from the database", err, http.StatusBadRequest)
+		return
+	}
+	respondWithJSON(response, request, class, http.StatusOK)
+}
+
 func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, request *http.Request) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {

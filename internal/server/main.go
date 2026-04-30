@@ -69,6 +69,7 @@ func main() {
 	// classes stuff
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
+	mux.HandleFunc("GET /api/classes/{classID}", cfg.getClassHandler)
 	mux.HandleFunc("POST /api/classes/{classID}/members", cfg.joinClassHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/members", cfg.getUsersForClassHandler)
 

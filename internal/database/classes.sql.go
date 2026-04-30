@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -39,6 +40,40 @@ func (q *Queries) CreateClass(ctx context.Context, arg CreateClassParams) (Class
 		&i.Name,
 		&i.TeacherID,
 		&i.AllowJoining,
+	)
+	return i, err
+}
+
+const getClass = `-- name: GetClass :one
+SELECT classes.id, classes.created_at, classes.updated_at,
+        classes.name, classes.teacher_id, classes.allow_joining, users.name as teacher_name
+FROM classes
+INNER JOIN users
+        ON classes.teacher_id = users.id
+WHERE classes.id = $1
+`
+
+type GetClassRow struct {
+	ID           uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Name         string
+	TeacherID    uuid.UUID
+	AllowJoining bool
+	TeacherName  string
+}
+
+func (q *Queries) GetClass(ctx context.Context, id uuid.UUID) (GetClassRow, error) {
+	row := q.db.QueryRowContext(ctx, getClass, id)
+	var i GetClassRow
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.TeacherID,
+		&i.AllowJoining,
+		&i.TeacherName,
 	)
 	return i, err
 }
