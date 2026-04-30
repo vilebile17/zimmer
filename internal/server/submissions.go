@@ -77,6 +77,10 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 			Valid:  params.Answers != "",
 		},
 	})
+	if err != nil {
+		respondWithError(response, request, "there was an error adding the submission to the database", err, http.StatusBadRequest)
+	}
+
 	respondWithJSON(response, request, submission, http.StatusCreated)
 	fmt.Printf("User %v just submitted their work for assignment %v", userID, assignmentID)
 }

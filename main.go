@@ -1,87 +1,51 @@
 package main
 
 import (
-	"context"
-	"database/sql"
-	"fmt"
+	"errors"
 	"log"
-	"net/http"
 	"os"
-	"sync/atomic"
+	"strings"
 
-	dotenv "github.com/joho/godotenv"
-	_ "github.com/lib/pq"
-	"github.com/vilebile17/zimmer/internal/database"
+	tea "charm.land/bubbletea/v2"
 )
 
-type apiConfig struct {
-	homePageViews atomic.Int32
-	activeUsers   atomic.Int32
-	dbQueries     *database.Queries
-	platform      string
-	JWTSecret     string
+const baseURL = "http://localhost:8080"
+
+func noJWT() tea.Msg {
+	return errMsg{errors.New("couldn't find the .zimmer_token file in the home directory")}
+}
+
+type errMsg struct{ err error }
+
+func (e errMsg) Error() string { return e.err.Error() }
+
+func getJWTToken() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	files, err := os.ReadDir(homeDir)
+	if err != nil {
+		return "", err
+	}
+
+	var JWTToken []byte
+	for _, file := range files {
+		if file.Name() == ".zimmer_token" {
+			JWTToken, err = os.ReadFile(homeDir + "/" + ".zimmer_token")
+			if err != nil {
+				return "", err
+			}
+			return string(JWTToken), nil
+		}
+	}
+
+	token := strings.TrimSpace(string(JWTToken))
+	return token, nil
 }
 
 func main() {
-	const port = ":8080"
-	cfg := apiConfig{}
-
-	err := dotenv.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dbURL := os.Getenv("DB_URL")
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	cfg.dbQueries = database.New(db)
-	cfg.platform = os.Getenv("PLATFORM")
-	cfg.JWTSecret = os.Getenv("JWT_SECRET")
-
-	activeUsers, err := cfg.dbQueries.GetTotalUserCount(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	cfg.activeUsers.Add(int32(activeUsers))
-
-	mux := http.NewServeMux()
-	server := http.Server{
-		Addr:    port,
-		Handler: mux,
-	}
-
-	// general utility stuff
-	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(http.Dir("./app"))))
-	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
-	mux.HandleFunc("/metrics", cfg.metricsHandler)
-	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
-
-	// user stuff
-	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
-	mux.HandleFunc("PUT /api/users", cfg.updateUserHandler)
-	mux.HandleFunc("GET /api/users/{userID}", cfg.getUserHandler)
-	mux.HandleFunc("DELETE /api/users", cfg.deleteUserHandler)
-	mux.HandleFunc("POST /api/login", cfg.loginHandler)
-
-	// classes stuff
-	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
-	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
-	mux.HandleFunc("POST /api/classes/{classID}/members", cfg.joinClassHandler)
-	mux.HandleFunc("GET /api/classes/{classID}/members", cfg.getUsersForClassHandler)
-
-	// assignments stuff
-	mux.HandleFunc("POST /api/classes/{classID}/assignments", cfg.createAssignmentHandler)
-	mux.HandleFunc("GET /api/classes/{classID}/assignments", cfg.getAssignmentsForAClassHandler)
-	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}", cfg.getAssignmentHandler)
-
-	// submissions stuff
-	mux.HandleFunc("POST /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.handInAssignmentHandler)
-	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.getSubmissionsHandler)
-
-	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", port)
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Println(err)
+	if _, err := tea.NewProgram(allClassesViewModel{}).Run(); err != nil {
+		log.Fatalf("Uh oh, there was an error: %v\n", err)
 	}
 }
