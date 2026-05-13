@@ -211,3 +211,44 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 	}, http.StatusOK)
 	fmt.Printf("Just got all of the users in class %v\n", classID)
 }
+
+func (cfg *apiConfig) removeFromClass(response http.ResponseWriter, request *http.Request) {
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		return
+	}
+	userToRemove, err := uuid.Parse(request.PathValue("userID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that userID", err, http.StatusBadRequest)
+		return
+	}
+
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		return
+	}
+
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "there was an error retrieving the class data from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	if userID != userToRemove && userID != class.TeacherID {
+		respondWithError(response, request, "You cannot remove another user from a class if you aren't the teacher.", err, http.StatusUnauthorized)
+		return
+	}
+
+	if err = cfg.dbQueries.RemoveUserFromClass(request.Context(), database.RemoveUserFromClassParams{
+		StudentID: userToRemove,
+		ClassID:   classID,
+	}); err != nil {
+		respondWithError(response, request, "there was an error removing the user from the class", err, http.StatusBadRequest)
+		return
+	}
+
+	fmt.Printf("Successfully removed user %v from the class %d\n", userToRemove, classID)
+	response.WriteHeader(http.StatusOK)
+}
