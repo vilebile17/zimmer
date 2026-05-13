@@ -12,23 +12,9 @@ import (
 )
 
 func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, request *http.Request) {
-	classID, err := uuid.Parse(request.PathValue("classID"))
-	if err != nil {
-		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
-		return
-	}
-
-	userID, err := cfg.getUserIDFromHeader(request.Header)
-	if err != nil {
-		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
-		return
-	}
-
-	if class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID); err != nil {
-		respondWithError(response, request, "couldn't get the class from the database", err, http.StatusBadRequest)
-		return
-	} else if class.TeacherID != userID {
-		respondWithError(response, request, "you can only make an assignment for a class which you are a teacher for", nil, http.StatusUnauthorized)
+	var err error
+	if statusCode, err := cfg.teacherActions(request); err != nil {
+		respondWithError(response, request, "There was an error validating your identity", err, statusCode)
 		return
 	}
 
@@ -62,6 +48,9 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 		}
 	}
 
+	// It cannot error as it would have done that earlier
+	classID, _ := uuid.Parse(request.PathValue("classID"))
+
 	assignment, err := cfg.dbQueries.CreateAssignment(request.Context(), database.CreateAssignmentParams{
 		ClassID: classID,
 		Title:   params.Title,
@@ -75,6 +64,9 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 		},
 		AllowLate: params.AllowLate,
 	})
+	if err != nil {
+		respondWithError(response, request, "There was an error adding the assignment to the database", err, http.StatusBadRequest)
+	}
 
 	respondWithJSON(response, request, assignment, http.StatusCreated)
 	fmt.Printf("just made an assignment for class %v, with the title '%v'. It has a due date of %v, instructions of '%v' and the statement 'it allows late submissions' is %v\n", classID, params.Title, params.DueAt, params.Instructions, assignment.AllowLate)

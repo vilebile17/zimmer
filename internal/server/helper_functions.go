@@ -92,3 +92,26 @@ func (cfg *apiConfig) isUserInThisClass(context context.Context, userID, classID
 	}
 	return false, nil
 }
+
+func (cfg *apiConfig) teacherActions(request *http.Request) (int, error) {
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		return http.StatusBadRequest, errors.New("There was an error parsing that classID")
+	}
+
+	userID, err := cfg.getUserIDFromHeader(request.Header)
+	if err != nil {
+		return http.StatusUnauthorized, errors.New("couldn't get userID from the auth header")
+	}
+
+	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	if err != nil {
+		return http.StatusUnauthorized, errors.New("couldn't get the class from the database")
+	}
+
+	if class.TeacherID != userID {
+		return http.StatusUnauthorized, errors.New("you can't get the access this action without being the class teacher")
+	}
+
+	return 0, nil
+}

@@ -86,26 +86,8 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 }
 
 func (cfg *apiConfig) getSubmissionsHandler(response http.ResponseWriter, request *http.Request) {
-	classID, err := uuid.Parse(request.PathValue("classID"))
-	if err != nil {
-		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
-		return
-	}
-
-	userID, err := cfg.getUserIDFromHeader(request.Header)
-	if err != nil {
-		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
-		return
-	}
-
-	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
-	if err != nil {
-		respondWithError(response, request, "couldn't get the class from the database", err, http.StatusUnauthorized)
-		return
-	}
-
-	if class.TeacherID != userID {
-		respondWithError(response, request, "you can't get the submissions for the assignment if you're not the teacher", nil, http.StatusUnauthorized)
+	if statusCode, err := cfg.teacherActions(request); err != nil {
+		respondWithError(response, request, "An error occured while trying to validate your identity", err, statusCode)
 		return
 	}
 
