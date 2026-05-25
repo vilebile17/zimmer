@@ -145,6 +145,15 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 		return
 	}
 
+	http.SetCookie(response, &http.Cookie{
+		Name:     "token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   3600,
+	})
+
 	respondWithJSON(response, request, UserAndJWT{
 		ID:        dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
@@ -171,9 +180,9 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 
 	type Params struct {
 		OldPassword string `json:"old_password"`
-		NewName     string `json:"new_name"`     //optional
-		NewEmail    string `json:"new_email"`    //optional
-		NewPassword string `json:"new_password"` //optional
+		NewName     string `json:"new_name"`     // optional
+		NewEmail    string `json:"new_email"`    // optional
+		NewPassword string `json:"new_password"` // optional
 	}
 
 	var params Params
