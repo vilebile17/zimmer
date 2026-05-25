@@ -54,3 +54,7 @@ SET
         updated_at = NOW()
 WHERE id = $1
 RETURNING *;
+
+-- name: RemoveUserFromClass :exec
+DELETE FROM students_classes
+WHERE student_id = $1 AND class_id = $2;

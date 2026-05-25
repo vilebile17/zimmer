@@ -201,6 +201,21 @@ func (q *Queries) JoinClass(ctx context.Context, arg JoinClassParams) (StudentsC
 	return i, err
 }
 
+const removeUserFromClass = `-- name: RemoveUserFromClass :exec
+DELETE FROM students_classes
+WHERE student_id = $1 AND class_id = $2
+`
+
+type RemoveUserFromClassParams struct {
+	StudentID uuid.UUID
+	ClassID   uuid.UUID
+}
+
+func (q *Queries) RemoveUserFromClass(ctx context.Context, arg RemoveUserFromClassParams) error {
+	_, err := q.db.ExecContext(ctx, removeUserFromClass, arg.StudentID, arg.ClassID)
+	return err
+}
+
 const updateClass = `-- name: UpdateClass :one
 UPDATE classes
 SET
