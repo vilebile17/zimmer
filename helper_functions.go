@@ -61,13 +61,40 @@ func respondWithJSON(response http.ResponseWriter, request *http.Request, payloa
 func (cfg *apiConfig) getUserIDFromHeader(header http.Header) (uuid.UUID, error) {
 	bearer, err := auth.GetBearerToken(header)
 	if err != nil {
-		return uuid.Nil, errors.New("there was an error getting the bearer token")
+		return uuid.Nil, errors.New("there was an error getting the bearer token from the headers")
 	}
 	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
 	if err != nil {
 		return uuid.Nil, errors.New("couldn't find a user with that JWT token")
 	}
 	return userID, nil
+}
+
+func (cfg *apiConfig) getUserIDFromCookie(request *http.Request) (uuid.UUID, error) {
+	cookie, err := request.Cookie("token")
+	if err != nil {
+		return uuid.Nil, errors.New("there was an error getting the token from the cookie")
+	}
+	bearer := cookie.Value
+
+	userID, err := auth.ValidateJWT(bearer, cfg.JWTSecret)
+	if err != nil {
+		return uuid.Nil, errors.New("couldn't find a user with that JWT token")
+	}
+	return userID, nil
+}
+
+func (cfg *apiConfig) getUserID(request *http.Request) (uuid.UUID, error) {
+	cookieID, cookieErr := cfg.getUserIDFromCookie(request)
+	headerID, headerErr := cfg.getUserIDFromHeader(request.Header)
+
+	if cookieErr == nil {
+		return cookieID, nil
+	} else if headerErr == nil {
+		return headerID, nil
+	} else {
+		return uuid.Nil, fmt.Errorf("Couldn't get the token: %v, %v", cookieErr, headerErr)
+	}
 }
 
 func (cfg *apiConfig) isUserInThisClass(context context.Context, userID, classID uuid.UUID) (bool, error) {

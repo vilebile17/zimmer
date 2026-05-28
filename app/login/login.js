@@ -1,11 +1,7 @@
-function printEmailAndPassword() {
+async function login() {
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
-        login(email, password);
-}
-
-async function login(email, password) {
-        const response = fetch("http://localhost:8080/api/login", {
+        const response = fetch("/api/login", {
                 method: "POST",
                 body: JSON.stringify({
                         email: email,
@@ -14,10 +10,10 @@ async function login(email, password) {
                 headers: {
                         "Content-Type": "application/json",
                 },
-        })
-        
-        const status = await response;
-        console.log(status);
+        });
+
+        let r = await response;
+        console.log(r.status);
 }
 
-document.getElementById("login-button").addEventListener("click", printEmailAndPassword);
+document.getElementById("login-button").addEventListener("click", login);

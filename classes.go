@@ -89,7 +89,7 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 }
 
 func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, request *http.Request) {
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
