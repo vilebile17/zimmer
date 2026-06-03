@@ -299,6 +299,28 @@ func (cfg *apiConfig) getUserHandler(response http.ResponseWriter, request *http
 	}
 }
 
+func (cfg *apiConfig) getUserFromCookie(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
+		return
+	}
+
+	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get user data from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, User{
+		ID:        userID,
+		Name:      user.Name,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+		Email:     user.Email,
+	}, http.StatusOK)
+}
+
 func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *http.Request) {
 	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {

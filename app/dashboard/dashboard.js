@@ -5,10 +5,20 @@ async function fetchClasses() {
         return response;
 }
 
+async function fetchUserData() {
+        const response = await fetch("/api/users", {
+                credentials: "include",
+        });
+        return response;
+}
+
 async function main() {
-        const response = await fetchClasses();
-        const data = await response.json();
-        console.log(data);
+        const classes = await fetchClasses();
+        const user = await fetchUserData();
+        const classData = await classes.json();
+        const userData = await user.json();
+        console.log(classData);
+        console.log(userData);
 }
 
 main();
