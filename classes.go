@@ -117,8 +117,8 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 	}
 
 	type Classes struct {
-		ClassesAsStudent []database.Class `json:"classes_as_student"`
-		ClassesAsTeacher []database.Class `json:"classes_as_teacher"`
+		ClassesAsStudent []database.Class `json:"classesAsStudent"`
+		ClassesAsTeacher []database.Class `json:"classesAsTeacher"`
 	}
 
 	respondWithJSON(response, request, Classes{
