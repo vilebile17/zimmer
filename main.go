@@ -59,6 +59,10 @@ func main() {
 	mux.HandleFunc("/metrics", cfg.metricsHandler)
 	mux.HandleFunc("POST /api/reset", cfg.resetHandler)
 
+	// site stuff
+	mux.HandleFunc("GET /c/{classID}", cfg.renderClass)
+	mux.HandleFunc("GET /u/{userID}", cfg.renderUser)
+
 	// user stuff
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)
 	mux.HandleFunc("PUT /api/users", cfg.updateUserHandler)
