@@ -1,14 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
 
-html {
-        font-family: Inter;
-        background-color: var(--ctp-mocha-base);
-}
-
-b {
-        color: var(--ctp-mocha-text);
-}
-
 label {
         color: var(--ctp-mocha-text);
 }
@@ -18,8 +9,3 @@ label {
         color: var(--ctp-mocha-text);
         background-color: var(--ctp-mocha-surface0);
 }
-
-p {
-        color: var(--ctp-mocha-text);
-}
-
