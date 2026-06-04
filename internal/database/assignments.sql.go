@@ -115,3 +115,18 @@ func (q *Queries) GetAssignmentsForAClass(ctx context.Context, classID uuid.UUID
 	}
 	return items, nil
 }
+
+const getNumAssignmentsToDo = `-- name: GetNumAssignmentsToDo :one
+SELECT COUNT(assignments.title) FROM students_classes
+INNER JOIN classes ON classes.id = students_classes.class_id
+INNER JOIN assignments ON assignments.class_id = classes.id
+WHERE students_classes.student_id = $1
+AND NOW() < assignments.due_at
+`
+
+func (q *Queries) GetNumAssignmentsToDo(ctx context.Context, studentID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNumAssignmentsToDo, studentID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}

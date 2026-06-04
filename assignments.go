@@ -138,3 +138,23 @@ func (cfg *apiConfig) getAssignmentHandler(response http.ResponseWriter, request
 	respondWithJSON(response, request, Assignment, http.StatusOK)
 	fmt.Printf("Just got info about assignment %v: %v\n", AssignmentID, Assignment.Title)
 }
+
+func (cfg *apiConfig) getNumAssignmentsHandler(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "couldn't get the user ID from headers nor cookies", err, http.StatusUnauthorized)
+		return
+	}
+
+	num, err := cfg.dbQueries.GetNumAssignmentsToDo(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get the number of assignments due from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	type Response struct {
+		Num int64 `json:"num"`
+	}
+	r := Response{Num: num}
+	respondWithJSON(response, request, r, http.StatusOK)
+}

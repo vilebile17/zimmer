@@ -20,3 +20,10 @@ ORDER BY created_at DESC;
 -- name: GetAssignmentFromID :one
 SELECT * FROM assignments
 WHERE id = $1;
+
+-- name: GetNumAssignmentsToDo :one
+SELECT COUNT(assignments.title) FROM students_classes
+INNER JOIN classes ON classes.id = students_classes.class_id
+INNER JOIN assignments ON assignments.class_id = classes.id
+WHERE students_classes.student_id = $1
+AND NOW() < assignments.due_at;

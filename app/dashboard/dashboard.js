@@ -12,20 +12,24 @@ async function fetchUserData() {
         return response;
 }
 
-async function main() {
-        const classes = await fetchClasses();
-        const user = await fetchUserData();
-        const classData = await classes.json();
-        const userData = await user.json();
+async function fetchNumAssignmentsDue() {
+        const response = await fetch("/api/numAssignmentsDue", {
+                credentials: "include",
+        });
+        return response;
+}
 
-        console.log(classData);
-        console.log(userData);
-        document.getElementById("username").textContent = userData.name;
-        document.getElementById("numClasses").textContent =
-                classData.classesAsStudent.length +
-                classData.classesAsTeacher.length;
+function writeNumClasses(classData) {
+        var total = 0;
+        const studentNull = classData.classesAsStudent == null;
+        const teacherNull = classData.classesAsTeacher == null;
+        total += studentNull ? 0 : classData.classesAsStudent.length;
+        total += teacherNull ? 0 : classData.classesAsTeacher.length;
+        document.getElementById("numClasses").textContent = total;
+}
 
-        if (classData.classesAsStudent.length != 0) {
+function writeClasses(classData) {
+        if (classData.classesAsStudent != null) {
                 const studentDiv = document.createElement("div");
                 var title = document.createElement("h3");
                 title.textContent = "Classes as a Student:";
@@ -41,7 +45,7 @@ async function main() {
                 document.body.insertBefore(studentDiv, null);
         }
 
-        if (classData.classesAsTeacher.length != 0) {
+        if (classData.classesAsTeacher != null) {
                 const teacherDiv = document.createElement("div");
                 var title = document.createElement("h3");
                 title.textContent = "Classes as a Teacher:";
@@ -56,6 +60,24 @@ async function main() {
 
                 document.body.insertBefore(teacherDiv, null);
         }
+}
+
+async function main() {
+        var temp = await fetchNumAssignmentsDue();
+        const numAss = await temp.json();
+        temp = await fetchClasses();
+        const classData = await temp.json();
+        temp = await fetchUserData();
+        const userData = await temp.json();
+
+        console.log(classData);
+        console.log(userData);
+        console.log(numAss);
+        document.getElementById("username").textContent = userData.name;
+        document.getElementById("numAssignments").textContent = numAss.num;
+
+        writeNumClasses(classData);
+        writeClasses(classData);
 }
 
 main();
