@@ -21,3 +21,11 @@ WHERE assignment_id = $1;
 -- name: GetSubmission :one
 SELECT * FROM submissions
 WHERE id = $1;
+
+-- name: GradeSubmission :one
+UPDATE submissions
+SET
+        score = $2,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING *;

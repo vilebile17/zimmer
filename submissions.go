@@ -105,3 +105,43 @@ func (cfg *apiConfig) getSubmissionsHandler(response http.ResponseWriter, reques
 
 	respondWithJSON(response, request, submissions, http.StatusOK)
 }
+
+func (cfg *apiConfig) gradeSubmissionsHandler(response http.ResponseWriter, request *http.Request) {
+	statusCode, err := cfg.teacherActions(request)
+	if err != nil {
+		respondWithError(response, request, "couldn't verify that the user is the teacher", err, statusCode)
+		return
+	}
+
+	submissionID, err := uuid.Parse(request.PathValue("submissionID"))
+	if err != nil {
+		respondWithError(response, request, "unable to parse submissionID from the URL", err, http.StatusBadRequest)
+		return
+	}
+
+	type Params struct {
+		Score int `json:"score"`
+	}
+
+	var params Params
+	decoder := json.NewDecoder(request.Body)
+	err = decoder.Decode(&params)
+	if err != nil {
+		respondWithError(response, request, "There was an error decoding the parameters (required {score:int})", err, http.StatusBadRequest)
+		return
+	}
+
+	if params.Score < 0 || params.Score > 100 {
+		respondWithError(response, request, fmt.Sprintf("Invalid score: %v/100", params.Score), nil, http.StatusBadRequest)
+		return
+	}
+
+	submission, err := cfg.dbQueries.GradeSubmission(request.Context(), database.GradeSubmissionParams{
+		ID: submissionID,
+		Score: sql.NullInt32{
+			Int32: int32(params.Score),
+			Valid: true,
+		},
+	})
+	respondWithJSON(response, request, submission, http.StatusOK)
+}

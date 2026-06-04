@@ -46,6 +46,7 @@ type Submission struct {
 	AssignmentID uuid.UUID
 	UserID       uuid.UUID
 	Answers      sql.NullString
+	Score        sql.NullInt32
 }
 
 type User struct {

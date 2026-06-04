@@ -23,7 +23,7 @@ VALUES (
         $2,
         $3
 )
-RETURNING id, created_at, updated_at, assignment_id, user_id, answers
+RETURNING id, created_at, updated_at, assignment_id, user_id, answers, score
 `
 
 type CreateSubmissionParams struct {
@@ -42,12 +42,13 @@ func (q *Queries) CreateSubmission(ctx context.Context, arg CreateSubmissionPara
 		&i.AssignmentID,
 		&i.UserID,
 		&i.Answers,
+		&i.Score,
 	)
 	return i, err
 }
 
 const getSubmission = `-- name: GetSubmission :one
-SELECT id, created_at, updated_at, assignment_id, user_id, answers FROM submissions
+SELECT id, created_at, updated_at, assignment_id, user_id, answers, score FROM submissions
 WHERE id = $1
 `
 
@@ -61,6 +62,7 @@ func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (Submission, 
 		&i.AssignmentID,
 		&i.UserID,
 		&i.Answers,
+		&i.Score,
 	)
 	return i, err
 }
@@ -111,4 +113,33 @@ func (q *Queries) GetSubmissionsForAssignment(ctx context.Context, assignmentID 
 		return nil, err
 	}
 	return items, nil
+}
+
+const gradeSubmission = `-- name: GradeSubmission :one
+UPDATE submissions
+SET
+        score = $2,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING id, created_at, updated_at, assignment_id, user_id, answers, score
+`
+
+type GradeSubmissionParams struct {
+	ID    uuid.UUID
+	Score sql.NullInt32
+}
+
+func (q *Queries) GradeSubmission(ctx context.Context, arg GradeSubmissionParams) (Submission, error) {
+	row := q.db.QueryRowContext(ctx, gradeSubmission, arg.ID, arg.Score)
+	var i Submission
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.AssignmentID,
+		&i.UserID,
+		&i.Answers,
+		&i.Score,
+	)
+	return i, err
 }

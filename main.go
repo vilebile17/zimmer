@@ -87,6 +87,7 @@ func main() {
 	// submissions stuff
 	mux.HandleFunc("POST /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.handInAssignmentHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.getSubmissionsHandler)
+	mux.HandleFunc("PUT /api/classes/{classID}/assignments/{assignmentID}/submissions/{submissionID}", cfg.gradeSubmissionsHandler)
 
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", cfg.port)
 	if err := server.ListenAndServe(); err != nil {
