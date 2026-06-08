@@ -1,11 +1,12 @@
-@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+@import url("/default.css");
 
 label {
-        color: var(--ctp-mocha-text);
+        color: var(--text);
 }
 
-.input {
-        margin: auto;
-        color: var(--ctp-mocha-text);
-        background-color: var(--ctp-mocha-surface0);
+.login-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
 }

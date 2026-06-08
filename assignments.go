@@ -46,6 +46,8 @@ func (cfg *apiConfig) createAssignmentHandler(response http.ResponseWriter, requ
 			respondWithError(response, request, "couldn't parse the due_at parameter (it uses RFC3339)", err, http.StatusBadRequest)
 			return
 		}
+	} else {
+		params.AllowLate = true
 	}
 
 	// It cannot error as it would have done that earlier

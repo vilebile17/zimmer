@@ -1,8 +1,8 @@
-@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+@import url("mauve.css");
 
 body {
-        background-color: var(--ctp-mocha-base);
-        color: var(--ctp-mocha-text);
+        background-color: var(--bg-dark);
+        color: var(--text-muted);
         font-family: inter;
         line-height: 1.7;
         margin: 0;
@@ -13,6 +13,7 @@ body {
 }
 
 b {
+        color: var(--text);
         font-weight: 900;
 }
 
@@ -22,10 +23,9 @@ h3,
 h4,
 h5,
 h6 {
-        color: var(--ctp-mocha-sapphire);
+        color: var(--text);
         margin-top: 24px;
         margin-bottom: 16px;
-        text-shadow: 2px 2px 4px var(--ctp-mocha-crust);
 }
 
 h1 {
@@ -47,18 +47,18 @@ h6 {
 }
 
 a {
-        color: var(--ctp-mocha-teal);
+        color: var(--primary);
         text-decoration: none;
-        border-bottom: 2px solid var(--ctp-mocha-teal);
+        border-bottom: 2px solid var(--primary);
 }
 
 a:hover {
-        color: var(--ctp-mocha-blue);
-        border-color: var(--ctp-mocha-blue);
+        color: var(--secondary);
+        border-color: var(--secondary);
 }
 
 label {
-        color: var(--ctp-mocha-text);
+        color: var(--text-muted);
 }
 
 ul,
@@ -67,9 +67,9 @@ ol {
 }
 
 code {
-        background-color: var(--ctp-mocha-surface1);
+        background-color: var(--bg-light);
         border-radius: 6px;
-        color: var(--ctp-mocha-yellow);
+        color: var(--text-muted);
         padding: 0.4em 0.6em;
         font-family: "courier new", monospace;
 }
@@ -79,7 +79,7 @@ pre code {
 }
 
 pre {
-        background-color: var(--ctp-mocha-surface1);
+        background-color: var(--bg);
         border-radius: 6px;
         padding: 1em;
         overflow: auto;
@@ -87,14 +87,14 @@ pre {
 }
 
 blockquote {
-        background-color: var(--ctp-mocha-surface0);
-        border-left: 4px solid var(--ctp-mocha-mauve);
+        background-color: var(--bg);
+        border-left: 4px solid var(--secondary);
         padding-left: 2em;
         margin-left: 0;
         padding-top: 0.5em;
         padding-bottom: 0.5em;
         padding-right: 0.5em;
-        color: var(--ctp-mocha-text);
+        color: var(--text);
         font-style: italic;
 }
 
@@ -102,8 +102,67 @@ img {
         max-width: 100%;
         height: auto;
         border-radius: 6px;
-        border: 3px solid var(--ctp-mocha-text);
+        border: 3px solid var(--text);
         box-shadow: 3px 3px 6px #000;
+}
+
+input {
+        width: 100%;
+        max-width: 20rem;
+
+        padding: 0.75rem 1rem;
+
+        border: 1px solid var(--text-muted);
+        border-radius: 0.5rem;
+
+        background-color: var(--bg-light);
+        color: var(--text);
+
+        font-size: 1rem;
+
+        transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+input:focus {
+        outline: none;
+        border-color: var(--primary);
+
+        box-shadow: 0 0 0 3px
+                color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+button {
+        cursor: pointer;
+        background: var(--bg-light);
+        text-decoration: none;
+
+        padding: 12px 20px;
+        border: 1px solid var(--text-muted);
+        border-radius: 0.5rem;
+
+        color: var(--text);
+        font-weight: bold;
+        transition: var(0.3s ease-in-out);
+}
+button:hover {
+        transition: var(0.3s ease-in-out);
+        box-shadow: 0 0 0 3px
+                color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.card {
+        background: var(--bg);
+        padding: 1rem 2rem;
+        border: var(--border);
+        border-top: 1px solid var(--highlight);
+        border-radius: 1rem;
+        box-shadow: var(--shadow);
+}
+
+.card:hover {
+        background-color: var(--bg-light);
 }
 
 ::-webkit-scrollbar {

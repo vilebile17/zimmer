@@ -1,20 +1,20 @@
-@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+@import url("/mauve.css");
 
 html {
         font-family: Inter;
-        background-color: var(--ctp-mocha-base);
+        background-color: var(--dark-bg);
 }
 
 .user-info {
         font-size: 1.5em;
-        color: var(--ctp-mocha-subtext0);
+        color: var(--text-muted);
 }
 
 b {
-        color: var(--ctp-mocha-text);
+        color: var(--text);
 }
 
-.top-info-section {
+.user-card {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -24,5 +24,5 @@ b {
 }
 
 .icon-tabler-user {
-        color: var(--ctp-mocha-text);
+        color: var(--text);
 }
