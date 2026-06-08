@@ -144,12 +144,12 @@ button {
 
         color: var(--text);
         font-weight: bold;
-        transition: var(0.3s ease-in-out);
+        transition: var(--transition);
 }
+
 button:hover {
-        transition: var(0.3s ease-in-out);
-        box-shadow: 0 0 0 3px
-                color-mix(in srgb, var(--primary) 25%, transparent);
+        scale: 1.05;
+        transition: var(transition);
 }
 
 .card {
@@ -158,7 +158,7 @@ button:hover {
         border: var(--border);
         border-top: 1px solid var(--highlight);
         border-radius: 1rem;
-        box-shadow: var(--shadow);
+        box-shadow: var(--soft-shadow);
 }
 
 .card:hover {
@@ -167,6 +167,11 @@ button:hover {
 
 .mini-text {
         font-size: 0.8rem;
+}
+
+.theme-switcher {
+        position: fixed;
+        right: 5vw;
 }
 
 ::-webkit-scrollbar {
