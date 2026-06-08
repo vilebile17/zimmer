@@ -3,7 +3,18 @@ async function login() {
         let password = document.getElementById("password").value;
 
         if (email == "" || password == "") {
-                window.alert("Email and password parameters cannot be empty!");
+                let snackbar = document.getElementById("snackbar");
+                snackbar.textContent =
+                        "Email and password parameters cannot be empty!";
+                snackbar.className = "show";
+
+                setTimeout(function () {
+                        snackbar.className = snackbar.className.replace(
+                                "show",
+                                "",
+                        );
+                }, 3000);
+
                 return;
         }
 
@@ -20,8 +31,17 @@ async function login() {
 
         let r = await response;
         if (r.status >= 400) {
-                error = await r.json();
-                window.alert(error.error);
+                let error = await r.json();
+                let snackbar = document.getElementById("snackbar");
+                snackbar.textContent = error.error;
+                snackbar.className = "show";
+
+                setTimeout(function () {
+                        snackbar.className = snackbar.className.replace(
+                                "show",
+                                "",
+                        );
+                }, 3000);
         } else {
                 window.location.replace("/dashboard");
                 window.location.href = "/dashboard";
