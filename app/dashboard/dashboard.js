@@ -63,12 +63,16 @@ function writeClasses(classData) {
 }
 
 async function main() {
-        var temp = await fetchNumAssignmentsDue();
-        const numAss = await temp.json();
-        temp = await fetchClasses();
-        const classData = await temp.json();
-        temp = await fetchUserData();
-        const userData = await temp.json();
+        var response = await fetchNumAssignmentsDue();
+        if (response.status == 401) {
+                window.location.replace("/login");
+                window.location.href = "/login";
+        }
+        const numAss = await response.json();
+        response = await fetchClasses();
+        const classData = await response.json();
+        response = await fetchUserData();
+        const userData = await response.json();
 
         console.log(classData);
         console.log(userData);

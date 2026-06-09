@@ -20,7 +20,7 @@ async function login() {
                 },
         });
 
-        if (r.status >= 400) {
+        if (response.status >= 400) {
                 let error = await response.json();
                 snackbar(error.error);
                 return;

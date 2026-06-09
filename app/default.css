@@ -1,4 +1,4 @@
-@import url("/sapphire.css");
+@import url("/colours.css");
 
 body {
         background-color: var(--bg-dark);
