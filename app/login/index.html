@@ -13,23 +13,10 @@
                 />
                 <link href="/default.css" rel="stylesheet" />
                 <link href="/login/styles.css" rel="stylesheet" />
-                <script>
-                        function toggleTheme() {
-                                document.body.classList.toggle("light");
-                        }
-                        function goToDashboard() {
-                                window.location.replace("/dashboard");
-                                window.location.href = "/dashboard";
-                        }
-                </script>
         </head>
         <header>
-                <h3 onclick="goToDashboard()" id="navbar-logo">Zimmer</h3>
-                <button
-                        type="button"
-                        id="theme-switcher"
-                        onclick="toggleTheme()"
-                >
+                <h3 id="navbar-logo">Zimmer</h3>
+                <button type="button" id="theme-switcher">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -94,4 +81,5 @@
                 <script src="./login.js" type="module"></script>
         </body>
         <div id="snackbar">login failed</div>
+        <script src="/universal_actions.js" type="module"></script>
 </html>

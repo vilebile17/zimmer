@@ -9,4 +9,13 @@ function snackbar(content) {
         return;
 }
 
-export { snackbar };
+function toggleTheme() {
+        document.body.classList.toggle("light");
+}
+
+function goToDashboard() {
+        window.location.replace("/dashboard");
+        window.location.href = "/dashboard";
+}
+
+export { snackbar, toggleTheme, goToDashboard };

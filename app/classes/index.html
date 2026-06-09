@@ -12,23 +12,10 @@
                         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
                 />
                 <link href="/default.css" rel="stylesheet" />
-                <script>
-                        function toggleTheme() {
-                                document.body.classList.toggle("light");
-                        }
-                        function goToDashboard() {
-                                window.location.replace("/dashboard");
-                                window.location.href = "/dashboard";
-                        }
-                </script>
         </head>
         <header>
-                <h3 onclick="goToDashboard()" id="navbar-logo">Zimmer</h3>
-                <button
-                        type="button"
-                        id="theme-switcher"
-                        onclick="toggleTheme()"
-                >
+                <h3 id="navbar-logo">Zimmer</h3>
+                <button type="button" id="theme-switcher">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -60,4 +47,5 @@
                         <a href="/u/{{.TeacherID}}">{{.TeacherName}}</a>
                 </p>
         </div>
+        <script src="/universal_actions.js" type="module"></script>
 </html>
