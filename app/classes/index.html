@@ -55,6 +55,9 @@
         </header>
         <div class="card">
                 <h1>{{.Name}}</h1>
-                <p class="mini-text">Taught by {{.TeacherName}}</p>
+                <p class="mini-text">
+                        Taught by
+                        <a href="/u/{{.TeacherID}}">{{.TeacherName}}</a>
+                </p>
         </div>
 </html>

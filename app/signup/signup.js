@@ -59,6 +59,8 @@ async function signup() {
                 snackbar(error.error);
                 return;
         }
+        window.location.replace("/dashboard");
+        window.location.href = "/dashboard";
 }
 
 document.getElementById("signup-button").addEventListener("click", signup);

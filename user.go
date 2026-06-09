@@ -308,7 +308,7 @@ func (cfg *apiConfig) getUserFromCookie(response http.ResponseWriter, request *h
 
 	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
 	if err != nil {
-		respondWithError(response, request, "couldn't get user data from the database", err, http.StatusBadRequest)
+		respondWithError(response, request, "couldn't get user data from the database", err, http.StatusUnauthorized)
 		return
 	}
 

@@ -49,9 +49,11 @@ func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Re
 	err = tmpl.Execute(response, struct {
 		Name        string
 		TeacherName string
+		TeacherID   string
 	}{
 		Name:        class.Name,
 		TeacherName: class.TeacherName,
+		TeacherID:   class.TeacherID.String(),
 	})
 	if err != nil {
 		fmt.Println(err)
