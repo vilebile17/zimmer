@@ -66,6 +66,10 @@ ol {
         padding-left: 30px;
 }
 
+ul {
+        list-style: "· ";
+}
+
 code {
         background-color: var(--bg-light);
         border-radius: 6px;
@@ -159,6 +163,7 @@ button:hover {
         border-top: 1px solid var(--highlight);
         border-radius: 1rem;
         box-shadow: var(--soft-shadow);
+        margin: 1.5rem;
 }
 
 .card:hover {

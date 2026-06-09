@@ -20,7 +20,7 @@ async function fetchNumAssignmentsDue() {
 }
 
 function writeNumClasses(classData) {
-        var total = 0;
+        let total = 0;
         const studentNull = classData.classesAsStudent == null;
         const teacherNull = classData.classesAsTeacher == null;
         total += studentNull ? 0 : classData.classesAsStudent.length;
@@ -29,41 +29,52 @@ function writeNumClasses(classData) {
 }
 
 function writeClasses(classData) {
+        const holderDiv = document.createElement("div");
+        holderDiv.id = "classes-holder";
         if (classData.classesAsStudent != null) {
                 const studentDiv = document.createElement("div");
-                var title = document.createElement("h3");
+                studentDiv.classList.add("card");
+                let title = document.createElement("h3");
                 title.textContent = "Classes as a Student:";
                 studentDiv.appendChild(title);
 
-                for (var i = 0; i < classData.classesAsStudent.length; i++) {
-                        var className = document.createElement("ul");
+                for (let i = 0; i < classData.classesAsStudent.length; i++) {
+                        let bulletPoint = document.createElement("ul");
+                        let className = document.createElement("a");
+                        className.href = `/c/${classData.classesAsStudent[i].ID}`;
                         className.textContent =
                                 classData.classesAsStudent[i].Name;
-                        studentDiv.appendChild(className);
+                        bulletPoint.appendChild(className);
+                        studentDiv.appendChild(bulletPoint);
                 }
 
-                document.body.insertBefore(studentDiv, null);
+                holderDiv.appendChild(studentDiv);
         }
 
         if (classData.classesAsTeacher != null) {
                 const teacherDiv = document.createElement("div");
-                var title = document.createElement("h3");
+                teacherDiv.classList.add("card");
+                let title = document.createElement("h3");
                 title.textContent = "Classes as a Teacher:";
                 teacherDiv.appendChild(title);
 
-                for (var i = 0; i < classData.classesAsTeacher.length; i++) {
-                        var className = document.createElement("ul");
+                for (let i = 0; i < classData.classesAsTeacher.length; i++) {
+                        let bulletPoint = document.createElement("ul");
+                        let className = document.createElement("a");
+                        className.href = `/c/${classData.classesAsTeacher[i].ID}`;
                         className.textContent =
                                 classData.classesAsTeacher[i].Name;
-                        teacherDiv.appendChild(className);
+                        bulletPoint.appendChild(className);
+                        teacherDiv.appendChild(bulletPoint);
                 }
 
-                document.body.insertBefore(teacherDiv, null);
+                holderDiv.appendChild(teacherDiv);
         }
+        document.body.insertBefore(holderDiv, null);
 }
 
 async function main() {
-        var response = await fetchNumAssignmentsDue();
+        let response = await fetchNumAssignmentsDue();
         if (response.status == 401) {
                 window.location.replace("/login");
                 window.location.href = "/login";
@@ -81,7 +92,13 @@ async function main() {
         document.getElementById("numAssignments").textContent = numAss.num;
 
         writeNumClasses(classData);
-        writeClasses(classData);
+
+        if (
+                classData.classesAsTeacher != null ||
+                classData.classesAsStudent != null
+        ) {
+                writeClasses(classData);
+        }
 }
 
 main();

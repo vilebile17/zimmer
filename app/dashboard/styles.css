@@ -26,3 +26,12 @@ b {
 .icon-tabler-user {
         color: var(--text);
 }
+
+#classes-holder {
+        display: flex;
+        gap: 1rem;
+}
+
+#classes-holder > div {
+        flex: 1;
+}
