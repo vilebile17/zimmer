@@ -17,10 +17,14 @@
                         function toggleTheme() {
                                 document.body.classList.toggle("light");
                         }
+                        function goToDashboard() {
+                                window.location.replace("/dashboard");
+                                window.location.href = "/dashboard";
+                        }
                 </script>
         </head>
         <header>
-                <h3>Zimmer</h3>
+                <h3 onclick="goToDashboard()" id="navbar-logo">Zimmer</h3>
                 <button
                         type="button"
                         id="theme-switcher"

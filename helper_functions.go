@@ -131,7 +131,7 @@ func (cfg *apiConfig) teacherActions(request *http.Request) (int, error) {
 		return http.StatusUnauthorized, errors.New("couldn't get userID from the auth header")
 	}
 
-	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
 		return http.StatusUnauthorized, errors.New("couldn't get the class from the database")
 	}

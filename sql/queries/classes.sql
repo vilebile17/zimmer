@@ -41,10 +41,6 @@ WHERE id IN (
 SELECT * FROM classes
 WHERE teacher_id = $1;
 
--- name: GetClassFromClassID :one
-SELECT * FROM classes
-WHERE id = $1;
-
 -- name: UpdateClass :one
 UPDATE classes
 SET

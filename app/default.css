@@ -170,6 +170,12 @@ button:hover {
         background-color: var(--bg-light);
 }
 
+.card > .mini-text,
+.card > h1 {
+        text-align: center;
+        align-content: center;
+}
+
 .mini-text {
         font-size: 0.8rem;
 }
@@ -187,6 +193,12 @@ header {
         display: flex;
         align-items: center;
         justify-content: center;
+}
+
+#navbar-logo:hover {
+        cursor: pointer;
+        scale: 1.05;
+        transition: var(transition);
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */

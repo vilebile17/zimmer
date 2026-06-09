@@ -59,7 +59,7 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		return
 	}
 
-	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "couldn't retrieve the class from the database", err, http.StatusUnauthorized)
 		return
@@ -179,7 +179,7 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 
-	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "There was an error retreiving that class", err, http.StatusBadRequest)
 		return

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -14,36 +15,47 @@ func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Re
 		return
 	}
 
-	class, err := cfg.dbQueries.GetClassFromClassID(request.Context(), classID)
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
 		respondWithError(response, request, "There was an error getting the class data from the database", err, http.StatusBadRequest)
 		return
 	}
 
-	response.Header().Set("Content-Type", "text/html")
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "Unable to get the userID from cookies and from headers", err, http.StatusUnauthorized)
+		return
+	}
+
+	isInClass, err := cfg.isUserInThisClass(request.Context(), userID, classID)
+	if err != nil {
+		respondWithError(response, request, "Unable to check if user is in the class", err, http.StatusUnauthorized)
+		return
+	}
+	if !isInClass {
+		respondWithError(response, request, "You can only view a class if you are in it", err, http.StatusUnauthorized)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("./app/classes/index.html")
+	if err != nil {
+		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.WriteHeader(http.StatusOK)
-	var data []byte
-	response.Write(fmt.Appendf(data, `
-	<!doctype html>
-<html>
-        <head>
-                <meta charset="utf-8" />
-                <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1"
-                />
-                <title>Bester Zimmer</title>
-                <link
-                        rel="stylesheet"
-                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-                />
-                <link href="/default.css" rel="stylesheet" />
-        </head>
-        <body>
-        	This is the classes page for %v
-        </body>
-</html>
-	`, class.Name))
+
+	err = tmpl.Execute(response, struct {
+		Name        string
+		TeacherName string
+	}{
+		Name:        class.Name,
+		TeacherName: class.TeacherName,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Request) {

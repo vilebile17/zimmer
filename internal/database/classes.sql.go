@@ -78,25 +78,6 @@ func (q *Queries) GetClass(ctx context.Context, id uuid.UUID) (GetClassRow, erro
 	return i, err
 }
 
-const getClassFromClassID = `-- name: GetClassFromClassID :one
-SELECT id, created_at, updated_at, name, teacher_id, allow_joining FROM classes
-WHERE id = $1
-`
-
-func (q *Queries) GetClassFromClassID(ctx context.Context, id uuid.UUID) (Class, error) {
-	row := q.db.QueryRowContext(ctx, getClassFromClassID, id)
-	var i Class
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Name,
-		&i.TeacherID,
-		&i.AllowJoining,
-	)
-	return i, err
-}
-
 const getClassesAsStudent = `-- name: GetClassesAsStudent :many
 SELECT id, created_at, updated_at, name, teacher_id, allow_joining FROM classes
 WHERE id IN (
