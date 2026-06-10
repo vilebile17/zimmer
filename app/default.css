@@ -170,12 +170,13 @@ button:hover {
         background-color: var(--bg-light);
 }
 
-.card > .mini-text,
+.card > .extra-info,
 .card > h1 {
         text-align: center;
         align-content: center;
 }
 
+.extra-info,
 .mini-text {
         font-size: 0.8rem;
 }

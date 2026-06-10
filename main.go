@@ -62,6 +62,7 @@ func main() {
 	// site stuff
 	mux.HandleFunc("GET /c/{classID}", cfg.renderClass)
 	mux.HandleFunc("GET /u/{userID}", cfg.renderUser)
+	mux.HandleFunc("GET /a/{assignmentID}", cfg.renderAssignment)
 
 	// user stuff
 	mux.HandleFunc("POST /api/users", cfg.createUserHandler)

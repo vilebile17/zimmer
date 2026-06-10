@@ -12,6 +12,7 @@
                         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
                 />
                 <link href="/default.css" rel="stylesheet" />
+                <link href="/classes/styles.css" rel="stylesheet" />
         </head>
         <header>
                 <h3 id="navbar-logo">Zimmer</h3>
@@ -42,10 +43,12 @@
         </header>
         <div class="card">
                 <h1>{{.Name}}</h1>
-                <p class="mini-text">
+                <p class="extra-info" id="class-id">ID: {{.ClassID}}</p>
+                <p class="extra-info">
                         Taught by
                         <a href="/u/{{.TeacherID}}">{{.TeacherName}}</a>
                 </p>
         </div>
         <script src="/universal_actions.js" type="module"></script>
+        <script src="/classes/classes.js"></script>
 </html>

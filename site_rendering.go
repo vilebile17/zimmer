@@ -50,10 +50,12 @@ func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Re
 		Name        string
 		TeacherName string
 		TeacherID   string
+		ClassID     string
 	}{
 		Name:        class.Name,
 		TeacherName: class.TeacherName,
 		TeacherID:   class.TeacherID.String(),
+		ClassID:     classID.String(),
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -97,4 +99,59 @@ func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Req
         </body>
 </html>
 	`, user.Name))
+}
+
+func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *http.Request) {
+	assignmentID, err := uuid.Parse(request.PathValue("assignmentID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that assignmentID", err, http.StatusBadRequest)
+		return
+	}
+
+	assignment, err := cfg.dbQueries.GetAssignmentFromID(request.Context(), assignmentID)
+	if err != nil {
+		respondWithError(response, request, "There was an error getting assignment data from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		return
+	}
+
+	isInClass, err := cfg.isUserInThisClass(request.Context(), userID, assignment.ClassID)
+	if err != nil {
+		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		return
+	}
+	if !isInClass {
+		respondWithError(response, request, "Couldn't retrieve assignment as the user isn't in the class", err, http.StatusUnauthorized)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html")
+	response.WriteHeader(http.StatusOK)
+	var data []byte
+	response.Write(fmt.Appendf(data, `
+	<!doctype html>
+<html>
+        <head>
+                <meta charset="utf-8" />
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                />
+                <title>Bester Zimmer</title>
+                <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+                />
+                <link href="/default.css" rel="stylesheet" />
+        </head>
+        <body>
+        	This is the assignment page for an assignment with the title <b>%v</b>
+        </body>
+</html>
+	`, assignment.Title))
 }

@@ -1,4 +1,4 @@
-import { snackbar } from "/universal.js";
+import { snackbar } from "/functions.js";
 
 async function signup() {
         let email = document.getElementById("email").value;

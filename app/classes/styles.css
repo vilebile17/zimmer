@@ -1,0 +1,5 @@
+.assignment-title {
+        border-bottom: none;
+        font-size: 1.2em;
+        color: var(--text);
+}
