@@ -165,7 +165,7 @@ func (cfg *apiConfig) getUsersForClassHandler(response http.ResponseWriter, requ
 		return
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
 		return

@@ -41,13 +41,90 @@
                         </svg>
                 </button>
         </header>
-        <div class="card">
-                <h1>{{.Name}}</h1>
-                <p class="extra-info" id="class-id">ID: {{.ClassID}}</p>
-                <p class="extra-info">
-                        Taught by
-                        <a href="/u/{{.TeacherID}}">{{.TeacherName}}</a>
-                </p>
+        <div id="top-info-section">
+                <div class="card">
+                        <h2>{{.Name}}</h2>
+                        <p class="extra-info mini-text" id="class-id">
+                                ID: {{.ClassID}}
+                        </p>
+                        <p class="extra-info mini-text">
+                                Taught by
+                                <a href="/u/{{.TeacherID}}">{{.TeacherName}}</a>
+                        </p>
+                </div>
+                <div class="card">
+                        <h3>Quick Links + Nav</h3>
+                        <!-- Tab links -->
+                        <div class="tab">
+                                <button
+                                        class="tab-links"
+                                        onclick="openTab(event, 'assignments')"
+                                        id="default"
+                                >
+                                        <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-text"
+                                        >
+                                                <path
+                                                        stroke="none"
+                                                        d="M0 0h24v24H0z"
+                                                        fill="none"
+                                                />
+                                                <path
+                                                        d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
+                                                />
+                                                <path
+                                                        d="M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2"
+                                                />
+                                                <path d="M9 12h6" />
+                                                <path d="M9 16h6" />
+                                        </svg>
+                                </button>
+                                <button
+                                        class="tab-links"
+                                        onclick="openTab(event, 'students')"
+                                >
+                                        <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-users"
+                                        >
+                                                <path
+                                                        stroke="none"
+                                                        d="M0 0h24v24H0z"
+                                                        fill="none"
+                                                />
+                                                <path
+                                                        d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"
+                                                />
+                                                <path
+                                                        d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"
+                                                />
+                                                <path
+                                                        d="M16 3.13a4 4 0 0 1 0 7.75"
+                                                />
+                                                <path
+                                                        d="M21 21v-2a4 4 0 0 0 -3 -3.85"
+                                                />
+                                        </svg>
+                                </button>
+                        </div>
+                </div>
         </div>
         <script src="/universal_actions.js" type="module"></script>
         <script src="/classes/classes.js"></script>
