@@ -79,7 +79,7 @@ async function createAllAssignments() {
         if (!assignments) {
                 document.body.insertBefore(
                         createDefaultTab(
-                                "There are no assignments yet...",
+                                "No assignments yet...",
                                 "assignments",
                         ),
                         null,
@@ -101,10 +101,7 @@ async function createAllStudents() {
 
         if (!students) {
                 document.body.insertBefore(
-                        createDefaultTab(
-                                "There are no students yet...",
-                                "students",
-                        ),
+                        createDefaultTab("No students yet...", "students"),
                         null,
                 );
                 return;
@@ -116,7 +113,7 @@ async function createAllStudents() {
         studentsDiv.classList.add("card");
 
         for (const s of students) {
-                let studentPoint = document.createElement("ul");
+                let studentPoint = document.createElement("ol");
                 let studentName = document.createElement("a");
                 studentName.textContent = s.Name;
                 studentName.classList.add("card-heading");
