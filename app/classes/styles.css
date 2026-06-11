@@ -1,5 +1,4 @@
-.student-name,
-.assignment-title {
+.card-heading {
         border-bottom: none;
         font-size: 1.2em;
         color: var(--text);
@@ -21,10 +20,15 @@
 
 /* Style the tab */
 .tab {
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
         border: 1px solid var(--border);
-        border-radius: 10px;
         background-color: var(--bg-light);
+        border-radius: 10px;
+
+        margin: 1.5rem;
+        overflow: hidden;
         max-width: max-content;
         justify-content: space-between;
 }

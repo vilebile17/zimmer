@@ -16,6 +16,21 @@ function openTab(event, tabID) {
         event.currentTarget.className += " active";
 }
 
+function createDefaultTab(text, id) {
+        const outerDiv = document.createElement("div");
+        outerDiv.classList.add("card");
+        outerDiv.classList.add("tab-content");
+        outerDiv.id = id;
+
+        const unorderedList = document.createElement("ul");
+        const textDOM = document.createElement("p");
+        textDOM.classList.add("card-heading");
+        textDOM.textContent = text;
+        unorderedList.appendChild(textDOM);
+        outerDiv.appendChild(unorderedList);
+        return outerDiv;
+}
+
 function getClassID() {
         let text = document.getElementById("class-id").textContent;
         text = text.trim();
@@ -44,7 +59,7 @@ function addCard(assignment, grandadDiv) {
 
         const title = document.createElement("a");
         title.textContent = assignment.Title;
-        title.classList.add("assignment-title");
+        title.classList.add("card-heading");
         title.href = `/a/${assignment.ID}`;
         assignmentDiv.appendChild(title);
 
@@ -58,10 +73,17 @@ function addCard(assignment, grandadDiv) {
         grandadDiv.appendChild(assignmentDiv);
 }
 
-async function main() {
+async function createAllAssignments() {
         const resp = await fetchAssignments();
         const assignments = await resp.json();
         if (!assignments) {
+                document.body.insertBefore(
+                        createDefaultTab(
+                                "There are no assignments yet...",
+                                "assignments",
+                        ),
+                        null,
+                );
                 return;
         }
 
@@ -72,8 +94,22 @@ async function main() {
                 addCard(a, assignmentsDiv);
         }
         document.body.insertBefore(assignmentsDiv, null);
+}
 
+async function createAllStudents() {
         const students = (await (await fetchMembers()).json()).students;
+
+        if (!students) {
+                document.body.insertBefore(
+                        createDefaultTab(
+                                "There are no students yet...",
+                                "students",
+                        ),
+                        null,
+                );
+                return;
+        }
+
         const studentsDiv = document.createElement("div");
         studentsDiv.id = "students";
         studentsDiv.classList.add("tab-content");
@@ -83,13 +119,17 @@ async function main() {
                 let studentPoint = document.createElement("ul");
                 let studentName = document.createElement("a");
                 studentName.textContent = s.Name;
-                studentName.classList.add("student-name");
+                studentName.classList.add("card-heading");
                 studentName.href = `/u/${s.ID}`;
                 studentPoint.appendChild(studentName);
                 studentsDiv.appendChild(studentPoint);
         }
         document.body.insertBefore(studentsDiv, null);
+}
 
+async function main() {
+        await createAllAssignments();
+        await createAllStudents();
         document.getElementById("default").click();
 }
 
