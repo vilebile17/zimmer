@@ -127,7 +127,7 @@ async function createAllStudents() {
 async function main() {
         await createAllAssignments();
         await createAllStudents();
-        document.getElementById("default").click();
+        document.getElementById("default-tab").click();
 }
 
 main();

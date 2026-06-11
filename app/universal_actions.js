@@ -5,3 +5,8 @@ document.getElementById("theme-switcher").addEventListener(
         "click",
         toggleTheme,
 );
+
+const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)");
+if (prefersLightScheme.matches) {
+        document.getElementById("theme-switcher").click();
+}

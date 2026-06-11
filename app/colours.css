@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css");
+
 :root {
         --hard-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
         --soft-shadow: 0px 12px 12px #00000015;
@@ -5,66 +7,34 @@
 }
 
 :root {
-        /* hsl (fallback color) */
-        --bg-dark: hsl(197 100% 1%);
-        --bg: hsl(190 100% 2%);
-        --bg-light: hsl(187 100% 4%);
-        --text: hsl(186 100% 84%);
-        --text-muted: hsl(186 56% 58%);
-        --highlight: hsl(184 100% 17%);
-        --border: hsl(185 100% 10%);
-        --border-muted: hsl(186 100% 6%);
-        --primary: hsl(186 56% 58%);
-        --secondary: hsl(5 68% 74%);
-        --danger: hsl(9 53% 66%);
-        --warning: hsl(51 35% 50%);
-        --success: hsl(149 34% 54%);
-        --info: hsl(217 59% 67%);
-        /* oklch */
-        --bg-dark: oklch(0.1 0.05 205);
-        --bg: oklch(0.15 0.05 205);
-        --bg-light: oklch(0.2 0.05 205);
-        --text: oklch(0.96 0.1 205);
-        --text-muted: oklch(0.76 0.1 205);
-        --highlight: oklch(0.5 0.1 205);
-        --border: oklch(0.4 0.1 205);
-        --border-muted: oklch(0.3 0.1 205);
-        --primary: oklch(0.76 0.1 205);
-        --secondary: oklch(0.76 0.1 25);
-        --danger: oklch(0.7 0.1 30);
-        --warning: oklch(0.7 0.1 100);
-        --success: oklch(0.7 0.1 160);
-        --info: oklch(0.7 0.1 260);
+        --bg-dark: var(--ctp-mocha-mantle);
+        --bg: var(--ctp-mocha-base);
+        --bg-light: var(--ctp-mocha-surface0);
+        --text: var(--ctp-mocha-text);
+        --text-muted: var(--ctp-mocha-subtext1);
+        --highlight: var(--ctp-mocha-sky);
+        --border: var(--ctp-mocha-sapphire);
+        --border-muted: var(--ctp-mocha-blue);
+        --primary: var(--ctp-mocha-sky);
+        --secondary: var(--ctp-mocha-mauve);
+        --danger: var(--ctp-mocha-red);
+        --warning: var(--ctp-mocha-yellow);
+        --success: var(--ctp-mocha-green);
+        --info: var(--ctp-mocha-blue);
 }
 body.light {
-        /* hsl (fallback color) */
-        --bg-dark: hsl(182 24% 88%);
-        --bg: hsl(182 44% 93%);
-        --bg-light: hsl(182 100% 99%);
-        --text: hsl(185 100% 3%);
-        --text-muted: hsl(183 20% 26%);
-        --highlight: hsl(183 100% 97%);
-        --border: hsl(183 11% 48%);
-        --border-muted: hsl(183 14% 59%);
-        --primary: hsl(183 100% 9%);
-        --secondary: hsl(357 44% 32%);
-        --danger: hsl(9 21% 41%);
-        --warning: hsl(52 23% 34%);
-        --success: hsl(147 19% 36%);
-        --info: hsl(217 22% 41%);
-        /* oklch */
-        --bg-dark: oklch(0.92 0.015 200);
-        --bg: oklch(0.96 0.015 200);
-        --bg-light: oklch(1 0.015 200);
-        --text: oklch(0.15 0.03 200);
-        --text-muted: oklch(0.4 0.03 200);
-        --highlight: oklch(1 0.03 200);
-        --border: oklch(0.6 0.03 200);
-        --border-muted: oklch(0.7 0.03 200);
-        --primary: oklch(0.4 0.1 200);
-        --secondary: oklch(0.4 0.1 20);
-        --danger: oklch(0.5 0.05 30);
-        --warning: oklch(0.5 0.05 100);
-        --success: oklch(0.5 0.05 160);
-        --info: oklch(0.5 0.05 260);
+        --bg-dark: var(--ctp-latte-crust);
+        --bg: var(--ctp-latte-mantle);
+        --bg-light: var(--ctp-latte-base);
+        --text: var(--ctp-latte-text);
+        --text-muted: var(--ctp-latte-subtext1);
+        --highlight: var(--ctp-latte-sky);
+        --border: var(--ctp-latte-sapphire);
+        --border-muted: var(--ctp-latte-blue);
+        --primary: var(--ctp-latte-sky);
+        --secondary: var(--ctp-latte-peach);
+        --danger: var(--ctp-latte-red);
+        --warning: var(--ctp-latte-yellow);
+        --success: var(--ctp-latte-green);
+        --info: var(--ctp-latte-blue);
 }
