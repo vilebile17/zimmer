@@ -88,6 +88,7 @@ func main() {
 
 	// submissions stuff
 	mux.HandleFunc("POST /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.handInAssignmentHandler)
+	mux.HandleFunc("PUT /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.updateSubmissionHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.getSubmissionsHandler)
 	mux.HandleFunc("PUT /api/classes/{classID}/assignments/{assignmentID}/submissions/{submissionID}", cfg.gradeSubmissionsHandler)
 

@@ -67,6 +67,31 @@ func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (Submission, 
 	return i, err
 }
 
+const getSubmissionForUser = `-- name: GetSubmissionForUser :one
+SELECT id, created_at, updated_at, assignment_id, user_id, answers, score FROM submissions
+WHERE assignment_id = $1 AND user_id = $2
+`
+
+type GetSubmissionForUserParams struct {
+	AssignmentID uuid.UUID
+	UserID       uuid.UUID
+}
+
+func (q *Queries) GetSubmissionForUser(ctx context.Context, arg GetSubmissionForUserParams) (Submission, error) {
+	row := q.db.QueryRowContext(ctx, getSubmissionForUser, arg.AssignmentID, arg.UserID)
+	var i Submission
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.AssignmentID,
+		&i.UserID,
+		&i.Answers,
+		&i.Score,
+	)
+	return i, err
+}
+
 const getSubmissionsForAssignment = `-- name: GetSubmissionsForAssignment :many
 SELECT submissions.id, submissions.created_at, submissions.updated_at,
         submissions.user_id, submissions.answers, users.name
@@ -131,6 +156,35 @@ type GradeSubmissionParams struct {
 
 func (q *Queries) GradeSubmission(ctx context.Context, arg GradeSubmissionParams) (Submission, error) {
 	row := q.db.QueryRowContext(ctx, gradeSubmission, arg.ID, arg.Score)
+	var i Submission
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.AssignmentID,
+		&i.UserID,
+		&i.Answers,
+		&i.Score,
+	)
+	return i, err
+}
+
+const updateSubmission = `-- name: UpdateSubmission :one
+UPDATE submissions
+SET
+        answers = $2,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING id, created_at, updated_at, assignment_id, user_id, answers, score
+`
+
+type UpdateSubmissionParams struct {
+	ID      uuid.UUID
+	Answers sql.NullString
+}
+
+func (q *Queries) UpdateSubmission(ctx context.Context, arg UpdateSubmissionParams) (Submission, error) {
+	row := q.db.QueryRowContext(ctx, updateSubmission, arg.ID, arg.Answers)
 	var i Submission
 	err := row.Scan(
 		&i.ID,

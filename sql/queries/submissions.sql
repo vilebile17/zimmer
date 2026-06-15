@@ -29,3 +29,15 @@ SET
         updated_at = NOW()
 WHERE id = $1
 RETURNING *;
+
+-- name: UpdateSubmission :one
+UPDATE submissions
+SET
+        answers = $2,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+
+-- name: GetSubmissionForUser :one
+SELECT * FROM submissions
+WHERE assignment_id = $1 AND user_id = $2;

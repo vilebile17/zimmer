@@ -1,22 +1,43 @@
-async function handIn(work) {
+var alreadyHandedIn = false;
+
+async function handIn() {
+        const work = document.getElementById("student-work");
         const classID = getClassID();
-        console.log(classID);
         const assignmentID = getAssignmentID();
-        console.log(assignmentID);
-        const response = await fetch(
-                `/api/classes/${classID}/assignments/${assignmentID}/submissions`,
-                {
-                        method: "POST",
-                        body: JSON.stringify({
-                                answers: work,
-                        }),
-                        headers: {
-                                "Content-Type": "application/json",
+        var response;
+
+        if (!alreadyHandedIn) {
+                response = await fetch(
+                        `/api/classes/${classID}/assignments/${assignmentID}/submissions`,
+                        {
+                                method: "POST",
+                                body: JSON.stringify({
+                                        answers: work.value,
+                                }),
+                                headers: {
+                                        "Content-Type": "application/json",
+                                },
+                                credentials: "include",
                         },
-                        credentials: "include",
-                },
-        );
-        return await response.json();
+                );
+        } else {
+                response = await fetch(
+                        `/api/classes/${classID}/assignments/${assignmentID}/submissions`,
+                        {
+                                method: "PUT",
+                                body: JSON.stringify({
+                                        answers: work.value,
+                                }),
+                                headers: {
+                                        "Content-Type": "application/json",
+                                },
+                                credentials: "include",
+                        },
+                );
+        }
+
+        console.log(await response.json());
+        alreadyHandedIn = true;
 }
 
 function getClassID() {
@@ -34,8 +55,23 @@ function getAssignmentID() {
 }
 
 async function main() {
-        const work = document.getElementById("student-work");
-        console.log(await handIn(work.value));
+        const response = await fetch(
+                `/api/classes/${getClassID()}/assignments/${getAssignmentID()}/submissions`,
+                {
+                        method: "GET",
+                        credentials: "include",
+                },
+        );
+
+        const userWork = await response.json();
+        if (userWork?.Answers) {
+                const workBox = document.getElementById("student-work");
+                workBox.value = userWork.Answers.String;
+                alreadyHandedIn = true;
+        } else {
+                console.log("No old submission found");
+        }
 }
 
-document.getElementById("hand-in-button").addEventListener("click", main);
+document.getElementById("hand-in-button").addEventListener("click", handIn);
+main();
