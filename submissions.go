@@ -18,9 +18,15 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 		return
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
-		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
+		respondWithError(response, request, "couldn't get userID from the auth header or from cookies :(", err, http.StatusUnauthorized)
+		return
+	}
+
+	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get the class info from the database", err, http.StatusUnauthorized)
 		return
 	}
 
@@ -36,8 +42,8 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 			break
 		}
 	}
-	if !inClass {
-		respondWithError(response, request, "you can only hand in to an assignment which you are a student in", err, http.StatusUnauthorized)
+	if !inClass || class.TeacherID == userID {
+		respondWithError(response, request, "blud's not a student in the class, why try hand in to one of their assignments??", nil, http.StatusUnauthorized)
 		return
 	}
 
@@ -79,6 +85,7 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 	})
 	if err != nil {
 		respondWithError(response, request, "there was an error adding the submission to the database", err, http.StatusBadRequest)
+		return
 	}
 
 	respondWithJSON(response, request, submission, http.StatusCreated)

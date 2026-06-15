@@ -41,11 +41,13 @@
                         </svg>
                 </button>
         </header>
-        <a class="mini-text" href="/c/{{.ClassID}}">← Back to Class</a>
+        <a class="mini-text" id="back-button" href="/c/{{.ClassID}}"
+                >← Back to Class</a
+        >
         <body>
                 <div class="card title-card">
                         <h1>{{.Title}}</h1>
-                        <p class="mini-text">ID: {{.ID}}</p>
+                        <p class="mini-text" id="id">ID: {{.ID}}</p>
                 </div>
                 <div class="card">
                         <h3>Instructions</h3>
@@ -67,4 +69,5 @@
         </body>
         <div id="snackbar">login failed</div>
         <script src="/universal_actions.js" type="module"></script>
+        <script src="/assignments/assignments.js"></script>
 </html>
