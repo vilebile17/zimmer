@@ -1,0 +1,17 @@
+.title-card {
+        text-align: center;
+}
+
+#student-work {
+        width: 100%;
+        box-sizing: border-box;
+        background-color: var(--bg-light);
+        border-radius: 0.5rem;
+        padding: 12px 20px;
+        border: 1px solid var(--border-muted);
+        color: var(--text);
+}
+
+#hand-in-button {
+        border: 1px solid var(--border-muted);
+}

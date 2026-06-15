@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+        <head>
+                <meta charset="utf-8" />
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                />
+                <title>Bester Zimmer</title>
+                <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+                />
+                <link href="/default.css" rel="stylesheet" />
+                <link href="/assignments/styles.css" rel="stylesheet" />
+        </head>
+        <header>
+                <h3 id="navbar-logo">Zimmer</h3>
+                <button type="button" id="theme-switcher">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-sun"
+                        >
+                                <path
+                                        stroke="none"
+                                        d="M0 0h24v24H0z"
+                                        fill="none"
+                                />
+                                <path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                <path
+                                        d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
+                                />
+                        </svg>
+                </button>
+        </header>
+        <a class="mini-text" href="/c/{{.ClassID}}">← Back to Class</a>
+        <body>
+                <div class="card title-card">
+                        <h1>{{.Title}}</h1>
+                        <p class="mini-text">ID: {{.ID}}</p>
+                </div>
+                <div class="card">
+                        <h3>Instructions</h3>
+                        <p>{{.Instructions}}</p>
+                </div>
+                <div class="card submission-card">
+                        <h3>Your Work</h3>
+                        <textarea
+                                id="student-work"
+                                name="student-work"
+                                rows="7"
+                        ></textarea>
+                        <div>
+                                <button type="button" id="hand-in-button">
+                                        Hand In
+                                </button>
+                        </div>
+                </div>
+        </body>
+        <div id="snackbar">login failed</div>
+        <script src="/universal_actions.js" type="module"></script>
+</html>

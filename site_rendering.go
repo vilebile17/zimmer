@@ -130,28 +130,27 @@ func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *ht
 		return
 	}
 
-	response.Header().Set("Content-Type", "text/html")
+	tmpl, err := template.ParseFiles("./app/assignments/index.html")
+	if err != nil {
+		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.WriteHeader(http.StatusOK)
-	var data []byte
-	response.Write(fmt.Appendf(data, `
-	<!doctype html>
-<html>
-        <head>
-                <meta charset="utf-8" />
-                <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1"
-                />
-                <title>Bester Zimmer</title>
-                <link
-                        rel="stylesheet"
-                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-                />
-                <link href="/default.css" rel="stylesheet" />
-        </head>
-        <body>
-        	This is the assignment page for an assignment with the title <b>%v</b>
-        </body>
-</html>
-	`, assignment.Title))
+
+	err = tmpl.Execute(response, struct {
+		Title        string
+		ID           string
+		ClassID      string
+		Instructions string
+	}{
+		Title:        assignment.Title,
+		ID:           assignmentID.String(),
+		ClassID:      assignment.ClassID.String(),
+		Instructions: assignment.Instructions.String,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
