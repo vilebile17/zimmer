@@ -1,3 +1,4 @@
+import { snackbar } from "/functions.js";
 var alreadyHandedIn = false;
 
 async function handIn() {
@@ -20,6 +21,11 @@ async function handIn() {
                                 credentials: "include",
                         },
                 );
+                if (response.ok) {
+                        snackbar("successfully handed in!");
+                } else {
+                        snackbar(await response.json().error);
+                }
         } else {
                 response = await fetch(
                         `/api/classes/${classID}/assignments/${assignmentID}/submissions`,
@@ -34,6 +40,11 @@ async function handIn() {
                                 credentials: "include",
                         },
                 );
+                if (response.ok) {
+                        snackbar("successfully updated submission!");
+                } else {
+                        snackbar(await response.json().error);
+                }
         }
 
         console.log(await response.json());
