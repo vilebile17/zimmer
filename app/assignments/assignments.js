@@ -6,6 +6,7 @@ async function handIn() {
         const classID = getClassID();
         const assignmentID = getAssignmentID();
         var response;
+        var result;
 
         if (!alreadyHandedIn) {
                 response = await fetch(
@@ -24,7 +25,8 @@ async function handIn() {
                 if (response.ok) {
                         snackbar("successfully handed in!");
                 } else {
-                        snackbar(await response.json().error);
+                        result = await response.json();
+                        snackbar(result?.error);
                 }
         } else {
                 response = await fetch(
@@ -43,11 +45,12 @@ async function handIn() {
                 if (response.ok) {
                         snackbar("successfully updated submission!");
                 } else {
-                        snackbar(await response.json().error);
+                        result = await response.json();
+                        snackbar(result?.error);
                 }
         }
 
-        console.log(await response.json());
+        console.log(result);
         alreadyHandedIn = true;
 }
 

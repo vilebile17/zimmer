@@ -42,8 +42,12 @@ func (cfg *apiConfig) handInAssignmentHandler(response http.ResponseWriter, requ
 			break
 		}
 	}
-	if !inClass || class.TeacherID == userID {
-		respondWithError(response, request, "blud's not a student in the class, why try hand in to one of their assignments??", nil, http.StatusUnauthorized)
+
+	if class.TeacherID == userID {
+		respondWithError(response, request, "ur the teacher bro, y r u handing in??", nil, http.StatusUnauthorized)
+		return
+	} else if !inClass {
+		respondWithError(response, request, "you're not a student in this class!", nil, http.StatusUnauthorized)
 		return
 	}
 
@@ -235,8 +239,12 @@ func (cfg *apiConfig) updateSubmissionHandler(response http.ResponseWriter, requ
 			break
 		}
 	}
-	if !inClass || class.TeacherID == userID {
-		respondWithError(response, request, "blud's not a student in the class, why try hand in to one of their assignments??", nil, http.StatusUnauthorized)
+
+	if class.TeacherID == userID {
+		respondWithError(response, request, "ur the teacher bro, y r u handing in??", nil, http.StatusUnauthorized)
+		return
+	} else if !inClass {
+		respondWithError(response, request, "you're not a student in this class!", nil, http.StatusUnauthorized)
 		return
 	}
 
