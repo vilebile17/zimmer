@@ -53,7 +53,7 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		return
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
@@ -61,7 +61,7 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 
 	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
-		respondWithError(response, request, "couldn't retrieve the class from the database", err, http.StatusUnauthorized)
+		respondWithError(response, request, "couldn't retrieve the class from the database", err, http.StatusBadRequest)
 		return
 	}
 
@@ -80,7 +80,7 @@ func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *ht
 		ClassID:   classID,
 	})
 	if err != nil {
-		respondWithError(response, request, "There was an error finding that class...", err, http.StatusBadRequest)
+		respondWithError(response, request, `couldn't join, perhaps you're already there ¯\_(ツ)_/¯`, err, http.StatusBadRequest)
 		return
 	}
 

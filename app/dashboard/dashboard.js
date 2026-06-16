@@ -1,3 +1,5 @@
+import { snackbar } from "/functions.js";
+
 async function fetchClasses() {
         const response = await fetch("/api/classes", {
                 credentials: "include",
@@ -17,6 +19,47 @@ async function fetchNumAssignmentsDue() {
                 credentials: "include",
         });
         return response;
+}
+
+function setUpModal() {
+        var modal = document.getElementById("join-class-modal");
+        var btn = document.getElementById("join-class-button");
+        var join = document.getElementById("join");
+        var span = document.getElementsByClassName("close")[0];
+        var classID = document.getElementById("class-id");
+
+        btn.onclick = function () {
+                modal.style.display = "block";
+        };
+        span.onclick = function () {
+                modal.style.display = "none";
+        };
+        join.onclick = async function () {
+                console.log(classID.value);
+                const response = await fetch(
+                        `/api/classes/${classID.value}/members`,
+                        {
+                                method: "POST",
+                                credentials: "include",
+                        },
+                );
+
+                if (response.ok) {
+                        modal.style.display = "none";
+                        snackbar("successfully joined class!");
+                        setTimeout(() => {
+                                location.reload();
+                        }, 1000);
+                } else {
+                        const data = await response.json();
+                        snackbar(data?.error);
+                }
+        };
+        window.onclick = function (event) {
+                if (event.target == modal) {
+                        modal.style.display = "none";
+                }
+        };
 }
 
 async function logout() {
@@ -79,10 +122,16 @@ function writeClasses(classData) {
 
                 holderDiv.appendChild(teacherDiv);
         }
-        document.body.insertBefore(holderDiv, null);
+
+        document.body.insertBefore(
+                holderDiv,
+                document.getElementById("snackbar"),
+        );
 }
 
 async function main() {
+        setUpModal();
+
         let response = await fetchUserData();
         if (response.status == 401) {
                 window.location.replace("/login");

@@ -28,10 +28,7 @@
                 </select>
         </header>
         <body>
-                <p id="logout-text">
-                        Not you? click <a id="logout-button">here</a> to log out
-                </p>
-                <div class="user-card card">
+                                <div class="user-card card">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="240"
@@ -69,7 +66,31 @@
                                 </p>
                         </div>
                 </div>
+                <div id="snackbar">login failed</div>
+                <div id="class-buttons">
+                        <button id="join-class-button">Join Class</button>
+                        <button id="create-class-button">Create Class</button>
+                </div>
+
+                <div id="join-class-modal" class="modal">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <span class="close">&times;</span>
+                                        <h2>Join a Class</h2>
+                                </div>
+                        </div>
+                        <div class="modal-body">
+                                <p>Enter the class ID, your teacher should provide this to you</p>
+                                <input id="class-id" placeholder="classID"></input>
+                        </div>
+                        <div class="modal-footer">
+                                <button id="join">Join</button>
+                        </div>
+                </div>
+                <p id="logout-text">
+                        Not you? click <a id="logout-button">here</a> to log out
+                </p>
         </body>
         <script src="/universal_actions.js" type="module"></script>
-        <script src="/dashboard/dashboard.js"></script>
+        <script src="/dashboard/dashboard.js" type="module"></script>
 </html>
