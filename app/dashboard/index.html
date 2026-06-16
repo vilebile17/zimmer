@@ -13,7 +13,6 @@
                 />
                 <link href="/default.css" rel="stylesheet" />
                 <link href="/dashboard/styles.css" rel="stylesheet" />
-                <script src="/dashboard/dashboard.js"></script>
         </head>
         <header>
                 <h3 id="navbar-logo">Zimmer</h3>
@@ -43,6 +42,9 @@
                 </button>
         </header>
         <body>
+                <p id="logout-text">
+                        Not you? click <a id="logout-button">here</a> to log out
+                </p>
                 <div class="user-card card">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -83,4 +85,5 @@
                 </div>
         </body>
         <script src="/universal_actions.js" type="module"></script>
+        <script src="/dashboard/dashboard.js"></script>
 </html>

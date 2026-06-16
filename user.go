@@ -165,6 +165,18 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 	fmt.Printf("User %v (%v) just logged in\n", dbUser.Name, dbUser.Email)
 }
 
+func (cfg *apiConfig) logoutHandler(response http.ResponseWriter, _ *http.Request) {
+	http.SetCookie(response, &http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   -1,
+	})
+	response.WriteHeader(http.StatusOK)
+}
+
 func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *http.Request) {
 	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {

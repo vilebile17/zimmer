@@ -19,6 +19,15 @@ async function fetchNumAssignmentsDue() {
         return response;
 }
 
+async function logout() {
+        await fetch("/api/logout", {
+                method: "POST",
+                credentials: "include",
+        });
+        window.location.replace("/login");
+        window.location.href = "/login";
+}
+
 function writeNumClasses(classData) {
         let total = 0;
         const studentNull = classData.classesAsStudent == null;
@@ -103,3 +112,4 @@ async function main() {
 }
 
 main();
+document.getElementById("logout-button").addEventListener("click", logout);

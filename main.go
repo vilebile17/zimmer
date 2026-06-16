@@ -71,6 +71,7 @@ func main() {
 	mux.HandleFunc("GET /api/users/{userID}", cfg.getUserHandler)
 	mux.HandleFunc("DELETE /api/users", cfg.deleteUserHandler)
 	mux.HandleFunc("POST /api/login", cfg.loginHandler)
+	mux.HandleFunc("POST /api/logout", cfg.logoutHandler)
 
 	// classes stuff
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)

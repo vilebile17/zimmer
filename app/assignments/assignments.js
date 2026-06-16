@@ -1,4 +1,3 @@
-import { snackbar } from "/functions.js";
 var alreadyHandedIn = false;
 
 async function handIn() {
