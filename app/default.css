@@ -187,6 +187,18 @@ header {
         transition: var(transition);
 }
 
+#theme-switcher {
+        background-color: var(--bg-light);
+        padding: 0.5rem 0.5rem;
+        border-radius: 0.5rem;
+        color: var(--text);
+        border: 1px var(--border-muted);
+}
+
+#theme-switcher:focus {
+        outline: none;
+}
+
 /* The snackbar - position it at the bottom and in the middle of the screen */
 #snackbar {
         visibility: hidden; /* Hidden by default. Visible on click */
