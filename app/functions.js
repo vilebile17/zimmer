@@ -9,13 +9,15 @@ function snackbar(content) {
         return;
 }
 
-function toggleTheme() {
-        document.body.classList.toggle("light");
-}
-
 function goToDashboard() {
         window.location.replace("/dashboard");
         window.location.href = "/dashboard";
 }
 
-export { snackbar, toggleTheme, goToDashboard };
+function changeTheme() {
+        const theme = document.getElementById("theme-switcher").value;
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+}
+
+export { snackbar, changeTheme, goToDashboard };

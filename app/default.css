@@ -181,15 +181,6 @@ header {
         align-items: center;
 }
 
-#theme-switcher {
-        padding: 0;
-        width: 3rem;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-}
-
 #navbar-logo:hover {
         cursor: pointer;
         scale: 1.05;

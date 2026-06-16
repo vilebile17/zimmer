@@ -22,7 +22,23 @@
         --success: var(--ctp-mocha-green);
         --info: var(--ctp-mocha-blue);
 }
-body.light {
+[data-theme="mocha"] {
+        --bg-dark: var(--ctp-mocha-mantle);
+        --bg: var(--ctp-mocha-base);
+        --bg-light: var(--ctp-mocha-surface0);
+        --text: var(--ctp-mocha-text);
+        --text-muted: var(--ctp-mocha-subtext1);
+        --highlight: var(--ctp-mocha-sky);
+        --border: var(--ctp-mocha-sapphire);
+        --border-muted: var(--ctp-mocha-blue);
+        --primary: var(--ctp-mocha-sky);
+        --secondary: var(--ctp-mocha-mauve);
+        --danger: var(--ctp-mocha-red);
+        --warning: var(--ctp-mocha-yellow);
+        --success: var(--ctp-mocha-green);
+        --info: var(--ctp-mocha-blue);
+}
+[data-theme="latte"] {
         --bg-dark: var(--ctp-latte-crust);
         --bg: var(--ctp-latte-mantle);
         --bg-light: var(--ctp-latte-base);
@@ -37,4 +53,20 @@ body.light {
         --warning: var(--ctp-latte-yellow);
         --success: var(--ctp-latte-green);
         --info: var(--ctp-latte-blue);
+}
+[data-theme="sapphire"] {
+        --bg-dark: oklch(0.1 0.05 205);
+        --bg: oklch(0.15 0.05 205);
+        --bg-light: oklch(0.2 0.05 205);
+        --text: oklch(0.96 0.1 205);
+        --text-muted: oklch(0.76 0.1 205);
+        --highlight: oklch(0.5 0.1 205);
+        --border: oklch(0.4 0.1 205);
+        --border-muted: oklch(0.3 0.1 205);
+        --primary: oklch(0.76 0.1 205);
+        --secondary: oklch(0.76 0.1 25);
+        --danger: oklch(0.7 0.1 30);
+        --warning: oklch(0.7 0.1 100);
+        --success: oklch(0.7 0.1 160);
+        --info: oklch(0.7 0.1 260);
 }
