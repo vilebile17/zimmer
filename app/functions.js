@@ -1,12 +1,28 @@
-function snackbar(content) {
-        let snackbar = document.getElementById("snackbar");
+function snackbarHelper(content, id) {
+        let snackbar = document.getElementById(id);
         snackbar.textContent = content;
-        snackbar.className = "show";
+        snackbar.classList.add("show");
 
         setTimeout(function () {
-                snackbar.className = snackbar.className.replace("show", "");
-        }, 3000);
+                snackbar.className = "snackbar";
+        }, 2900);
         return;
+}
+
+function snackbar(content) {
+        snackbarHelper(content, "snackbar");
+}
+function snackbarSuccess(content) {
+        snackbarHelper(content, "snackbar-success");
+}
+function snackbarWarning(content) {
+        snackbarHelper(content, "snackbar-warning");
+}
+function snackbarDanger(content) {
+        snackbarHelper(content, "snackbar-danger");
+}
+function snackbarInfo(content) {
+        snackbarHelper(content, "snackbar-info");
 }
 
 function goToDashboard() {
@@ -20,4 +36,12 @@ function changeTheme() {
         localStorage.setItem("theme", theme);
 }
 
-export { snackbar, changeTheme, goToDashboard };
+export {
+        snackbar,
+        changeTheme,
+        goToDashboard,
+        snackbarDanger,
+        snackbarInfo,
+        snackbarSuccess,
+        snackbarWarning,
+};

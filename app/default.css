@@ -145,7 +145,7 @@ button {
 
         padding: 12px 20px;
         border: 1px solid var(--text-muted);
-        border-radius: 0.5rem;
+        border-radius: 1.5rem;
 
         color: var(--text);
         font-weight: bold;
@@ -168,7 +168,7 @@ button:hover {
 }
 
 .card:hover {
-        background-color: var(--bg-light);
+        background: var(--gradient-hover);
 }
 
 .mini-text {
@@ -200,12 +200,11 @@ header {
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
-#snackbar {
+.snackbar {
         visibility: hidden; /* Hidden by default. Visible on click */
         min-width: 250px; /* Set a default minimum width */
         margin-left: -125px; /* Divide value of min-width by 2 */
-        background-color: var(--bg-light); /* Black background color */
-        color: var(--text); /* White text color */
+        color: var(--bg); /* White text color */
         text-align: center; /* Centered text */
         border-radius: 10px; /* Rounded borders */
         padding: 16px; /* Padding */
@@ -216,7 +215,7 @@ header {
 }
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
-#snackbar.show {
+.snackbar.show {
         visibility: visible; /* Show the snackbar */
         /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   However, delay the fade out process for 2.5 seconds */
@@ -226,6 +225,19 @@ header {
         animation:
                 fadein 0.5s,
                 fadeout 0.5s 2.5s;
+}
+
+#snackbar-success {
+        background-color: var(--success);
+}
+#snackbar-danger {
+        background-color: var(--danger);
+}
+#snackbar-warning {
+        background-color: var(--warning);
+}
+#snackbar-info {
+        background-color: var(--info);
 }
 
 /* Animations to fade the snackbar in and out */

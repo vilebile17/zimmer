@@ -1,4 +1,4 @@
-import { snackbar } from "/functions.js";
+import { snackbarWarning, snackbarDanger } from "/functions.js";
 
 async function signup() {
         let email = document.getElementById("email").value;
@@ -6,20 +6,20 @@ async function signup() {
         let password2 = document.getElementById("confirm-password").value;
         let name = document.getElementById("name").value;
 
-        if (email == "" || password == "" || name == "") {
-                snackbar(
+        if (email === "" || password === "" || name === "") {
+                snackbarWarning(
                         "Name, email and password parameters cannot be empty!",
                 );
                 return;
         }
 
-        if (password != password2) {
-                snackbar("Passwords don't match!");
+        if (password !== password2) {
+                snackbarWarning("Passwords don't match!");
                 return;
         }
 
         if (password.length < 8) {
-                snackbar("Password must be at least 8 characters long");
+                snackbarWarning("Password must be at least 8 characters long");
                 return;
         }
 
@@ -56,7 +56,7 @@ async function signup() {
 
         if (response.status >= 400) {
                 let error = await response.json();
-                snackbar(error.error);
+                snackbarDanger(error?.error);
                 return;
         }
         window.location.replace("/dashboard");

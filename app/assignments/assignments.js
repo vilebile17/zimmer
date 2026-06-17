@@ -1,4 +1,4 @@
-import { snackbar } from "/functions.js";
+import { snackbarDanger, snackbarSuccess } from "/functions.js";
 
 var alreadyHandedIn = false;
 
@@ -24,10 +24,10 @@ async function handIn() {
                         },
                 );
                 if (response.ok) {
-                        snackbar("successfully handed in!");
+                        snackbarSuccess("successfully handed in!");
                 } else {
                         result = await response.json();
-                        snackbar(result?.error);
+                        snackbarDanger(result?.error);
                 }
         } else {
                 response = await fetch(
@@ -44,10 +44,10 @@ async function handIn() {
                         },
                 );
                 if (response.ok) {
-                        snackbar("successfully updated submission!");
+                        snackbarSuccess("successfully updated submission!");
                 } else {
                         result = await response.json();
-                        snackbar(result?.error);
+                        snackbarDanger(result?.error);
                 }
         }
 

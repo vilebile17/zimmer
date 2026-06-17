@@ -1,4 +1,8 @@
-import { snackbar } from "/functions.js";
+import {
+        snackbarSuccess,
+        snackbarDanger,
+        snackbarWarning,
+} from "/functions.js";
 
 async function fetchClasses() {
         const response = await fetch("/api/classes", {
@@ -35,7 +39,11 @@ function setUpModal() {
                 modal.style.display = "none";
         };
         join.onclick = async function () {
-                console.log(classID.value);
+                if (!classID.value) {
+                        snackbarWarning("classID parameter must be filled");
+                        return;
+                }
+
                 const response = await fetch(
                         `/api/classes/${classID.value}/members`,
                         {
@@ -46,13 +54,13 @@ function setUpModal() {
 
                 if (response.ok) {
                         modal.style.display = "none";
-                        snackbar("successfully joined class!");
+                        snackbarSuccess("successfully joined class!");
                         setTimeout(() => {
                                 location.reload();
                         }, 1000);
                 } else {
                         const data = await response.json();
-                        snackbar(data?.error);
+                        snackbarDanger(data?.error);
                 }
         };
         window.onclick = function (event) {
@@ -125,7 +133,7 @@ function writeClasses(classData) {
 
         document.body.insertBefore(
                 holderDiv,
-                document.getElementById("snackbar"),
+                document.getElementsByClassName("snackbar")[0],
         );
 }
 
@@ -144,9 +152,6 @@ async function main() {
         response = await fetchNumAssignmentsDue();
         const numAss = await response.json();
 
-        console.log(classData);
-        console.log(userData);
-        console.log(numAss);
         document.getElementById("username").textContent = userData.name;
         document.getElementById("numAssignments").textContent = numAss.num;
 

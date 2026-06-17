@@ -4,6 +4,7 @@
         --hard-shadow: 0px 4px 4px #00000030, 0px 12px 12px #00000015;
         --soft-shadow: 0px 12px 12px #00000015;
         --transition: 0.3s ease in out;
+        --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
 }
 
 :root {
