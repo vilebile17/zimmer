@@ -21,6 +21,7 @@
                         Test selection
                         <option value="mocha">CTP Mocha</option>
                         <option value="latte">CTP Latte</option>
+                        <option value="nord">Nord</option>
                         <option value="sapphire">Sapphire</option>
                         <option value="hacker">Hacker</option>
                         <option value="grape">Grape</option>
@@ -75,16 +76,16 @@
                 <div id="join-class-modal" class="modal">
                         <div class="modal-content">
                                 <div class="modal-header">
-                                        <span class="close">&times;</span>
+                                        <span class="close" id="join-close" >&times;</span>
                                         <h2>Join a Class</h2>
                                 </div>
-                        </div>
-                        <div class="modal-body">
-                                <p>Enter the class ID, your teacher should provide this to you</p>
-                                <input id="class-id" placeholder="classID"></input>
-                        </div>
-                        <div class="modal-footer">
-                                <button id="join">Join</button>
+                                <div class="modal-body">
+                                        <p>Enter the class ID, your teacher should provide this to you</p>
+                                        <input id="class-id" placeholder="classID"></input>
+                                </div>
+                                <div class="modal-footer">
+                                        <button id="join">Join</button>
+                                </div>
                         </div>
                 </div>
                 <p id="logout-text">

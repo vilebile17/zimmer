@@ -49,7 +49,7 @@ func (cfg *apiConfig) createClassHandler(response http.ResponseWriter, request *
 func (cfg *apiConfig) joinClassHandler(response http.ResponseWriter, request *http.Request) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error getting and parsing the class ID from the URL", err, http.StatusUnauthorized)
+		respondWithError(response, request, "Invalid classID", err, http.StatusBadRequest)
 		return
 	}
 

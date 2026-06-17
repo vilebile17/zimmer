@@ -25,7 +25,7 @@ function setUpModal() {
         var modal = document.getElementById("join-class-modal");
         var btn = document.getElementById("join-class-button");
         var join = document.getElementById("join");
-        var span = document.getElementsByClassName("close")[0];
+        var span = document.getElementById("join-close");
         var classID = document.getElementById("class-id");
 
         btn.onclick = function () {

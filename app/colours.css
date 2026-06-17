@@ -118,3 +118,19 @@
         --success: oklch(0.5 0.13 160);
         --info: oklch(0.5 0.13 260);
 }
+[data-theme="nord"] {
+        --bg-dark: #2e3440;
+        --bg: #3b4252;
+        --bg-light: #434c5e;
+        --text: #eceff4;
+        --text-muted: #d8dee9;
+        --highlight: #88c0d0;
+        --border: #81a1c1;
+        --border-muted: #5e81ac;
+        --primary: #88c0d0;
+        --secondary: #8fbcbb;
+        --danger: #bf616a;
+        --warning: #ebcb8b;
+        --success: #a3be8c;
+        --info: #5e81ac;
+}
