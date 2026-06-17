@@ -27,7 +27,7 @@ func (cfg *apiConfig) createClassHandler(response http.ResponseWriter, request *
 		return
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return
@@ -38,7 +38,7 @@ func (cfg *apiConfig) createClassHandler(response http.ResponseWriter, request *
 		TeacherID: userID,
 	})
 	if err != nil {
-		respondWithError(response, request, "There was an error adding a class to the database", err, http.StatusBadRequest)
+		respondWithError(response, request, "couldn't add class to database, it might already exist", err, http.StatusBadRequest)
 		return
 	}
 

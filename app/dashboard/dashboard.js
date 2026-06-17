@@ -25,7 +25,7 @@ async function fetchNumAssignmentsDue() {
         return response;
 }
 
-function setUpModal() {
+function setUpJoinModal() {
         var modal = document.getElementById("join-class-modal");
         var btn = document.getElementById("join-class-button");
         var join = document.getElementById("join");
@@ -58,6 +58,54 @@ function setUpModal() {
                         setTimeout(() => {
                                 location.reload();
                         }, 1000);
+                } else {
+                        const data = await response.json();
+                        snackbarDanger(data?.error);
+                }
+        };
+        window.onclick = function (event) {
+                if (event.target == modal) {
+                        modal.style.display = "none";
+                }
+        };
+}
+
+function setUpCreateModal() {
+        var modal = document.getElementById("create-class-modal");
+        var btn = document.getElementById("create-class-button");
+        var create = document.getElementById("create");
+        var span = document.getElementById("create-close");
+        var className = document.getElementById("class-name");
+
+        btn.onclick = function () {
+                modal.style.display = "block";
+        };
+        span.onclick = function () {
+                modal.style.display = "none";
+        };
+        create.onclick = async function () {
+                if (!className.value) {
+                        snackbarWarning("className parameter must be filled");
+                        return;
+                }
+
+                const response = await fetch(`/api/classes`, {
+                        method: "POST",
+                        body: JSON.stringify({
+                                name: className.value,
+                        }),
+                        headers: {
+                                "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                });
+
+                if (response.ok) {
+                        modal.style.display = "none";
+                        snackbarSuccess("successfully created the class!");
+                        setTimeout(() => {
+                                location.reload();
+                        }, 1500);
                 } else {
                         const data = await response.json();
                         snackbarDanger(data?.error);
@@ -138,8 +186,6 @@ function writeClasses(classData) {
 }
 
 async function main() {
-        setUpModal();
-
         let response = await fetchUserData();
         if (response.status == 401) {
                 window.location.replace("/login");
@@ -163,6 +209,9 @@ async function main() {
         ) {
                 writeClasses(classData);
         }
+
+        setUpJoinModal();
+        setUpCreateModal();
 }
 
 main();
