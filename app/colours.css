@@ -103,22 +103,6 @@
         --success: oklch(0.7 0.13 160);
         --info: oklch(0.7 0.13 260);
 }
-[data-theme="parchment"] {
-        --bg-dark: oklch(0.92 0.065 88);
-        --bg: oklch(0.96 0.065 88);
-        --bg-light: oklch(1 0.065 88);
-        --text: oklch(0.15 0.13 88);
-        --text-muted: oklch(0.4 0.13 88);
-        --highlight: oklch(1 0.13 88);
-        --border: oklch(0.6 0.13 88);
-        --border-muted: oklch(0.7 0.13 88);
-        --primary: oklch(0.4 0.13 88);
-        --secondary: oklch(0.4 0.13 268);
-        --danger: oklch(0.5 0.13 30);
-        --warning: oklch(0.5 0.13 100);
-        --success: oklch(0.5 0.13 160);
-        --info: oklch(0.5 0.13 260);
-}
 [data-theme="nord"] {
         --bg-dark: #2e3440;
         --bg: #3b4252;
@@ -134,4 +118,36 @@
         --warning: #ebcb8b;
         --success: #a3be8c;
         --info: #5e81ac;
+}
+[data-theme="gruvbox-dark"] {
+        --bg-dark: oklch(0.1 0.025 91);
+        --bg: oklch(0.15 0.025 91);
+        --bg-light: oklch(0.2 0.025 91);
+        --text: oklch(0.96 0.05 91);
+        --text-muted: oklch(0.76 0.05 91);
+        --highlight: oklch(0.5 0.05 91);
+        --border: oklch(0.4 0.05 91);
+        --border-muted: oklch(0.3 0.05 91);
+        --primary: oklch(0.76 0.1 91);
+        --secondary: oklch(0.76 0.1 271);
+        --danger: oklch(0.7 0.05 30);
+        --warning: oklch(0.7 0.05 100);
+        --success: oklch(0.7 0.05 160);
+        --info: oklch(0.7 0.05 260);
+}
+[data-theme="gruvbox-light"] {
+        --bg-dark: oklch(0.92 0.025 91);
+        --bg: oklch(0.96 0.025 91);
+        --bg-light: oklch(1 0.025 91);
+        --text: oklch(0.15 0.05 91);
+        --text-muted: oklch(0.4 0.05 91);
+        --highlight: oklch(1 0.05 91);
+        --border: oklch(0.6 0.05 91);
+        --border-muted: oklch(0.7 0.05 91);
+        --primary: oklch(0.4 0.1 91);
+        --secondary: oklch(0.4 0.1 271);
+        --danger: oklch(0.5 0.05 30);
+        --warning: oklch(0.5 0.05 100);
+        --success: oklch(0.5 0.05 160);
+        --info: oklch(0.5 0.05 260);
 }
