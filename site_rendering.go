@@ -12,35 +12,35 @@ import (
 func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Request) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Invalid classID", err, http.StatusBadRequest)
 		return
 	}
 
 	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
-		respondWithError(response, request, "There was an error getting the class data from the database", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "No class was found with that ID", err, http.StatusBadRequest)
 		return
 	}
 
 	userID, err := cfg.getUserID(request)
 	if err != nil {
-		respondWithError(response, request, "Unable to get the userID from cookies and from headers", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "Unable to authenticate user", err, http.StatusUnauthorized)
 		return
 	}
 
 	isInClass, err := cfg.isUserInThisClass(request.Context(), userID, classID)
 	if err != nil {
-		respondWithError(response, request, "Unable to check if user is in the class", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "Unable to authenticate user", err, http.StatusUnauthorized)
 		return
 	}
 	if !isInClass {
-		respondWithError(response, request, "You can only view a class if you are in it", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "You cannot view a class which you're not a member in", err, http.StatusForbidden)
 		return
 	}
 
 	tmpl, err := template.ParseFiles("./app/classes/index.html")
 	if err != nil {
-		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		respondWithErrorPage(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
 		return
 	}
 
@@ -66,13 +66,13 @@ func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Re
 func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Request) {
 	userID, err := uuid.Parse(request.PathValue("userID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error parsing that userID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Invalid userID", err, http.StatusBadRequest)
 		return
 	}
 
 	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
 	if err != nil {
-		respondWithError(response, request, "There was an error getting user data from the database", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Couldn't find a user with that ID", err, http.StatusBadRequest)
 		return
 	}
 
@@ -105,35 +105,35 @@ func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Req
 func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *http.Request) {
 	assignmentID, err := uuid.Parse(request.PathValue("assignmentID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error parsing that assignmentID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Invalid assignmentID", err, http.StatusBadRequest)
 		return
 	}
 
 	assignment, err := cfg.dbQueries.GetAssignmentFromID(request.Context(), assignmentID)
 	if err != nil {
-		respondWithError(response, request, "There was an error getting assignment data from the database", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Couldn't find an assignment with that ID", err, http.StatusBadRequest)
 		return
 	}
 
 	userID, err := cfg.getUserID(request)
 	if err != nil {
-		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
 		return
 	}
 
 	isInClass, err := cfg.isUserInThisClass(request.Context(), userID, assignment.ClassID)
 	if err != nil {
-		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
 		return
 	}
 	if !isInClass {
-		respondWithError(response, request, "Couldn't retrieve assignment as the user isn't in the class", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "You cannot view the assignment as your not in the class", err, http.StatusForbidden)
 		return
 	}
 
 	tmpl, err := template.ParseFiles("./app/assignments/index.html")
 	if err != nil {
-		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		respondWithErrorPage(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
 		return
 	}
 
@@ -168,36 +168,36 @@ func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *ht
 func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *http.Request) {
 	submissionID, err := uuid.Parse(request.PathValue("submissionID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error parsing that submissionID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Invalid submissionID", err, http.StatusBadRequest)
 		return
 	}
 
 	submission, err := cfg.dbQueries.GetSubmission(request.Context(), submissionID)
 	if err != nil {
-		respondWithError(response, request, "There was an error getting submission data from the database", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Couldn't find a submission with that ID", err, http.StatusBadRequest)
 		return
 	}
 
 	userID, err := cfg.getUserID(request)
 	if err != nil {
-		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		respondWithErrorPage(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
 		return
 	}
 
 	class, err := cfg.dbQueries.GetClass(request.Context(), submission.ClassID)
 	if err != nil {
-		respondWithError(response, request, "Couldn't get class data", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Couldn't get class data", err, http.StatusBadRequest)
 		return
 	}
 
 	if class.TeacherID != userID {
-		respondWithError(response, request, "You must be a teacher to access this page", err, http.StatusUnauthorized)
+		respondWithError(response, request, "You must be a teacher to access this page", err, http.StatusForbidden)
 		return
 	}
 
 	tmpl, err := template.ParseFiles("./app/submissions/index.html")
 	if err != nil {
-		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		respondWithErrorPage(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
 		return
 	}
 
@@ -220,6 +220,34 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		SubmissionID:   submissionID.String(),
 		Work:           submission.Answers.String,
 		UpdatedAt:      submission.UpdatedAt.Format(time.RFC1123),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func respondWithErrorPage(response http.ResponseWriter, request *http.Request, message string, err error, statusCode int) {
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(message)
+	}
+
+	tmpl, err := template.ParseFiles("./app/error.html")
+	if err != nil {
+		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	response.WriteHeader(http.StatusOK)
+
+	err = tmpl.Execute(response, struct {
+		ErrorCode    int
+		ErrorMessage string
+	}{
+		ErrorCode:    statusCode,
+		ErrorMessage: message,
 	})
 	if err != nil {
 		fmt.Println(err)

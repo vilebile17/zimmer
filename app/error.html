@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+        <head>
+                <meta charset="utf-8" />
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                />
+                <title>Bester Zimmer</title>
+                <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+                />
+                <link href="/default.css" rel="stylesheet" />
+                <script src="/set_theme.js"></script>
+                <style>
+                        * {
+                                text-align: center;
+                        }
+                        svg {
+                                color: var(--danger);
+                        }
+                </style>
+        </head>
+        <header>
+                <h3 id="navbar-logo">Zimmer</h3>
+                <select id="theme-switcher">
+                        Test selection
+                        <option value="mocha">CTP Mocha</option>
+                        <option value="latte">CTP Latte</option>
+                        <option value="gruvbox-dark">Gruvbox Dark</option>
+                        <option value="gruvbox-light">Gruvbox Light</option>
+                        <option value="nord">Nord</option>
+                        <option value="sapphire">Sapphire</option>
+                        <option value="hacker">Hacker</option>
+                        <option value="grape">Grape</option>
+                </select>
+        </header>
+        <body>
+                <div class="card">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="240"
+                                height="240"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle"
+                        >
+                                <path
+                                        stroke="none"
+                                        d="M0 0h24v24H0z"
+                                        fill="none"
+                                />
+                                <path
+                                        d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
+                                />
+                                <path d="M12 9v4" />
+                                <path d="M12 16v.01" />
+                        </svg>
+                        <h1>{{.ErrorCode}}</h1>
+                </div>
+                <div class="card">
+                        <h3>{{.ErrorMessage}}</h3>
+                </div>
+        </body>
+        <script src="/universal_actions.js" type="module"></script>
+</html>

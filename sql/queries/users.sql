@@ -24,7 +24,8 @@ WHERE id IN (
         SELECT student_id
         FROM students_classes
         WHERE class_id = $1
-);
+)
+ORDER BY name;
 
 -- name: UpdateUser :one
 UPDATE users

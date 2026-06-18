@@ -62,6 +62,7 @@ WHERE id IN (
         FROM students_classes
         WHERE class_id = $1
 )
+ORDER BY name ASC
 `
 
 type GetStudentsForClassRow struct {

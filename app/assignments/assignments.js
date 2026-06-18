@@ -65,7 +65,7 @@ async function handIn() {
                 console.log(result);
         }
         alreadyHandedIn = true;
-        const gradeSpan = document.getElementById("grade");
+        const gradeSpan = document.getElementById("status");
         gradeSpan.textContent =
                 gradeSpan.textContent == "assigned"
                         ? "handed in"
@@ -88,7 +88,7 @@ function getAssignmentID() {
 
 async function loadStudentStuff() {
         console.log("this guy is a student");
-        const gradeSpan = document.getElementById("grade");
+        const gradeSpan = document.getElementById("status");
         const response = await fetch(
                 `/api/classes/${getClassID()}/assignments/${getAssignmentID()}/submissions`,
                 {
