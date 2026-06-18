@@ -1,4 +1,4 @@
-.title-card {
+#title-card {
         text-align: center;
 }
 
@@ -14,4 +14,9 @@
 
 #hand-in-button {
         border: 1px solid var(--border-muted);
+}
+
+.submission-link {
+        font-size: 1.2em;
+        color: var(--text);
 }

@@ -16,7 +16,8 @@ SELECT submissions.id, submissions.created_at, submissions.updated_at,
 FROM submissions
 INNER JOIN users
         ON submissions.user_id = users.id
-WHERE assignment_id = $1;
+WHERE assignment_id = $1
+ORDER BY submissions.updated_at ASC;
 
 -- name: GetSubmission :one
 SELECT * FROM submissions

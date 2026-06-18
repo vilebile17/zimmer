@@ -128,7 +128,7 @@ func (cfg *apiConfig) getClassesForUserHandler(response http.ResponseWriter, req
 }
 
 func (cfg *apiConfig) getClassHandler(response http.ResponseWriter, request *http.Request) {
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't authorize user", err, http.StatusUnauthorized)
 		return

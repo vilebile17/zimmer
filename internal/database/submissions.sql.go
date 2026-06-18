@@ -99,6 +99,7 @@ FROM submissions
 INNER JOIN users
         ON submissions.user_id = users.id
 WHERE assignment_id = $1
+ORDER BY submissions.updated_at ASC
 `
 
 type GetSubmissionsForAssignmentRow struct {

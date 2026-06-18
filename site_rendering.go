@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -139,16 +140,25 @@ func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *ht
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.WriteHeader(http.StatusOK)
 
+	var dueAt string
+	if assignment.DueAt.Valid {
+		dueAt = "Due on " + assignment.DueAt.Time.Format(time.RFC1123)
+	} else {
+		dueAt = "No due date"
+	}
+
 	err = tmpl.Execute(response, struct {
 		Title        string
 		ID           string
 		ClassID      string
 		Instructions string
+		DueAt        string
 	}{
 		Title:        assignment.Title,
 		ID:           assignmentID.String(),
 		ClassID:      assignment.ClassID.String(),
 		Instructions: assignment.Instructions.String,
+		DueAt:        dueAt,
 	})
 	if err != nil {
 		fmt.Println(err)

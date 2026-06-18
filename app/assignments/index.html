@@ -33,15 +33,16 @@
                 >← Back to Class</a
         >
         <body>
-                <div class="card title-card">
+                <div class="card" id="title-card">
                         <h1>{{.Title}}</h1>
                         <p class="mini-text" id="id">ID: {{.ID}}</p>
+                        <p class="mini-text">{{.DueAt}}</p>
                 </div>
                 <div class="card">
                         <h3>Instructions</h3>
                         <p>{{.Instructions}}</p>
                 </div>
-                <div class="card submission-card">
+                <div class="card" id="submission-card">
                         <h3>Your Work</h3>
                         <textarea
                                 id="student-work"
