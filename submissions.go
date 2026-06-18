@@ -206,6 +206,7 @@ func (cfg *apiConfig) gradeSubmissionsHandler(response http.ResponseWriter, requ
 		},
 	})
 	respondWithJSON(response, request, submission, http.StatusOK)
+	fmt.Println("Just graded some dingus' work")
 }
 
 func (cfg *apiConfig) updateSubmissionHandler(response http.ResponseWriter, request *http.Request) {

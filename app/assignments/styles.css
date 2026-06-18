@@ -10,6 +10,7 @@
         padding: 12px 20px;
         border: 1px solid var(--border-muted);
         color: var(--text);
+        margin-top: 0.5rem; /* space between header and textarea */
 }
 
 #hand-in-button {
@@ -19,4 +20,14 @@
 .submission-link {
         font-size: 1.2em;
         color: var(--text);
+}
+
+/* Right-aligned header for the submission card */
+.submission-header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
 }

@@ -65,6 +65,11 @@ async function handIn() {
                 console.log(result);
         }
         alreadyHandedIn = true;
+        const gradeSpan = document.getElementById("grade");
+        gradeSpan.textContent =
+                gradeSpan.textContent == "assigned"
+                        ? "handed in"
+                        : gradeSpan.textContent;
 }
 
 function getClassID() {
@@ -83,6 +88,7 @@ function getAssignmentID() {
 
 async function loadStudentStuff() {
         console.log("this guy is a student");
+        const gradeSpan = document.getElementById("grade");
         const response = await fetch(
                 `/api/classes/${getClassID()}/assignments/${getAssignmentID()}/submissions`,
                 {
@@ -92,10 +98,15 @@ async function loadStudentStuff() {
         );
 
         const userWork = await response.json();
+        console.log(userWork);
         if (userWork?.Answers) {
                 const workBox = document.getElementById("student-work");
                 workBox.value = userWork.Answers.String;
                 alreadyHandedIn = true;
+
+                gradeSpan.textContent = userWork?.Score.Valid
+                        ? `${userWork.Score.Int32}/100`
+                        : "handed in";
         } else {
                 console.log("No old submission found");
         }

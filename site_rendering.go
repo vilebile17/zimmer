@@ -208,6 +208,7 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		AssignmentName string
 		AssignmentID   string
 		StudentName    string
+		ClassID        string
 		SubmissionID   string
 		Work           string
 		UpdatedAt      string
@@ -215,6 +216,7 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		AssignmentName: submission.AssignmentTitle,
 		AssignmentID:   submission.AssignmentID.String(),
 		StudentName:    submission.UserName,
+		ClassID:        submission.ClassID.String(),
 		SubmissionID:   submissionID.String(),
 		Work:           submission.Answers.String,
 		UpdatedAt:      submission.UpdatedAt.Format(time.RFC1123),

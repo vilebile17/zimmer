@@ -29,9 +29,9 @@
                         <option value="grape">Grape</option>
                 </select>
         </header>
-        <a class="mini-text" id="back-button" href="/c/{{.ClassID}}"
-                >← Back to Class</a
-        >
+        <a class="mini-text" id="back-button" href="/c/{{.ClassID}}">
+                ← Back to Class
+        </a>
         <body>
                 <div class="card" id="title-card">
                         <h1>{{.Title}}</h1>
@@ -43,7 +43,12 @@
                         <p>{{.Instructions}}</p>
                 </div>
                 <div class="card" id="submission-card">
-                        <h3>Your Work</h3>
+                        <div class="submission-header">
+                                <h3>Your Work</h3>
+                                <span id="grade" class="mini-text"
+                                        >assigned</span
+                                >
+                        </div>
                         <textarea
                                 id="student-work"
                                 name="student-work"

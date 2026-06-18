@@ -126,7 +126,7 @@ func (cfg *apiConfig) teacherActions(request *http.Request) (int, error) {
 		return http.StatusBadRequest, errors.New("There was an error parsing that classID")
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		return http.StatusUnauthorized, errors.New("couldn't get userID from the auth header")
 	}
