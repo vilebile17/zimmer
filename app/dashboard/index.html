@@ -30,7 +30,7 @@
                 </select>
         </header>
         <body>
-                                <div class="user-card card">
+                <div class="user-card card">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="240"
@@ -69,7 +69,9 @@
                         </div>
                 </div>
                 <div class="snackbar" id="snackbar-success">joined class!</div>
-                <div class="snackbar" id="snackbar-danger">couldn't join class :(</div>
+                <div class="snackbar" id="snackbar-danger">
+                        couldn't join class :(
+                </div>
                 <div id="class-buttons">
                         <button id="join-class-button">Join Class</button>
                         <button id="create-class-button">Create Class</button>
@@ -78,12 +80,20 @@
                 <div id="join-class-modal" class="modal">
                         <div class="modal-content">
                                 <div class="modal-header">
-                                        <span class="close" id="join-close" >&times;</span>
+                                        <span class="close" id="join-close"
+                                                >&times;</span
+                                        >
                                         <h2>Join a Class</h2>
                                 </div>
                                 <div class="modal-body">
-                                        <p>Enter the class ID, your teacher should provide this to you</p>
-                                        <input id="class-id" placeholder="classID"></input>
+                                        <p>
+                                                Enter the class ID, your teacher
+                                                should provide this to you
+                                        </p>
+                                        <input
+                                                id="class-id"
+                                                placeholder="classID"
+                                        />
                                 </div>
                                 <div class="modal-footer">
                                         <button id="join">Join</button>
@@ -93,12 +103,17 @@
                 <div id="create-class-modal" class="modal">
                         <div class="modal-content">
                                 <div class="modal-header">
-                                        <span class="close" id="create-close" >&times;</span>
+                                        <span class="close" id="create-close"
+                                                >&times;</span
+                                        >
                                         <h2>Create a Class</h2>
                                 </div>
                                 <div class="modal-body">
                                         <p>Enter the class name</p>
-                                        <input id="class-name" placeholder="className"></input>
+                                        <input
+                                                id="class-name"
+                                                placeholder="className"
+                                        />
                                 </div>
                                 <div class="modal-footer">
                                         <button id="create">Create</button>

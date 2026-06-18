@@ -12,7 +12,9 @@ function removeItem(array, itemToRemove) {
         return array;
 }
 
-async function handIn(classID, assignmentID) {
+async function handIn() {
+        const classID = getClassID();
+        const assignmentID = getAssignmentID();
         const work = document.getElementById("student-work");
         var response;
         var result;
@@ -59,7 +61,9 @@ async function handIn(classID, assignmentID) {
                 }
         }
 
-        console.log(result);
+        if (result) {
+                console.log(result);
+        }
         alreadyHandedIn = true;
 }
 

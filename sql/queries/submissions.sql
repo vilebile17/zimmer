@@ -20,8 +20,14 @@ WHERE assignment_id = $1
 ORDER BY submissions.updated_at ASC;
 
 -- name: GetSubmission :one
-SELECT * FROM submissions
-WHERE id = $1;
+SELECT submissions.id, submissions.created_at, submissions.updated_at,
+        submissions.user_id as user_id, submissions.answers, users.name as user_name,
+        assignments.title as assignment_title, classes.id as class_id,
+        assignments.id as assignment_id FROM submissions
+INNER JOIN assignments ON submissions.assignment_id = assignments.id
+INNER JOIN users ON submissions.user_id = users.id
+INNER JOIN classes ON assignments.class_id = classes.id
+WHERE submissions.id = $1;
 
 -- name: GradeSubmission :one
 UPDATE submissions

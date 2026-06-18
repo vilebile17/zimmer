@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+        <head>
+                <meta charset="utf-8" />
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1"
+                />
+                <title>Bester Zimmer</title>
+                <link
+                        rel="stylesheet"
+                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+                />
+                <link href="/default.css" rel="stylesheet" />
+                <link href="/submissions/styles.css" rel="stylesheet" />
+                <script src="/set_theme.js"></script>
+        </head>
+        <header>
+                <h3 id="navbar-logo">Zimmer</h3>
+                <select id="theme-switcher">
+                        Test selection
+                        <option value="mocha">CTP Mocha</option>
+                        <option value="latte">CTP Latte</option>
+                        <option value="gruvbox-dark">Gruvbox Dark</option>
+                        <option value="gruvbox-light">Gruvbox Light</option>
+                        <option value="nord">Nord</option>
+                        <option value="sapphire">Sapphire</option>
+                        <option value="hacker">Hacker</option>
+                        <option value="grape">Grape</option>
+                </select>
+        </header>
+        <a class="mini-text" id="back-button" href="/a/{{.AssignmentID}}"
+                >← Back to Assignment</a
+        >
+        <div id="top-info-section">
+                <div class="card" id="info">
+                        <h3>{{.AssignmentName}} - {{.StudentName}}</h3>
+                        <p class="extra-info mini-text" id="class-id">
+                                ID: {{.SubmissionID}}
+                        </p>
+                        <p class="extra-info mini-text">
+                                Handed in at {{.UpdatedAt}}
+                        </p>
+                </div>
+                <div class="card" id="actions-panel">
+                        <input id="marks" placeholder="/100" />
+                        <button id="grade-button">Grade</button>
+                </div>
+        </div>
+        <div class="card">
+                <p>{{.Work}}</p>
+        </div>
+        <script src="/universal_actions.js" type="module"></script>
+</html>

@@ -1,0 +1,40 @@
+#top-info-section {
+        display: flex;
+        gap: 0.5rem;
+}
+
+#top-info-section > div {
+        flex: 1;
+}
+
+#info {
+        text-align: center;
+}
+
+#marks {
+        width: 3rem;
+}
+
+#actions-panel {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+        border-top: 1px solid var(--highlight);
+        box-shadow: var(--soft-shadow);
+        border-radius: 10px;
+
+        margin: 1.5rem;
+        overflow: hidden;
+        max-width: max-content;
+        justify-content: space-between;
+}
+
+#actions-panel > * {
+        background-color: inherit;
+        color: var(--text-muted);
+        float: left;
+        outline: none;
+        padding: 14px 16px;
+        text-align: center;
+}

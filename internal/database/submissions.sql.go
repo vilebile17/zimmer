@@ -48,21 +48,41 @@ func (q *Queries) CreateSubmission(ctx context.Context, arg CreateSubmissionPara
 }
 
 const getSubmission = `-- name: GetSubmission :one
-SELECT id, created_at, updated_at, assignment_id, user_id, answers, score FROM submissions
-WHERE id = $1
+SELECT submissions.id, submissions.created_at, submissions.updated_at,
+        submissions.user_id as user_id, submissions.answers, users.name as user_name,
+        assignments.title as assignment_title, classes.id as class_id,
+        assignments.id as assignment_id FROM submissions
+INNER JOIN assignments ON submissions.assignment_id = assignments.id
+INNER JOIN users ON submissions.user_id = users.id
+INNER JOIN classes ON assignments.class_id = classes.id
+WHERE submissions.id = $1
 `
 
-func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (Submission, error) {
+type GetSubmissionRow struct {
+	ID              uuid.UUID
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	UserID          uuid.UUID
+	Answers         sql.NullString
+	UserName        string
+	AssignmentTitle string
+	ClassID         uuid.UUID
+	AssignmentID    uuid.UUID
+}
+
+func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (GetSubmissionRow, error) {
 	row := q.db.QueryRowContext(ctx, getSubmission, id)
-	var i Submission
+	var i GetSubmissionRow
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.AssignmentID,
 		&i.UserID,
 		&i.Answers,
-		&i.Score,
+		&i.UserName,
+		&i.AssignmentTitle,
+		&i.ClassID,
+		&i.AssignmentID,
 	)
 	return i, err
 }

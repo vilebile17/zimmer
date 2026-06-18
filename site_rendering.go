@@ -164,3 +164,62 @@ func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *ht
 		fmt.Println(err)
 	}
 }
+
+func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *http.Request) {
+	submissionID, err := uuid.Parse(request.PathValue("submissionID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that submissionID", err, http.StatusBadRequest)
+		return
+	}
+
+	submission, err := cfg.dbQueries.GetSubmission(request.Context(), submissionID)
+	if err != nil {
+		respondWithError(response, request, "There was an error getting submission data from the database", err, http.StatusBadRequest)
+		return
+	}
+
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "Couldn't authenticate the user", err, http.StatusUnauthorized)
+		return
+	}
+
+	class, err := cfg.dbQueries.GetClass(request.Context(), submission.ClassID)
+	if err != nil {
+		respondWithError(response, request, "Couldn't get class data", err, http.StatusBadRequest)
+		return
+	}
+
+	if class.TeacherID != userID {
+		respondWithError(response, request, "You must be a teacher to access this page", err, http.StatusUnauthorized)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("./app/submissions/index.html")
+	if err != nil {
+		respondWithError(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	response.WriteHeader(http.StatusOK)
+
+	err = tmpl.Execute(response, struct {
+		AssignmentName string
+		AssignmentID   string
+		StudentName    string
+		SubmissionID   string
+		Work           string
+		UpdatedAt      string
+	}{
+		AssignmentName: submission.AssignmentTitle,
+		AssignmentID:   submission.AssignmentID.String(),
+		StudentName:    submission.UserName,
+		SubmissionID:   submissionID.String(),
+		Work:           submission.Answers.String,
+		UpdatedAt:      submission.UpdatedAt.Format(time.RFC1123),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+}
