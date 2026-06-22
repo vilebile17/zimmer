@@ -94,6 +94,12 @@ func main() {
 	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}/submissions", cfg.getSubmissionsHandler)
 	mux.HandleFunc("PUT /api/classes/{classID}/assignments/{assignmentID}/submissions/{submissionID}", cfg.gradeSubmissionsHandler)
 
+	// resource stuff
+	mux.HandleFunc("POST /api/classes/{classID}/resources", cfg.createResourceHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/resources", cfg.getResourcesForClassHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/resources/{resourceID}", cfg.getResourceHandler)
+	mux.HandleFunc("PUT /api/classes/{classID}/resources/{resourceID}", cfg.updateResourceHandler)
+
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", cfg.port)
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Println(err)

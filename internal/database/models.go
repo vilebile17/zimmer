@@ -31,6 +31,15 @@ type Class struct {
 	AllowJoining bool
 }
 
+type Resource struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	ClassID   uuid.UUID
+	Title     string
+	Content   sql.NullString
+}
+
 type StudentsClass struct {
 	ID        uuid.UUID
 	JoinedAt  time.Time
