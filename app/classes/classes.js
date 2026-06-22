@@ -53,6 +53,14 @@ async function fetchMembers() {
         return response;
 }
 
+async function fetchResources() {
+        const classID = getClassID();
+        const response = await fetch(`/api/classes/${classID}/resources`, {
+                credentials: "include",
+        });
+        return response;
+}
+
 function addCard(assignment, grandadDiv) {
         const assignmentDiv = document.createElement("div");
         assignmentDiv.classList.add("card");
@@ -124,9 +132,46 @@ async function createAllStudents() {
         document.body.insertBefore(studentsDiv, null);
 }
 
+async function createAllResources() {
+        const resources = await (await fetchResources()).json();
+
+        if (!resources) {
+                document.body.insertBefore(
+                        createDefaultTab("No resources yet...", "resources"),
+                        null,
+                );
+                return;
+        }
+
+        const grandadDiv = document.createElement("div");
+        grandadDiv.id = "resources";
+        grandadDiv.classList.add("tab-content");
+
+        for (const r of resources) {
+                const resourceDiv = document.createElement("div");
+                resourceDiv.classList.add("card");
+
+                const title = document.createElement("a");
+                title.textContent = r.title;
+                title.classList.add("card-heading");
+                resourceDiv.appendChild(title);
+
+                const createdAt = document.createElement("p");
+                createdAt.textContent = `Posted on ${new Date(r.created_at).toUTCString()}`;
+                createdAt.classList.add("mini-text");
+                resourceDiv.appendChild(createdAt);
+
+                grandadDiv.appendChild(resourceDiv);
+        }
+
+        document.body.insertBefore(grandadDiv, null);
+}
+
 async function main() {
         await createAllAssignments();
         await createAllStudents();
+        await createAllResources();
+
         document.getElementById("default-tab").click();
 }
 
