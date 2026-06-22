@@ -134,6 +134,7 @@ async function createAllStudents() {
 
 async function createAllResources() {
         const resources = await (await fetchResources()).json();
+        const classID = getClassID();
 
         if (!resources) {
                 document.body.insertBefore(
@@ -154,6 +155,7 @@ async function createAllResources() {
                 const title = document.createElement("a");
                 title.textContent = r.title;
                 title.classList.add("card-heading");
+                title.onclick = showResource(classID, r.id);
                 resourceDiv.appendChild(title);
 
                 const createdAt = document.createElement("p");
@@ -167,10 +169,46 @@ async function createAllResources() {
         document.body.insertBefore(grandadDiv, null);
 }
 
+function showResource(classID, resourceID) {
+        return async function () {
+                const modal = document.getElementById("resources-modal");
+                modal.style.display = "block";
+
+                const response = await fetch(
+                        `/api/classes/${classID}/resources/${resourceID}`,
+                        {
+                                credentials: "include",
+                        },
+                );
+                const resource = await response.json();
+
+                const modalHeader = document.getElementById("resource-title");
+                modalHeader.textContent = resource.title;
+                const modalContent =
+                        document.getElementById("resource-content");
+                modalContent.textContent = resource.content;
+        };
+}
+
+function setUpResourcesModal() {
+        var modal = document.getElementById("resources-modal");
+        var span = document.getElementById("resources-close");
+
+        span.onclick = function () {
+                modal.style.display = "none";
+        };
+        window.onclick = function (event) {
+                if (event.target == modal) {
+                        modal.style.display = "none";
+                }
+        };
+}
+
 async function main() {
         await createAllAssignments();
         await createAllStudents();
         await createAllResources();
+        setUpResourcesModal();
 
         document.getElementById("default-tab").click();
 }
