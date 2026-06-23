@@ -79,3 +79,11 @@
                 opacity: 1;
         }
 }
+
+#leave-button {
+        background-color: var(--danger);
+        color: var(--bg-light);
+        border: 0px;
+        display: block;
+        margin: 0 auto;
+}

@@ -14,6 +14,31 @@
                 <link href="/default.css" rel="stylesheet" />
                 <link href="/classes/styles.css" rel="stylesheet" />
                 <script src="/set_theme.js"></script>
+                <script>
+                        function openTab(event, tabID) {
+                                let tabContent =
+                                        document.getElementsByClassName(
+                                                "tab-content",
+                                        );
+                                for (let i = 0; i < tabContent.length; i++) {
+                                        tabContent[i].style.display = "none";
+                                }
+
+                                let tabLinks =
+                                        document.getElementsByClassName(
+                                                "tab-links",
+                                        );
+                                for (i = 0; i < tabLinks.length; i++) {
+                                        tabLinks[i].className = tabLinks[
+                                                i
+                                        ].className.replace(" active", "");
+                                }
+
+                                document.getElementById(tabID).style.display =
+                                        "block";
+                                event.currentTarget.className += " active";
+                        }
+                </script>
         </head>
         <header>
                 <h3 id="navbar-logo">Zimmer</h3>
@@ -191,6 +216,8 @@
                         </div>
                 </div>
         </div>
+        <div class="snackbar" id="snackbar-success">joined class!</div>
+        <div class="snackbar" id="snackbar-warning">
         <script src="/universal_actions.js" type="module"></script>
-        <script src="/classes/classes.js"></script>
+        <script src="/classes/classes.js" type="module"></script>
 </html>
