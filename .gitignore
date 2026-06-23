@@ -1,3 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment Variables (Secrets)
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build output
+dist/
+build/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# other
 .ideas.md
-/app/icons
