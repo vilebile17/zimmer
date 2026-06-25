@@ -1,4 +1,20 @@
-import { snackbarSuccess, snackbarWarning } from "/functions.js";
+function openTab(event, tabID) {
+        let tabContent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+        }
+
+        let tabLinks = document.getElementsByClassName("tab-links");
+        for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].className = tabLinks[i].className.replace(
+                        " active",
+                        "",
+                );
+        }
+
+        document.getElementById(tabID).style.display = "block";
+        event.currentTarget.className += " active";
+}
 
 function createDefaultTab(text, id) {
         const outerDiv = document.createElement("div");
@@ -100,6 +116,8 @@ async function createAllStudents() {
         }
 
         const studentsDiv = document.createElement("div");
+        studentsDiv.id = "students";
+        studentsDiv.classList.add("tab-content");
         studentsDiv.classList.add("card");
 
         for (const s of students) {
@@ -111,49 +129,7 @@ async function createAllStudents() {
                 studentPoint.appendChild(studentName);
                 studentsDiv.appendChild(studentPoint);
         }
-
-        const leaveButton = document.createElement("button");
-        leaveButton.textContent = "Leave";
-        leaveButton.id = "leave-button";
-        leaveButton.onclick = leaveClass;
-        const grandadDiv = document.createElement("div");
-        grandadDiv.id = "students";
-        grandadDiv.className = "tab-content";
-
-        grandadDiv.appendChild(studentsDiv);
-        grandadDiv.appendChild(leaveButton);
-        document.body.insertBefore(
-                grandadDiv,
-                document.getElementsByClassName("modal")[0],
-        );
-}
-
-async function leaveClass() {
-        if (!confirm("Are you sure you want to leave?")) {
-                return;
-        }
-
-        let response = await fetch("/api/users", {
-                credentials: "include",
-        });
-        const user = await response.json();
-        const classID = getClassID();
-
-        response = await fetch(`/api/classes/${classID}/members/${user.id}`, {
-                credentials: "include",
-                method: "DELETE",
-        });
-        if (!response.ok) {
-                const error = await response.json();
-                snackbarWarning(error.error);
-                return;
-        }
-
-        snackbarSuccess("Successfully left class");
-        setTimeout(() => {
-                window.location.replace("/dashboard");
-                window.location.href = "/dashboard";
-        }, 2000);
+        document.body.insertBefore(studentsDiv, null);
 }
 
 async function createAllResources() {

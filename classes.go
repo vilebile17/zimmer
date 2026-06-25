@@ -224,7 +224,7 @@ func (cfg *apiConfig) removeFromClass(response http.ResponseWriter, request *htt
 		return
 	}
 
-	userID, err := cfg.getUserID(request)
+	userID, err := cfg.getUserIDFromHeader(request.Header)
 	if err != nil {
 		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
 		return
