@@ -200,6 +200,7 @@ async function main() {
         const numAss = await response.json();
 
         document.getElementById("username").textContent = userData.name;
+        document.getElementById("username").href = `/u/${userData.id}`;
         document.getElementById("numAssignments").textContent = numAss.num;
 
         writeNumClasses(classData);

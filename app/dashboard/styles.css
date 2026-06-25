@@ -48,3 +48,12 @@ b {
 #class-buttons > button {
         margin: 0.5rem;
 }
+
+#username {
+        color: var(--text);
+        font-weight: bold;
+}
+
+#username:hover {
+        color: var(--secondary);
+}

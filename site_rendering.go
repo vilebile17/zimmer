@@ -18,7 +18,7 @@ func (cfg *apiConfig) renderClass(response http.ResponseWriter, request *http.Re
 
 	class, err := cfg.dbQueries.GetClass(request.Context(), classID)
 	if err != nil {
-		respondWithErrorPage(response, request, "No class was found with that ID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "No class was found with that ID", err, http.StatusNotFound)
 		return
 	}
 
@@ -72,34 +72,31 @@ func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Req
 
 	user, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
 	if err != nil {
-		respondWithErrorPage(response, request, "Couldn't find a user with that ID", err, http.StatusBadRequest)
+		respondWithErrorPage(response, request, "Couldn't find a user with that ID", err, http.StatusNotFound)
 		return
 	}
 
-	response.Header().Set("Content-Type", "text/html")
+	tmpl, err := template.ParseFiles("./app/users/index.html")
+	if err != nil {
+		respondWithErrorPage(response, request, "Failed to retrieve the html file from the /app folder", err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.WriteHeader(http.StatusOK)
-	var data []byte
-	response.Write(fmt.Appendf(data, `
-	<!doctype html>
-<html>
-        <head>
-                <meta charset="utf-8" />
-                <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1"
-                />
-                <title>Bester Zimmer</title>
-                <link
-                        rel="stylesheet"
-                        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-                />
-                <link href="/default.css" rel="stylesheet" />
-        </head>
-        <body>
-        	This is the user profile for the one and only <b>%v</b>
-        </body>
-</html>
-	`, user.Name))
+
+	err = tmpl.Execute(response, struct {
+		Username string
+		JoinedAt string
+		Bio      string
+	}{
+		Username: user.Name,
+		JoinedAt: user.CreatedAt.Format("02/01/2006"),
+		Bio:      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec non tempus diam. Integer bibendum odio nec tristique varius. Praesent euismod tempus urna, eget hendrerit mi dapibus ac. Quisque sodales porttitor.",
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (cfg *apiConfig) renderAssignment(response http.ResponseWriter, request *http.Request) {

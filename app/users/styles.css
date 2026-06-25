@@ -1,0 +1,43 @@
+@import url("/default.css");
+
+html {
+        font-family: Inter;
+        background-color: var(--dark-bg);
+}
+
+#user-info {
+        text-align: center;
+        color: var(--text-muted);
+}
+
+b {
+        color: var(--text);
+}
+
+.user-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 1rem;
+        text-align: left;
+}
+
+.user-card > svg,
+.user-card > #user-info {
+        flex: 1;
+}
+
+.user-card > svg {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+}
+
+.icon-tabler-user {
+        color: var(--text);
+}
+
+#username {
+        text-align: center;
+}
