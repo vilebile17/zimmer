@@ -198,6 +198,13 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		return
 	}
 
+	var grade string
+	if submission.Grade.Valid {
+		grade = fmt.Sprintf("%v", submission.Grade.Int32)
+	} else {
+		grade = ""
+	}
+
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.WriteHeader(http.StatusOK)
 
@@ -205,6 +212,7 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		AssignmentName string
 		AssignmentID   string
 		StudentName    string
+		OldGrade       string
 		ClassID        string
 		SubmissionID   string
 		Work           string
@@ -213,6 +221,7 @@ func (cfg *apiConfig) renderSubmission(response http.ResponseWriter, request *ht
 		AssignmentName: submission.AssignmentTitle,
 		AssignmentID:   submission.AssignmentID.String(),
 		StudentName:    submission.UserName,
+		OldGrade:       grade,
 		ClassID:        submission.ClassID.String(),
 		SubmissionID:   submissionID.String(),
 		Work:           submission.Answers.String,

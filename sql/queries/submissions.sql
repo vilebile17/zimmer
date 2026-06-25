@@ -23,7 +23,7 @@ ORDER BY submissions.updated_at ASC;
 SELECT submissions.id, submissions.created_at, submissions.updated_at,
         submissions.user_id as user_id, submissions.answers, users.name as user_name,
         assignments.title as assignment_title, classes.id as class_id,
-        assignments.id as assignment_id FROM submissions
+        assignments.id as assignment_id, submissions.score as grade FROM submissions
 INNER JOIN assignments ON submissions.assignment_id = assignments.id
 INNER JOIN users ON submissions.user_id = users.id
 INNER JOIN classes ON assignments.class_id = classes.id

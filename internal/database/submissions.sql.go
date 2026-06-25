@@ -51,7 +51,7 @@ const getSubmission = `-- name: GetSubmission :one
 SELECT submissions.id, submissions.created_at, submissions.updated_at,
         submissions.user_id as user_id, submissions.answers, users.name as user_name,
         assignments.title as assignment_title, classes.id as class_id,
-        assignments.id as assignment_id FROM submissions
+        assignments.id as assignment_id, submissions.score as grade FROM submissions
 INNER JOIN assignments ON submissions.assignment_id = assignments.id
 INNER JOIN users ON submissions.user_id = users.id
 INNER JOIN classes ON assignments.class_id = classes.id
@@ -68,6 +68,7 @@ type GetSubmissionRow struct {
 	AssignmentTitle string
 	ClassID         uuid.UUID
 	AssignmentID    uuid.UUID
+	Grade           sql.NullInt32
 }
 
 func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (GetSubmissionRow, error) {
@@ -83,6 +84,7 @@ func (q *Queries) GetSubmission(ctx context.Context, id uuid.UUID) (GetSubmissio
 		&i.AssignmentTitle,
 		&i.ClassID,
 		&i.AssignmentID,
+		&i.Grade,
 	)
 	return i, err
 }
