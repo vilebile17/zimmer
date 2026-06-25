@@ -56,7 +56,8 @@ function setUpJoinModal() {
                         modal.style.display = "none";
                         snackbarSuccess("successfully joined class!");
                         setTimeout(() => {
-                                location.reload();
+                                window.location.replace(`/c/${classID.value}`);
+                                window.location.href = `/c/${classID.value}`;
                         }, 1000);
                 } else {
                         const data = await response.json();

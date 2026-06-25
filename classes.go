@@ -224,7 +224,7 @@ func (cfg *apiConfig) removeFromClass(response http.ResponseWriter, request *htt
 		return
 	}
 
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "couldn't get userID from the auth header", err, http.StatusUnauthorized)
 		return
@@ -250,5 +250,25 @@ func (cfg *apiConfig) removeFromClass(response http.ResponseWriter, request *htt
 	}
 
 	fmt.Printf("Successfully removed user %v from the class %d\n", userToRemove, classID)
+	response.WriteHeader(http.StatusOK)
+}
+
+func (cfg *apiConfig) deleteClass(response http.ResponseWriter, request *http.Request) {
+	statusCode, err := cfg.teacherActions(request)
+	if err != nil {
+		respondWithError(response, request, "Couldn't verify that you're the teacher", err, statusCode)
+		return
+	}
+
+	classID, err := uuid.Parse(request.PathValue("classID"))
+	if err != nil {
+		respondWithError(response, request, "Invalid classID", err, http.StatusBadRequest)
+		return
+	}
+
+	if err = cfg.dbQueries.DeleteClass(request.Context(), classID); err != nil {
+		respondWithError(response, request, "There was an error deleting the class", err, http.StatusBadRequest)
+		return
+	}
 	response.WriteHeader(http.StatusOK)
 }

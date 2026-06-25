@@ -54,3 +54,7 @@ RETURNING *;
 -- name: RemoveUserFromClass :exec
 DELETE FROM students_classes
 WHERE student_id = $1 AND class_id = $2;
+
+-- name: DeleteClass :exec
+DELETE FROM classes
+WHERE id = $1;

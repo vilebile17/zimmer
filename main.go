@@ -78,6 +78,7 @@ func main() {
 	mux.HandleFunc("POST /api/classes", cfg.createClassHandler)
 	mux.HandleFunc("GET /api/classes", cfg.getClassesForUserHandler)
 	mux.HandleFunc("GET /api/classes/{classID}", cfg.getClassHandler)
+	mux.HandleFunc("DELETE /api/classes/{classID}", cfg.deleteClass)
 	mux.HandleFunc("POST /api/classes/{classID}/members", cfg.joinClassHandler)
 	mux.HandleFunc("DELETE /api/classes/{classID}/members/{userID}", cfg.removeFromClass)
 	mux.HandleFunc("GET /api/classes/{classID}/members", cfg.getUsersForClassHandler)

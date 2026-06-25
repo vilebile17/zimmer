@@ -1,33 +1,27 @@
-function openTab(event, tabID) {
-        let tabContent = document.getElementsByClassName("tab-content");
-        for (let i = 0; i < tabContent.length; i++) {
-                tabContent[i].style.display = "none";
-        }
-
-        let tabLinks = document.getElementsByClassName("tab-links");
-        for (i = 0; i < tabLinks.length; i++) {
-                tabLinks[i].className = tabLinks[i].className.replace(
-                        " active",
-                        "",
-                );
-        }
-
-        document.getElementById(tabID).style.display = "block";
-        event.currentTarget.className += " active";
-}
+import { snackbarSuccess, snackbarWarning } from "/functions.js";
 
 function createDefaultTab(text, id) {
         const outerDiv = document.createElement("div");
-        outerDiv.classList.add("card");
         outerDiv.classList.add("tab-content");
         outerDiv.id = id;
 
+        const innerDiv = document.createElement("div");
+        innerDiv.classList.add("card");
         const unorderedList = document.createElement("ul");
         const textDOM = document.createElement("p");
+
         textDOM.classList.add("card-heading");
         textDOM.textContent = text;
         unorderedList.appendChild(textDOM);
-        outerDiv.appendChild(unorderedList);
+
+        innerDiv.appendChild(unorderedList);
+        outerDiv.appendChild(innerDiv);
+
+        if (id === "students") {
+                console.log("adding button");
+                createDangerButton(outerDiv);
+        }
+
         return outerDiv;
 }
 
@@ -104,6 +98,21 @@ async function createAllAssignments() {
         document.body.insertBefore(assignmentsDiv, null);
 }
 
+async function isUserTeacher() {
+        const classID = getClassID();
+        let response = await fetch(`/api/classes/${classID}`, {
+                credentials: "include",
+        });
+        const classObj = await response.json();
+
+        response = await fetch(`/api/users`, {
+                credentials: "include",
+        });
+        const user = await response.json();
+
+        return classObj.TeacherID === user.id;
+}
+
 async function createAllStudents() {
         const students = (await (await fetchMembers()).json()).students;
 
@@ -116,8 +125,6 @@ async function createAllStudents() {
         }
 
         const studentsDiv = document.createElement("div");
-        studentsDiv.id = "students";
-        studentsDiv.classList.add("tab-content");
         studentsDiv.classList.add("card");
 
         for (const s of students) {
@@ -129,7 +136,87 @@ async function createAllStudents() {
                 studentPoint.appendChild(studentName);
                 studentsDiv.appendChild(studentPoint);
         }
-        document.body.insertBefore(studentsDiv, null);
+
+        const grandadDiv = document.createElement("div");
+        grandadDiv.appendChild(studentsDiv);
+        createDangerButton(grandadDiv);
+        document.body.insertBefore(
+                grandadDiv,
+                document.getElementsByClassName("modal")[0],
+        );
+}
+
+async function createDangerButton(outerDiv) {
+        const leaveButton = document.createElement("button");
+        leaveButton.id = "leave-button";
+
+        if (await isUserTeacher()) {
+                leaveButton.textContent = "Delete Class";
+                leaveButton.onclick = deleteClass;
+        } else {
+                leaveButton.textContent = "Leave Class";
+                leaveButton.onclick = leaveClass;
+        }
+
+        outerDiv.id = "students";
+        outerDiv.className = "tab-content";
+
+        outerDiv.appendChild(leaveButton);
+}
+
+async function leaveClass() {
+        if (!confirm("Are you sure you want to leave this class?")) {
+                return;
+        }
+
+        let response = await fetch("/api/users", {
+                credentials: "include",
+        });
+        const user = await response.json();
+        const classID = getClassID();
+
+        response = await fetch(`/api/classes/${classID}/members/${user.id}`, {
+                credentials: "include",
+                method: "DELETE",
+        });
+        if (!response.ok) {
+                const error = await response.json();
+                snackbarWarning(error.error);
+                return;
+        }
+
+        snackbarSuccess("Successfully left class");
+        setTimeout(() => {
+                window.location.replace("/dashboard");
+                window.location.href = "/dashboard";
+        }, 2000);
+}
+
+async function deleteClass() {
+        if (
+                !confirm(
+                        "Are you sure that you want to delete this class?\nThis action CANNOT be undone.",
+                )
+        ) {
+                return;
+        }
+
+        const classID = getClassID();
+        const response = await fetch(`/api/classes/${classID}`, {
+                credentials: "include",
+                method: "DELETE",
+        });
+        if (!response.ok) {
+                const error = await response.json();
+                snackbarWarning(error.error);
+                return;
+        }
+
+        snackbarSuccess("Successfully deleted class");
+        setTimeout(() => {
+                window.location.replace("/dashboard");
+                window.location.href = "/dashboard";
+        }, 2000);
 }
 
 async function createAllResources() {

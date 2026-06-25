@@ -44,6 +44,16 @@ func (q *Queries) CreateClass(ctx context.Context, arg CreateClassParams) (Class
 	return i, err
 }
 
+const deleteClass = `-- name: DeleteClass :exec
+DELETE FROM classes
+WHERE id = $1
+`
+
+func (q *Queries) DeleteClass(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteClass, id)
+	return err
+}
+
 const getClass = `-- name: GetClass :one
 SELECT classes.id, classes.created_at, classes.updated_at,
         classes.name, classes.teacher_id, classes.allow_joining, users.name as teacher_name

@@ -72,7 +72,7 @@ func (cfg *apiConfig) createResourceHandler(response http.ResponseWriter, reques
 		Title:     resource.Title,
 		Content:   resource.Content.String,
 	}, http.StatusCreated)
-	fmt.Printf("a resource was created for class %v", classID)
+	fmt.Printf("a resource was created for class %v\n", classID)
 }
 
 func (cfg *apiConfig) getResourceHandler(response http.ResponseWriter, request *http.Request) {
@@ -164,7 +164,7 @@ func (cfg *apiConfig) getResourcesForClassHandler(response http.ResponseWriter, 
 		})
 	}
 	respondWithJSON(response, request, payload, http.StatusOK)
-	fmt.Printf("Just got the resources for the class %v", classID)
+	fmt.Printf("Just got the resources for the class %v\n", classID)
 }
 
 func (cfg *apiConfig) updateResourceHandler(response http.ResponseWriter, request *http.Request) {

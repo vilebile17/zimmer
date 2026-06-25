@@ -14,6 +14,31 @@
                 <link href="/default.css" rel="stylesheet" />
                 <link href="/classes/styles.css" rel="stylesheet" />
                 <script src="/set_theme.js"></script>
+                <script>
+                        function openTab(event, tabID) {
+                                let tabContent =
+                                        document.getElementsByClassName(
+                                                "tab-content",
+                                        );
+                                for (let i = 0; i < tabContent.length; i++) {
+                                        tabContent[i].style.display = "none";
+                                }
+
+                                let tabLinks =
+                                        document.getElementsByClassName(
+                                                "tab-links",
+                                        );
+                                for (i = 0; i < tabLinks.length; i++) {
+                                        tabLinks[i].className = tabLinks[
+                                                i
+                                        ].className.replace(" active", "");
+                                }
+
+                                document.getElementById(tabID).style.display =
+                                        "block";
+                                event.currentTarget.className += " active";
+                        }
+                </script>
         </head>
         <header>
                 <h3 id="navbar-logo">Zimmer</h3>
@@ -173,10 +198,14 @@
                         </button>
                 </div>
         </div>
-        <div class="card tab-content" id="announcements">
-                <ul>
-                        <p class="card-heading">No annoucements yet...</p>
-                </ul>
+        <div class="tab-content" id="announcements">
+                <div class="card">
+                        <ul>
+                                <p class="card-heading">
+                                        No annoucements yet...
+                                </p>
+                        </ul>
+                </div>
         </div>
         <div id="resources-modal" class="modal">
                 <div class="modal-content">
@@ -191,6 +220,8 @@
                         </div>
                 </div>
         </div>
+        <div class="snackbar" id="snackbar-warning">!</div>
+        <div class="snackbar" id="snackbar-success">:)</div>
         <script src="/universal_actions.js" type="module"></script>
-        <script src="/classes/classes.js"></script>
+        <script src="/classes/classes.js" type="module"></script>
 </html>
