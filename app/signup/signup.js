@@ -1,5 +1,4 @@
 import { snackbarWarning, snackbarDanger } from "/functions.js";
-import validator from "validator";
 
 async function signup() {
         let email = document.getElementById("email").value;
@@ -11,11 +10,6 @@ async function signup() {
                 snackbarWarning(
                         "Name, email and password parameters cannot be empty!",
                 );
-                return;
-        }
-
-        if (!validator.isEmail(email)) {
-                snackbarWarning("Invalid email format");
                 return;
         }
 
