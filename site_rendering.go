@@ -92,7 +92,7 @@ func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Req
 	}{
 		Username: user.Name,
 		JoinedAt: user.CreatedAt.Format("02/01/2006"),
-		Bio:      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec non tempus diam. Integer bibendum odio nec tristique varius. Praesent euismod tempus urna, eget hendrerit mi dapibus ac. Quisque sodales porttitor.",
+		Bio:      user.Bio,
 	})
 	if err != nil {
 		fmt.Println(err)

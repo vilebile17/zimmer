@@ -249,9 +249,8 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 		newEmail = dbUser.Email
 	}
 
-	newUser, err := cfg.dbQueries.UpdateUser(request.Context(), database.UpdateUserParams{
+	newUser, err := cfg.dbQueries.UpdateUserImportant(request.Context(), database.UpdateUserImportantParams{
 		ID:             userID,
-		Name:           newName,
 		Email:          newEmail,
 		HashedPassword: newPassword,
 	})
@@ -358,4 +357,63 @@ func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *h
 	respondWithJSON(response, request, Farewell{fmt.Sprintf("Goodbye %v, it's a shame to see you go :(", user.Name)}, http.StatusOK)
 	cfg.activeUsers.Add(-1)
 	fmt.Printf("User %v (%v) just left :(", user.Name, user.Email)
+}
+
+func (cfg *apiConfig) updateUserProfileHandler(response http.ResponseWriter, request *http.Request) {
+	userID, err := cfg.getUserID(request)
+	if err != nil {
+		respondWithError(response, request, "unable to get the userID", err, http.StatusUnauthorized)
+		return
+	}
+
+	dbUser, err := cfg.dbQueries.GetUserFromID(request.Context(), userID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get a user from the database with that ID", err, http.StatusBadRequest)
+		return
+	}
+
+	type Params struct {
+		Bio  string `json:"bio"`
+		Name string `json:"name"`
+	}
+
+	var params Params
+	decoder := json.NewDecoder(request.Body)
+	err = decoder.Decode(&params)
+	if err != nil {
+		respondWithError(response, request, "There was an error decoding the parameters ({'bio':string, 'name':string})", err, http.StatusBadRequest)
+		return
+	}
+
+	var newBio string
+	var newName string
+	if params.Bio != "" {
+		newBio = params.Bio
+	} else {
+		newBio = dbUser.Bio
+	}
+	if params.Name != "" {
+		newName = params.Name
+	} else {
+		newName = dbUser.Name
+	}
+
+	newUser, err := cfg.dbQueries.UpdateUserLessImportant(request.Context(), database.UpdateUserLessImportantParams{
+		ID:   userID,
+		Name: newName,
+		Bio:  newBio,
+	})
+	if err != nil {
+		respondWithError(response, request, "couldn't update user's information in the database...", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, User{
+		ID:        newUser.ID,
+		CreatedAt: newUser.CreatedAt,
+		UpdatedAt: newUser.UpdatedAt,
+		Name:      newUser.Name,
+		Email:     newUser.Email,
+	}, http.StatusCreated)
+	fmt.Println("Just updated a user's public info")
 }

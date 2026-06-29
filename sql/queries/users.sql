@@ -27,12 +27,11 @@ WHERE id IN (
 )
 ORDER BY name;
 
--- name: UpdateUser :one
+-- name: UpdateUserImportant :one
 UPDATE users
 SET
-        name = $2,
-        email = $3,
-        hashed_password = $4,
+        email = $2,
+        hashed_password = $3,
         updated_at = NOW()
 WHERE id = $1
 RETURNING *;
@@ -43,3 +42,12 @@ WHERE id = $1;
 
 -- name: GetTotalUserCount :one
 SELECT COUNT(*) FROM users;
+
+-- name: UpdateUserLessImportant :one
+UPDATE users
+SET
+        name = $2,
+        bio = $3,
+        updated_at = NOW()
+WHERE id = $1
+RETURNING *;
