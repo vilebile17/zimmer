@@ -38,6 +38,26 @@ b {
         color: var(--text);
 }
 
+#user-id,
+#edit-button,
 #username {
         text-align: center;
+}
+
+#holder-div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.input-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 1rem;
+}
+
+.input-group label {
+        white-space: nowrap;
 }

@@ -19,6 +19,7 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 	Name      string    `json:"name"`
+	Bio       string    `json:"bio"`
 }
 
 type UserAndJWT struct {
@@ -27,6 +28,7 @@ type UserAndJWT struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 	Name      string    `json:"name"`
+	Bio       string    `json:"bio"`
 	Token     string    `json:"token"`
 }
 
@@ -84,6 +86,7 @@ func (cfg *apiConfig) createUserHandler(response http.ResponseWriter, request *h
 		UpdatedAt: dbUser.UpdatedAt,
 		Email:     dbUser.Email,
 		Name:      dbUser.Name,
+		Bio:       dbUser.Bio,
 	}, http.StatusCreated)
 	cfg.activeUsers.Add(1)
 }
@@ -160,6 +163,7 @@ func (cfg *apiConfig) loginHandler(response http.ResponseWriter, request *http.R
 		UpdatedAt: dbUser.UpdatedAt,
 		Email:     dbUser.Email,
 		Name:      dbUser.Name,
+		Bio:       dbUser.Bio,
 		Token:     token,
 	}, http.StatusOK)
 	fmt.Printf("User %v (%v) just logged in\n", dbUser.Name, dbUser.Email)
@@ -264,6 +268,7 @@ func (cfg *apiConfig) updateUserHandler(response http.ResponseWriter, request *h
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 		Name:      newUser.Name,
+		Bio:       dbUser.Bio,
 		Email:     newUser.Email,
 	}, http.StatusCreated)
 	fmt.Printf("Just updated user %v to have a name of %v, an email of %v and a hashed password of... Wait, that's a secret :)\n", userID, newName, newEmail)
@@ -328,6 +333,7 @@ func (cfg *apiConfig) getUserFromCookie(response http.ResponseWriter, request *h
 		Name:      user.Name,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
+		Bio:       user.Bio,
 		Email:     user.Email,
 	}, http.StatusOK)
 }
@@ -414,6 +420,7 @@ func (cfg *apiConfig) updateUserProfileHandler(response http.ResponseWriter, req
 		UpdatedAt: newUser.UpdatedAt,
 		Name:      newUser.Name,
 		Email:     newUser.Email,
+		Bio:       newUser.Bio,
 	}, http.StatusCreated)
-	fmt.Println("Just updated a user's public info")
+	fmt.Printf("Just updated a user's public info: %v and %v\n", newUser.Name, newUser.Bio)
 }

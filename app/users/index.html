@@ -59,6 +59,54 @@
                                 <p id="bio">{{.Bio}}</p>
                         </div>
                 </div>
+                <p class="mini-text" id="user-id">ID: {{.ID}}</p>
+                <div id="modal" class="modal">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <span class="close" id="close-modal"
+                                                >&times;</span
+                                        >
+                                        <h2 id="modal-title">Edit Profile</h2>
+                                </div>
+                                <div class="modal-body">
+                                        <div class="input-group">
+                                                <label
+                                                        for="name-input"
+                                                        class="mini-text"
+                                                        type="text"
+                                                        name="name"
+                                                        >New Name:
+                                                </label>
+                                                <input
+                                                        id="name-input"
+                                                        value="{{.Username}}"
+                                                />
+                                        </div>
+                                        <div class="input-group">
+                                                <label
+                                                        for="bio-input"
+                                                        class="mini-text"
+                                                >
+                                                        New Bio:
+                                                </label>
+                                                <input
+                                                        type="text"
+                                                        name="bio"
+                                                        id="bio-input"
+                                                        value="{{.Bio}}"
+                                                />
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                        <button id="send-the-update-button">
+                                                Update Profile!
+                                        </button>
+                                </div>
+                        </div>
+                </div>
         </body>
+        <div class="snackbar" id="snackbar-success">Updated Successfully!</div>
+        <div class="snackbar" id="snackbar-danger">Couldn't update profile</div>
         <script src="/universal_actions.js" type="module"></script>
+        <script src="/users/users.js" type="module"></script>
 </html>

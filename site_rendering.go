@@ -89,10 +89,12 @@ func (cfg *apiConfig) renderUser(response http.ResponseWriter, request *http.Req
 		Username string
 		JoinedAt string
 		Bio      string
+		ID       string
 	}{
 		Username: user.Name,
 		JoinedAt: user.CreatedAt.Format("02/01/2006"),
 		Bio:      user.Bio,
+		ID:       user.ID.String(),
 	})
 	if err != nil {
 		fmt.Println(err)
