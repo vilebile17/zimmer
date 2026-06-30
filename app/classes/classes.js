@@ -58,6 +58,14 @@ async function fetchResources() {
         return response;
 }
 
+async function fetchAnnouncements() {
+        const classID = getClassID();
+        const response = await fetch(`/api/classes/${classID}/announcements`, {
+                credentials: "include",
+        });
+        return response;
+}
+
 function addCard(assignment, grandadDiv) {
         const assignmentDiv = document.createElement("div");
         assignmentDiv.classList.add("card");
@@ -260,7 +268,7 @@ async function createAllResources() {
                 const title = document.createElement("a");
                 title.textContent = r.title;
                 title.classList.add("card-heading");
-                title.onclick = showResource(classID, r.id);
+                title.onclick = showClassContent(classID, r.id, "resources");
                 resourceDiv.appendChild(title);
 
                 const createdAt = document.createElement("p");
@@ -274,24 +282,71 @@ async function createAllResources() {
         document.body.insertBefore(grandadDiv, null);
 }
 
-function showResource(classID, resourceID) {
+async function createAllAnnouncements() {
+        const announcements = await (await fetchAnnouncements()).json();
+        const classID = getClassID();
+
+        if (!announcements) {
+                document.body.insertBefore(
+                        createDefaultTab(
+                                "No announcements yet...",
+                                "announcements",
+                        ),
+                        null,
+                );
+                return;
+        }
+
+        const grandadDiv = document.createElement("div");
+        grandadDiv.id = "announcements";
+        grandadDiv.classList.add("tab-content");
+
+        for (const a of announcements) {
+                const announcementDiv = document.createElement("div");
+                announcementDiv.classList.add("card");
+
+                const title = document.createElement("a");
+                title.textContent = a.title;
+                title.classList.add("card-heading");
+                title.onclick = showClassContent(
+                        classID,
+                        a.id,
+                        "announcements",
+                );
+                announcementDiv.appendChild(title);
+
+                const createdAt = document.createElement("p");
+                createdAt.textContent = `Posted on ${new Date(a.created_at).toUTCString()}`;
+                createdAt.classList.add("mini-text");
+                announcementDiv.appendChild(createdAt);
+
+                grandadDiv.appendChild(announcementDiv);
+        }
+
+        document.body.insertBefore(grandadDiv, null);
+}
+
+function showClassContent(classID, contentID, contentType) {
         return async function () {
-                const modal = document.getElementById("resources-modal");
+                const modal = document.getElementById("class-content-modal");
                 modal.style.display = "block";
 
                 const response = await fetch(
-                        `/api/classes/${classID}/resources/${resourceID}`,
+                        `/api/classes/${classID}/${contentType}/${contentID}`,
                         {
                                 credentials: "include",
                         },
                 );
-                const resource = await response.json();
+                const cc = await response.json();
 
-                const modalHeader = document.getElementById("resource-title");
-                modalHeader.textContent = resource.title;
-                const modalContent =
-                        document.getElementById("resource-content");
-                modalContent.textContent = resource.content;
+                const modalHeader = document.getElementById(
+                        "class-content-title",
+                );
+                modalHeader.textContent = cc.title;
+                const modalContent = document.getElementById(
+                        "class-content-content",
+                );
+                modalContent.textContent = cc.content;
         };
 }
 
@@ -331,9 +386,9 @@ async function createAssignment() {
         }, 2000);
 }
 
-function setUpResourcesModal() {
-        var modal = document.getElementById("resources-modal");
-        var span = document.getElementById("resources-close");
+function setUpClassContentModal() {
+        var modal = document.getElementById("class-content-modal");
+        var span = document.getElementById("class-content-close");
 
         span.onclick = function () {
                 modal.style.display = "none";
@@ -363,7 +418,8 @@ async function main() {
         await createAllAssignments();
         await createAllStudents();
         await createAllResources();
-        setUpResourcesModal();
+        await createAllAnnouncements();
+        setUpClassContentModal();
         setUpCreateAssignmentModal();
 
         document.getElementById("default-tab").click();
