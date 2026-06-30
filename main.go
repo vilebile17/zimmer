@@ -99,8 +99,14 @@ func main() {
 	// resource stuff
 	mux.HandleFunc("POST /api/classes/{classID}/resources", cfg.createResourceHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/resources", cfg.getResourcesForClassHandler)
-	mux.HandleFunc("GET /api/classes/{classID}/resources/{resourceID}", cfg.getResourceHandler)
-	mux.HandleFunc("PUT /api/classes/{classID}/resources/{resourceID}", cfg.updateResourceHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/resources/{contentID}", cfg.getResourceHandler)
+	mux.HandleFunc("PUT /api/classes/{classID}/resources/{contentID}", cfg.updateClassContentHandler)
+
+	// announcement stuff
+	mux.HandleFunc("POST /api/classes/{classID}/announcements", cfg.createAnnouncementHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/announcements", cfg.getAnnouncementsForClassHandler)
+	mux.HandleFunc("GET /api/classes/{classID}/announcements/{contentID}", cfg.getAnnouncementHandler)
+	mux.HandleFunc("PUT /api/classes/{classID}/announcements/{contentID}", cfg.updateClassContentHandler)
 
 	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", cfg.port)
 	if err := server.ListenAndServe(); err != nil {

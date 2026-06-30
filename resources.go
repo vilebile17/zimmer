@@ -11,16 +11,28 @@ import (
 	"github.com/vilebile17/zimmer/internal/database"
 )
 
-type Resource struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	ClassID   uuid.UUID `json:"class_id"`
-	Title     string    `json:"title"`
-	Content   string    `json:"content"`
+const ResourceType = "resource"
+const AnnouncementType = "announcement"
+
+type ClassContent struct {
+	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	ContentType string    `json:"content_type"`
+	ClassID     uuid.UUID `json:"class_id"`
+	Title       string    `json:"title"`
+	Content     string    `json:"content"`
 }
 
 func (cfg *apiConfig) createResourceHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.createClassContentHandler(response, request, ResourceType)
+}
+
+func (cfg *apiConfig) createAnnouncementHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.createClassContentHandler(response, request, AnnouncementType)
+}
+
+func (cfg *apiConfig) createClassContentHandler(response http.ResponseWriter, request *http.Request, contentType string) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
 		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
@@ -51,9 +63,10 @@ func (cfg *apiConfig) createResourceHandler(response http.ResponseWriter, reques
 		return
 	}
 
-	resource, err := cfg.dbQueries.CreateResource(request.Context(), database.CreateResourceParams{
-		ClassID: classID,
-		Title:   params.Title,
+	cc, err := cfg.dbQueries.CreateClassContent(request.Context(), database.CreateClassContentParams{
+		ClassID:     classID,
+		Title:       params.Title,
+		ContentType: contentType,
 		Content: sql.NullString{
 			String: params.Content,
 			Valid:  params.Content != "",
@@ -64,25 +77,33 @@ func (cfg *apiConfig) createResourceHandler(response http.ResponseWriter, reques
 		return
 	}
 
-	respondWithJSON(response, request, Resource{
-		ID:        resource.ID,
-		CreatedAt: resource.CreatedAt,
-		UpdatedAt: resource.UpdatedAt,
-		ClassID:   resource.ClassID,
-		Title:     resource.Title,
-		Content:   resource.Content.String,
+	respondWithJSON(response, request, ClassContent{
+		ID:          cc.ID,
+		CreatedAt:   cc.CreatedAt,
+		UpdatedAt:   cc.UpdatedAt,
+		ContentType: cc.ContentType,
+		ClassID:     cc.ClassID,
+		Title:       cc.Title,
+		Content:     cc.Content.String,
 	}, http.StatusCreated)
-	fmt.Printf("a resource was created for class %v\n", classID)
+	fmt.Printf("a class content was created for class %v\n", classID)
 }
 
 func (cfg *apiConfig) getResourceHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.getClassContentHandler(response, request, ResourceType)
+}
+func (cfg *apiConfig) getAnnouncementHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.getClassContentHandler(response, request, AnnouncementType)
+}
+
+func (cfg *apiConfig) getClassContentHandler(response http.ResponseWriter, request *http.Request, contentType string) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
 		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
 		return
 	}
 
-	resourceID, err := uuid.Parse(request.PathValue("resourceID"))
+	contentID, err := uuid.Parse(request.PathValue("contentID"))
 	if err != nil {
 		respondWithError(response, request, "There was an error parsing that resourceID", err, http.StatusBadRequest)
 		return
@@ -104,23 +125,30 @@ func (cfg *apiConfig) getResourceHandler(response http.ResponseWriter, request *
 		return
 	}
 
-	resource, err := cfg.dbQueries.GetResource(request.Context(), resourceID)
+	cc, err := cfg.dbQueries.GetClassContent(request.Context(), contentID)
 	if err != nil {
 		respondWithError(response, request, "There was an error getting the resource from the database", err, http.StatusBadRequest)
 		return
 	}
 
-	respondWithJSON(response, request, Resource{
-		ID:        resource.ID,
-		CreatedAt: resource.CreatedAt,
-		UpdatedAt: resource.UpdatedAt,
-		ClassID:   resource.ClassID,
-		Title:     resource.Title,
-		Content:   resource.Content.String,
+	respondWithJSON(response, request, ClassContent{
+		ID:        cc.ID,
+		CreatedAt: cc.CreatedAt,
+		UpdatedAt: cc.UpdatedAt,
+		ClassID:   cc.ClassID,
+		Title:     cc.Title,
+		Content:   cc.Content.String,
 	}, http.StatusOK)
 }
 
 func (cfg *apiConfig) getResourcesForClassHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.getClassContentForClassHandler(response, request, ResourceType)
+}
+func (cfg *apiConfig) getAnnouncementsForClassHandler(response http.ResponseWriter, request *http.Request) {
+	cfg.getClassContentForClassHandler(response, request, AnnouncementType)
+}
+
+func (cfg *apiConfig) getClassContentForClassHandler(response http.ResponseWriter, request *http.Request, contentType string) {
 	classID, err := uuid.Parse(request.PathValue("classID"))
 	if err != nil {
 		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
@@ -143,9 +171,12 @@ func (cfg *apiConfig) getResourcesForClassHandler(response http.ResponseWriter, 
 		return
 	}
 
-	resources, err := cfg.dbQueries.GetResourcesForClass(request.Context(), classID)
+	resources, err := cfg.dbQueries.GetClassContentForClass(request.Context(), database.GetClassContentForClassParams{
+		ContentType: contentType,
+		ClassID:     classID,
+	})
 	if err != nil {
-		respondWithError(response, request, "Couldn't get the classes from the database", err, http.StatusBadRequest)
+		respondWithError(response, request, "Couldn't get the content from the database", err, http.StatusBadRequest)
 		return
 	}
 
@@ -164,13 +195,13 @@ func (cfg *apiConfig) getResourcesForClassHandler(response http.ResponseWriter, 
 		})
 	}
 	respondWithJSON(response, request, payload, http.StatusOK)
-	fmt.Printf("Just got the resources for the class %v\n", classID)
+	fmt.Printf("Just got some content from the class %v\n", classID)
 }
 
-func (cfg *apiConfig) updateResourceHandler(response http.ResponseWriter, request *http.Request) {
-	resourceID, err := uuid.Parse(request.PathValue("resourceID"))
+func (cfg *apiConfig) updateClassContentHandler(response http.ResponseWriter, request *http.Request) {
+	contentID, err := uuid.Parse(request.PathValue("contentID"))
 	if err != nil {
-		respondWithError(response, request, "There was an error parsing that classID", err, http.StatusBadRequest)
+		respondWithError(response, request, "There was an error parsing that contentID", err, http.StatusBadRequest)
 		return
 	}
 
@@ -193,7 +224,7 @@ func (cfg *apiConfig) updateResourceHandler(response http.ResponseWriter, reques
 		return
 	}
 
-	oldResource, err := cfg.dbQueries.GetResource(request.Context(), resourceID)
+	oldClassContent, err := cfg.dbQueries.GetClassContent(request.Context(), contentID)
 	if err != nil {
 		respondWithError(response, request, "There was an error getting the old resource data", err, http.StatusBadRequest)
 		return
@@ -202,18 +233,18 @@ func (cfg *apiConfig) updateResourceHandler(response http.ResponseWriter, reques
 	var newTitle string
 	var newContent string
 	if params.Title == "" {
-		newTitle = oldResource.Title
+		newTitle = oldClassContent.Title
 	} else {
 		newTitle = params.Title
 	}
 	if params.Content == "" {
-		newContent = oldResource.Content.String
+		newContent = oldClassContent.Content.String
 	} else {
 		newContent = params.Content
 	}
 
-	resource, err := cfg.dbQueries.UpdateResource(request.Context(), database.UpdateResourceParams{
-		ID:    resourceID,
+	cc, err := cfg.dbQueries.UpdateClassContent(request.Context(), database.UpdateClassContentParams{
+		ID:    contentID,
 		Title: newTitle,
 		Content: sql.NullString{
 			String: newContent,
@@ -225,13 +256,13 @@ func (cfg *apiConfig) updateResourceHandler(response http.ResponseWriter, reques
 		return
 	}
 
-	respondWithJSON(response, request, Resource{
-		ID:        resource.ID,
-		CreatedAt: resource.CreatedAt,
-		UpdatedAt: resource.UpdatedAt,
-		ClassID:   resource.ClassID,
-		Title:     resource.Title,
-		Content:   resource.Content.String,
+	respondWithJSON(response, request, ClassContent{
+		ID:        cc.ID,
+		CreatedAt: cc.CreatedAt,
+		UpdatedAt: cc.UpdatedAt,
+		ClassID:   cc.ClassID,
+		Title:     cc.Title,
+		Content:   cc.Content.String,
 	}, http.StatusCreated)
-	fmt.Println("Just updated a resource of id ", resourceID)
+	fmt.Println("Just updated some class content of id ", contentID)
 }
