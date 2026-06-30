@@ -4,7 +4,17 @@ function createDefaultTab(text, id) {
         const outerDiv = document.createElement("div");
         outerDiv.classList.add("tab-content");
         outerDiv.id = id;
+        defaultTabHelper(text, outerDiv);
 
+        if (id === "students") {
+                console.log("adding button");
+                createDangerButton(outerDiv);
+        }
+
+        return outerDiv;
+}
+
+function defaultTabHelper(text, outerDiv) {
         const innerDiv = document.createElement("div");
         innerDiv.classList.add("card");
         const unorderedList = document.createElement("ul");
@@ -16,13 +26,6 @@ function createDefaultTab(text, id) {
 
         innerDiv.appendChild(unorderedList);
         outerDiv.appendChild(innerDiv);
-
-        if (id === "students") {
-                console.log("adding button");
-                createDangerButton(outerDiv);
-        }
-
-        return outerDiv;
 }
 
 function getClassID() {
@@ -78,24 +81,38 @@ function addCard(assignment, grandadDiv) {
 async function createAllAssignments() {
         const resp = await fetchAssignments();
         const assignments = await resp.json();
-        if (!assignments) {
-                document.body.insertBefore(
-                        createDefaultTab(
-                                "No assignments yet...",
-                                "assignments",
-                        ),
-                        null,
-                );
-                return;
-        }
 
         const assignmentsDiv = document.createElement("div");
         assignmentsDiv.id = "assignments";
         assignmentsDiv.classList.add("tab-content");
+
+        if (await isUserTeacher()) {
+                const createAssignmentButton = document.createElement("button");
+                createAssignmentButton.className = "centered-buttons";
+                createAssignmentButton.textContent = "Create Assignment";
+                createAssignmentButton.onclick = showCreateAssignmentModal;
+
+                const createButton = document.getElementById("create");
+                createButton.onclick = createAssignment;
+
+                assignmentsDiv.appendChild(createAssignmentButton);
+        }
+
+        if (!assignments) {
+                defaultTabHelper("No assignments yet...", assignmentsDiv);
+                document.body.insertBefore(assignmentsDiv, null);
+                return;
+        }
+
         for (const a of assignments) {
                 addCard(a, assignmentsDiv);
         }
         document.body.insertBefore(assignmentsDiv, null);
+}
+
+function showCreateAssignmentModal() {
+        const modal = document.getElementById("create-assignment-modal");
+        modal.style.display = "block";
 }
 
 async function isUserTeacher() {
@@ -149,6 +166,7 @@ async function createAllStudents() {
 async function createDangerButton(outerDiv) {
         const leaveButton = document.createElement("button");
         leaveButton.id = "leave-button";
+        leaveButton.className = "centered-buttons";
 
         if (await isUserTeacher()) {
                 leaveButton.textContent = "Delete Class";
@@ -277,9 +295,56 @@ function showResource(classID, resourceID) {
         };
 }
 
+async function createAssignment() {
+        const title = document.getElementById("title-input").value;
+        const instructions =
+                document.getElementById("instructions-input").value;
+        const due_at = document.getElementById("due-at-input").value;
+        const allow_late = document.getElementById("allow-late-input").checked;
+        const classID = getClassID();
+
+        console.log(title);
+        console.log(instructions);
+        console.log(due_at);
+        console.log(allow_late);
+
+        const resp = await fetch(`/api/classes/${classID}/assignments`, {
+                credentials: "include",
+                method: "POST",
+                body: JSON.stringify({
+                        title,
+                        instructions,
+                        due_at,
+                        allow_late,
+                }),
+        });
+
+        const respObj = await resp.json();
+        if (!resp.ok) {
+                snackbarWarning(respObj?.error);
+                return;
+        }
+        snackbarSuccess("Successfully made assignment");
+        location.reload();
+}
+
 function setUpResourcesModal() {
         var modal = document.getElementById("resources-modal");
         var span = document.getElementById("resources-close");
+
+        span.onclick = function () {
+                modal.style.display = "none";
+        };
+        window.onclick = function (event) {
+                if (event.target == modal) {
+                        modal.style.display = "none";
+                }
+        };
+}
+
+function setUpCreateAssignmentModal() {
+        var modal = document.getElementById("create-assignment-modal");
+        var span = document.getElementById("create-close");
 
         span.onclick = function () {
                 modal.style.display = "none";
@@ -296,6 +361,7 @@ async function main() {
         await createAllStudents();
         await createAllResources();
         setUpResourcesModal();
+        setUpCreateAssignmentModal();
 
         document.getElementById("default-tab").click();
 }

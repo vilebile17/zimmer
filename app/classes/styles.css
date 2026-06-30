@@ -80,10 +80,28 @@
         }
 }
 
-#leave-button {
-        background-color: var(--danger);
-        color: var(--bg-light);
+.centered-buttons {
         border: 0px;
         display: block;
         margin: 0 auto;
+}
+
+#leave-button {
+        background-color: var(--danger);
+        color: var(--bg-light);
+}
+
+.input-group {
+        display: flex;
+        align-items: center;
+        width: max-content;
+        margin: 0 auto 1rem auto;
+        gap: 10px;
+}
+
+.input-group label {
+        white-space: nowrap;
+        width: 120px;
+        text-align: right;
+        margin-right: 10px;
 }

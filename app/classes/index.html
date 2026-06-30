@@ -220,7 +220,67 @@
                         </div>
                 </div>
         </div>
-        <div class="snackbar" id="snackbar-warning">!</div>
+        <div id="create-assignment-modal" class="modal">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <span class="close" id="create-close"
+                                        >&times;</span
+                                >
+                                <h2>Create an Assignment</h2>
+                        </div>
+                        <div class="modal-body">
+                                <div class="input-group">
+                                        <label
+                                                for="title-input"
+                                                class="mini-text"
+                                                type="text"
+                                                name="title"
+                                                >Title:
+                                        </label>
+                                        <input id="title-input" />
+                                </div>
+                                <div class="input-group">
+                                        <label
+                                                for="instructions-input"
+                                                class="mini-text"
+                                        >
+                                                Instructions (optional):
+                                        </label>
+                                        <input
+                                                type="text"
+                                                id="instructions-input"
+                                        />
+                                </div>
+                                <div class="input-group">
+                                        <label
+                                                for="due-at-input"
+                                                class="mini-text"
+                                        >
+                                                Due At (optional):
+                                        </label>
+                                        <input type="text" id="due-at-input" />
+                                </div>
+                                <div class="input-group">
+                                        <label
+                                                for="allow-late-input"
+                                                class="mini-text"
+                                        >
+                                                Allow Late
+                                        </label>
+                                        <input
+                                                type="checkbox"
+                                                id="allow-late-input"
+                                        />
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button id="create">Create</button>
+                        </div>
+                </div>
+        </div>
+        <div class="snackbar" id="snackbar-warning">
+                Something went wrong :(
+        </div>
         <div class="snackbar" id="snackbar-success">:)</div>
         <script src="/universal_actions.js" type="module"></script>
         <script src="/classes/classes.js" type="module"></script>
