@@ -325,7 +325,10 @@ async function createAssignment() {
                 return;
         }
         snackbarSuccess("Successfully made assignment");
-        location.reload();
+
+        setTimeout(() => {
+                location.reload();
+        }, 2000);
 }
 
 function setUpResourcesModal() {

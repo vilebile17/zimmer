@@ -49,9 +49,9 @@
                         <option value="gruvbox-dark">Gruvbox Dark</option>
                         <option value="gruvbox-light">Gruvbox Light</option>
                         <option value="nord">Nord</option>
+                        <option value="lilac">Lilac</option>
                         <option value="sapphire">Sapphire</option>
                         <option value="hacker">Hacker</option>
-                        <option value="grape">Grape</option>
                 </select>
         </header>
         <div id="top-info-section">
@@ -229,13 +229,17 @@
                                 <h2>Create an Assignment</h2>
                         </div>
                         <div class="modal-body">
+                                <p>
+                                        Required parameters are marked with an
+                                        asterisk (*)
+                                </p>
                                 <div class="input-group">
                                         <label
                                                 for="title-input"
                                                 class="mini-text"
                                                 type="text"
                                                 name="title"
-                                                >Title:
+                                                >Title* :
                                         </label>
                                         <input id="title-input" />
                                 </div>
@@ -244,7 +248,7 @@
                                                 for="instructions-input"
                                                 class="mini-text"
                                         >
-                                                Instructions (optional):
+                                                Instructions:
                                         </label>
                                         <input
                                                 type="text"
@@ -256,7 +260,11 @@
                                                 for="due-at-input"
                                                 class="mini-text"
                                         >
-                                                Due At (optional):
+                                                Due At
+                                                <a
+                                                        href="https://time.now/tool/rfc-3339-converter"
+                                                        >in RFC3339</a
+                                                >
                                         </label>
                                         <input type="text" id="due-at-input" />
                                 </div>
@@ -265,7 +273,7 @@
                                                 for="allow-late-input"
                                                 class="mini-text"
                                         >
-                                                Allow Late
+                                                Allow Late*
                                         </label>
                                         <input
                                                 type="checkbox"
