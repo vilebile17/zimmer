@@ -214,7 +214,7 @@
         <div id="create-assignment-modal" class="modal">
                 <div class="modal-content">
                         <div class="modal-header">
-                                <span class="close" id="create-close"
+                                <span class="close" id="create-assignment-close"
                                         >&times;</span
                                 >
                                 <h2>Create an Assignment</h2>
@@ -226,20 +226,20 @@
                                 </p>
                                 <div class="input-group">
                                         <label
-                                                for="title-input"
+                                                for="title-assignment-input"
                                                 class="mini-text"
                                                 type="text"
                                                 name="title"
-                                                >Title* :
+                                                >Title*
                                         </label>
-                                        <input id="title-input" />
+                                        <input id="title-assignment-input" />
                                 </div>
                                 <div class="input-group">
                                         <label
                                                 for="instructions-input"
                                                 class="mini-text"
                                         >
-                                                Instructions:
+                                                Instructions
                                         </label>
                                         <input
                                                 type="text"
@@ -251,10 +251,10 @@
                                                 for="due-at-input"
                                                 class="mini-text"
                                         >
-                                                Due At
+                                                Due At in
                                                 <a
                                                         href="https://time.now/tool/rfc-3339-converter"
-                                                        >in RFC3339</a
+                                                        >RFC3339</a
                                                 >
                                         </label>
                                         <input type="text" id="due-at-input" />
@@ -264,7 +264,7 @@
                                                 for="allow-late-input"
                                                 class="mini-text"
                                         >
-                                                Allow Late*
+                                                Allow Late
                                         </label>
                                         <input
                                                 type="checkbox"
@@ -273,7 +273,49 @@
                                 </div>
                         </div>
                         <div class="modal-footer">
-                                <button id="create">Create</button>
+                                <button id="create-assignment">Create</button>
+                        </div>
+                </div>
+        </div>
+        <div id="create-class-content-modal" class="modal">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <span
+                                        class="close"
+                                        id="create-class-content-close"
+                                        >&times;</span
+                                >
+                                <h2 id="create-content-modal-header"></h2>
+                        </div>
+                        <div class="modal-body">
+                                <p>
+                                        Required parameters are marked with an
+                                        asterisk (*)
+                                </p>
+                                <div class="input-group">
+                                        <label
+                                                for="title-class-content-input"
+                                                class="mini-text"
+                                                type="text"
+                                                name="title"
+                                                >Title*
+                                        </label>
+                                        <input id="title-class-content-input" />
+                                </div>
+                                <div class="input-group">
+                                        <label
+                                                for="content-input"
+                                                class="mini-text"
+                                        >
+                                                Content
+                                        </label>
+                                        <input type="text" id="content-input" />
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button id="create-class-content">
+                                        Create
+                                </button>
                         </div>
                 </div>
         </div>

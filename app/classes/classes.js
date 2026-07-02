@@ -1,4 +1,8 @@
-import { snackbarSuccess, snackbarWarning } from "/functions.js";
+import {
+        snackbarSuccess,
+        snackbarWarning,
+        snackbarDanger,
+} from "/functions.js";
 
 function createDefaultTab(text, id) {
         const outerDiv = document.createElement("div");
@@ -100,7 +104,8 @@ async function createAllAssignments() {
                 createAssignmentButton.textContent = "Create Assignment";
                 createAssignmentButton.onclick = showCreateAssignmentModal;
 
-                const createButton = document.getElementById("create");
+                const createButton =
+                        document.getElementById("create-assignment");
                 createButton.onclick = createAssignment;
 
                 assignmentsDiv.appendChild(createAssignmentButton);
@@ -249,17 +254,24 @@ async function createAllResources() {
         const resources = await (await fetchResources()).json();
         const classID = getClassID();
 
-        if (!resources) {
-                document.body.insertBefore(
-                        createDefaultTab("No resources yet...", "resources"),
-                        null,
-                );
-                return;
-        }
-
         const grandadDiv = document.createElement("div");
         grandadDiv.id = "resources";
         grandadDiv.classList.add("tab-content");
+
+        if (await isUserTeacher()) {
+                const createResourceButton = document.createElement("button");
+                createResourceButton.className = "centered-buttons";
+                createResourceButton.textContent = "Create Resource";
+                createResourceButton.onclick = showCreateResourceModal;
+
+                grandadDiv.appendChild(createResourceButton);
+        }
+
+        if (!resources) {
+                defaultTabHelper("No assignments yet...", grandadDiv);
+                document.body.insertBefore(grandadDiv, null);
+                return;
+        }
 
         for (const r of resources) {
                 const resourceDiv = document.createElement("div");
@@ -282,24 +294,38 @@ async function createAllResources() {
         document.body.insertBefore(grandadDiv, null);
 }
 
+function showCreateResourceModal() {
+        const modal = document.getElementById("create-class-content-modal");
+        modal.style.display = "block";
+        const header = document.getElementById("create-content-modal-header");
+        header.textContent = "Create Resource";
+        const button = document.getElementById("create-class-content");
+        button.onclick = createClassContent("resources");
+}
+
 async function createAllAnnouncements() {
         const announcements = await (await fetchAnnouncements()).json();
         const classID = getClassID();
 
-        if (!announcements) {
-                document.body.insertBefore(
-                        createDefaultTab(
-                                "No announcements yet...",
-                                "announcements",
-                        ),
-                        null,
-                );
-                return;
-        }
-
         const grandadDiv = document.createElement("div");
         grandadDiv.id = "announcements";
         grandadDiv.classList.add("tab-content");
+
+        if (await isUserTeacher()) {
+                const createAnnouncementButton =
+                        document.createElement("button");
+                createAnnouncementButton.className = "centered-buttons";
+                createAnnouncementButton.textContent = "Create Announcement";
+                createAnnouncementButton.onclick = showCreateAnnouncementModal;
+
+                grandadDiv.appendChild(createAnnouncementButton);
+        }
+
+        if (!announcements) {
+                defaultTabHelper("No announcements yet...", grandadDiv);
+                document.body.insertBefore(grandadDiv, null);
+                return;
+        }
 
         for (const a of announcements) {
                 const announcementDiv = document.createElement("div");
@@ -324,6 +350,49 @@ async function createAllAnnouncements() {
         }
 
         document.body.insertBefore(grandadDiv, null);
+}
+
+function showCreateAnnouncementModal() {
+        const modal = document.getElementById("create-class-content-modal");
+        modal.style.display = "block";
+        const header = document.getElementById("create-content-modal-header");
+        header.textContent = "Create Announcement";
+        const button = document.getElementById("create-class-content");
+        button.onclick = createClassContent("announcements");
+}
+
+function createClassContent(contentType) {
+        return async () => {
+                const classID = getClassID();
+                const title = document.getElementById(
+                        "title-class-content-input",
+                ).value;
+                const content = document.getElementById("content-input").value;
+
+                const response = await fetch(
+                        `/api/classes/${classID}/${contentType}`,
+                        {
+                                credentials: "include",
+                                method: "POST",
+                                body: JSON.stringify({
+                                        title,
+                                        content,
+                                }),
+                        },
+                );
+
+                const respObj = await response.json();
+                if (!response.ok) {
+                        snackbarWarning(respObj?.error);
+                        return;
+                }
+                snackbarSuccess(
+                        `Successfully made ${contentType.substring(0, contentType.length - 1)}`,
+                );
+                setTimeout(() => {
+                        location.reload();
+                }, 2000);
+        };
 }
 
 function showClassContent(classID, contentID, contentType) {
@@ -351,7 +420,7 @@ function showClassContent(classID, contentID, contentType) {
 }
 
 async function createAssignment() {
-        const title = document.getElementById("title-input").value;
+        const title = document.getElementById("title-assignment-input").value;
         const instructions =
                 document.getElementById("instructions-input").value;
         const due_at = document.getElementById("due-at-input").value;
@@ -402,9 +471,23 @@ function setUpClassContentModal() {
 
 function setUpCreateAssignmentModal() {
         var modal = document.getElementById("create-assignment-modal");
-        var span = document.getElementById("create-close");
+        var span = document.getElementById("create-assignment-close");
 
         span.onclick = function () {
+                modal.style.display = "none";
+        };
+        window.onclick = function (event) {
+                if (event.target == modal) {
+                        modal.style.display = "none";
+                }
+        };
+}
+
+function setUpCreateClassContentModal() {
+        var modal = document.getElementById("create-class-content-modal");
+        var span = document.getElementById("create-class-content-close");
+
+        span.onclick = () => {
                 modal.style.display = "none";
         };
         window.onclick = function (event) {
@@ -421,6 +504,7 @@ async function main() {
         await createAllAnnouncements();
         setUpClassContentModal();
         setUpCreateAssignmentModal();
+        setUpCreateClassContentModal();
 
         document.getElementById("default-tab").click();
 }
