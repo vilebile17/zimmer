@@ -26,32 +26,6 @@ function setUpModal() {
         };
 }
 
-async function main() {
-        const userID = getUserID();
-        const requester = await fetchRequester();
-
-        if (userID != requester.id) {
-                const modal = document.getElementById("modal");
-                modal.remove();
-                return;
-        }
-
-        setUpModal();
-        const outerDiv = document.createElement("div");
-        outerDiv.id = "holder-div";
-
-        const button = document.createElement("button");
-        button.id = "edit-button";
-        button.textContent = "Edit Profile";
-        button.onclick = () => {
-                const modal = document.getElementById("modal");
-                modal.style.display = "block";
-        };
-
-        outerDiv.appendChild(button);
-        document.body.insertBefore(outerDiv, null);
-}
-
 async function updateProfile() {
         const response = await fetch("/api/users/profile", {
                 credentials: "include",
@@ -72,6 +46,62 @@ async function updateProfile() {
         setTimeout(() => {
                 location.reload();
         }, 2000);
+}
+
+async function main() {
+        const userID = getUserID();
+        const requester = await fetchRequester();
+
+        if (userID != requester.id) {
+                const modal = document.getElementById("modal");
+                modal.remove();
+                return;
+        }
+
+        setUpModal();
+        const outerDiv = document.createElement("div");
+        outerDiv.id = "holder-div";
+
+        const editButton = document.createElement("button");
+        editButton.id = "edit-button";
+        editButton.textContent = "Edit Profile";
+        editButton.onclick = () => {
+                const modal = document.getElementById("modal");
+                modal.style.display = "block";
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.id = "delete-button";
+        deleteButton.textContent = "Delete Account";
+        deleteButton.onclick = async () => {
+                if (
+                        !window.confirm(
+                                "Are you 100% you want to delete your account?\nThis action CANNOT be undone.",
+                        )
+                ) {
+                        return;
+                }
+
+                const resp = await fetch("/api/users", {
+                        credentials: "include",
+                        method: "DELETE",
+                });
+
+                const respObj = await resp.json();
+                if (resp.ok) {
+                        snackbarSuccess("It's a shame to see you go :(");
+                        setTimeout(() => {
+                                window.location.replace("/");
+                                window.location.href = "/";
+                        }, 1500);
+                        return;
+                }
+                snackbarDanger(respObj?.error);
+        };
+
+        outerDiv.appendChild(editButton);
+        outerDiv.appendChild(deleteButton);
+        document.body.insertBefore(outerDiv, null);
 }
 
 main();

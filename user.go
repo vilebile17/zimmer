@@ -339,7 +339,7 @@ func (cfg *apiConfig) getUserFromCookie(response http.ResponseWriter, request *h
 }
 
 func (cfg *apiConfig) deleteUserHandler(response http.ResponseWriter, request *http.Request) {
-	userID, err := cfg.getUserIDFromHeader(request.Header)
+	userID, err := cfg.getUserID(request)
 	if err != nil {
 		respondWithError(response, request, "unable to get the userID from the auth header", err, http.StatusBadRequest)
 		return
