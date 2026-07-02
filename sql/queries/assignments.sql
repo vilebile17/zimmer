@@ -27,3 +27,8 @@ INNER JOIN classes ON classes.id = students_classes.class_id
 INNER JOIN assignments ON assignments.class_id = classes.id
 WHERE students_classes.student_id = $1
 AND NOW() < assignments.due_at;
+
+-- name: DeleteAssignment :one
+DELETE FROM assignments
+WHERE id = $1
+RETURNING *;

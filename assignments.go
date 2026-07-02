@@ -160,3 +160,26 @@ func (cfg *apiConfig) getNumAssignmentsHandler(response http.ResponseWriter, req
 	r := Response{Num: num}
 	respondWithJSON(response, request, r, http.StatusOK)
 }
+
+func (cfg *apiConfig) deleteAssignmentHandler(response http.ResponseWriter, request *http.Request) {
+	AssignmentID, err := uuid.Parse(request.PathValue("assignmentID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that assignmentID", err, http.StatusBadRequest)
+		return
+	}
+
+	statusCode, err := cfg.teacherActions(request)
+	if err != nil {
+		respondWithError(response, request, "you must be the teacher to delete an assignment", err, statusCode)
+		return
+	}
+
+	assignment, err := cfg.dbQueries.DeleteAssignment(request.Context(), AssignmentID)
+	if err != nil {
+		respondWithError(response, request, "there was an error deleting the assignment", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, assignment, http.StatusOK)
+	fmt.Println("Deleted an assignment")
+}

@@ -62,9 +62,3 @@ b {
 .input-group label {
         white-space: nowrap;
 }
-
-#delete-button {
-        background-color: var(--danger);
-        color: var(--bg-light);
-        border: none;
-}

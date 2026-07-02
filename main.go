@@ -88,6 +88,7 @@ func main() {
 	mux.HandleFunc("POST /api/classes/{classID}/assignments", cfg.createAssignmentHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/assignments", cfg.getAssignmentsForAClassHandler)
 	mux.HandleFunc("GET /api/classes/{classID}/assignments/{assignmentID}", cfg.getAssignmentHandler)
+	mux.HandleFunc("DELETE /api/classes/{classID}/assignments/{assignmentID}", cfg.deleteAssignmentHandler)
 	mux.HandleFunc("GET /api/numAssignmentsDue", cfg.getNumAssignmentsHandler)
 
 	// submissions stuff

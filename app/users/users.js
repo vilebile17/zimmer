@@ -71,7 +71,7 @@ async function main() {
         };
 
         const deleteButton = document.createElement("button");
-        deleteButton.id = "delete-button";
+        deleteButton.className = "danger-button";
         deleteButton.textContent = "Delete Account";
         deleteButton.onclick = async () => {
                 if (

@@ -178,8 +178,8 @@ async function createAllStudents() {
 
 async function createDangerButton(outerDiv) {
         const leaveButton = document.createElement("button");
-        leaveButton.id = "leave-button";
-        leaveButton.className = "centered-buttons";
+        leaveButton.classList.add("centered-buttons");
+        leaveButton.classList.add("danger-button");
 
         if (await isUserTeacher()) {
                 leaveButton.textContent = "Delete Class";

@@ -88,6 +88,8 @@ function getAssignmentID() {
 
 async function loadStudentStuff() {
         console.log("this guy is a student");
+        document.getElementById("delete-button").remove();
+
         const gradeSpan = document.getElementById("status");
         const response = await fetch(
                 `/api/classes/${getClassID()}/assignments/${getAssignmentID()}/submissions`,
@@ -135,7 +137,7 @@ async function createYetToHandIn(students) {
         }
         document.body.insertBefore(
                 bigDiv,
-                document.getElementById("snackbar-success"),
+                document.getElementById("delete-holder"),
         );
 }
 
@@ -200,9 +202,41 @@ async function loadTeacherStuff(classID, assignmentID) {
         }
         document.body.insertBefore(
                 submissionsDiv,
-                document.getElementById("snackbar-success"),
+                document.getElementById("delete-holder"),
         );
         createYetToHandIn(students);
+}
+
+async function deleteAssignment() {
+        if (
+                !window.confirm(
+                        "Are you sure you want to delete this assignment?",
+                )
+        ) {
+                return;
+        }
+
+        const assignmentID = getAssignmentID();
+        const classID = getClassID();
+
+        const resp = await fetch(
+                `/api/classes/${classID}/assignments/${assignmentID}`,
+                {
+                        credentials: "include",
+                        method: "DELETE",
+                },
+        );
+
+        const respObj = await resp.json();
+        if (!resp.ok) {
+                snackbarDanger(respObj?.error);
+                return;
+        }
+        snackbarSuccess("successfully deleted assignment");
+        setTimeout(() => {
+                window.location.replace(`/c/${classID}`);
+                window.location.href(`/c/${classID}`);
+        }, 1500);
 }
 
 async function main() {
@@ -229,4 +263,8 @@ async function main() {
 }
 
 document.getElementById("hand-in-button").addEventListener("click", handIn);
+document.getElementById("delete-button").addEventListener(
+        "click",
+        deleteAssignment,
+);
 main();

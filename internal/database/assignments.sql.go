@@ -57,6 +57,28 @@ func (q *Queries) CreateAssignment(ctx context.Context, arg CreateAssignmentPara
 	return i, err
 }
 
+const deleteAssignment = `-- name: DeleteAssignment :one
+DELETE FROM assignments
+WHERE id = $1
+RETURNING id, class_id, created_at, updated_at, due_at, title, instructions, allow_late
+`
+
+func (q *Queries) DeleteAssignment(ctx context.Context, id uuid.UUID) (Assignment, error) {
+	row := q.db.QueryRowContext(ctx, deleteAssignment, id)
+	var i Assignment
+	err := row.Scan(
+		&i.ID,
+		&i.ClassID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DueAt,
+		&i.Title,
+		&i.Instructions,
+		&i.AllowLate,
+	)
+	return i, err
+}
+
 const getAssignmentFromID = `-- name: GetAssignmentFromID :one
 SELECT id, class_id, created_at, updated_at, due_at, title, instructions, allow_late FROM assignments
 WHERE id = $1
