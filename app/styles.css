@@ -1,0 +1,45 @@
+#hero-section {
+        margin-top: 3rem;
+}
+
+#hero-section > * {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        border: none;
+}
+
+#logo {
+        color: var(--primary);
+}
+
+body {
+        max-width: 60%;
+}
+
+#hero-heading {
+        font-size: 4rem;
+}
+
+.button-holder {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+}
+
+.button-holder button {
+        font-size: 1.2rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+}
+
+#sign-up-button {
+        border: none;
+        background-color: var(--primary);
+        color: var(--bg);
+}
+
+#login-button {
+        color: var(--primary);
+}

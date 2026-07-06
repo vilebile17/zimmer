@@ -6,77 +6,64 @@
                         name="viewport"
                         content="width=device-width, initial-scale=1"
                 />
-                <title>Bester Zimmer</title>
+                <title>{{.Username}}'s profile</title>
                 <link
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
                 />
                 <link href="/default.css" rel="stylesheet" />
                 <link href="/styles.css" rel="stylesheet" />
+                <script src="/set_theme.js"></script>
+                <script>
+                        function login() {
+                                window.location.replace("/login");
+                                window.location.href = "/login";
+                        }
+                        function signup() {
+                                window.location.replace("/signup");
+                                window.location.href = "/signup";
+                        }
+                </script>
         </head>
         <header>
                 <h3 id="navbar-logo">Zimmer</h3>
-                <button type="button" id="theme-switcher">
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-sun"
-                        >
-                                <path
-                                        stroke="none"
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                />
-                                <path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                <path
-                                        d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"
-                                />
-                        </svg>
-                </button>
+                <select id="theme-switcher">
+                        Test selection
+                        <option value="mocha">CTP Mocha</option>
+                        <option value="latte">CTP Latte</option>
+                        <option value="gruvbox-dark">Gruvbox Dark</option>
+                        <option value="gruvbox-light">Gruvbox Light</option>
+                        <option value="nord">Nord</option>
+                        <option value="lilac">Lilac</option>
+                        <option value="sapphire">Sapphire</option>
+                        <option value="hacker">Hacker</option>
+                </select>
         </header>
         <body>
-                <article>
-                        <h1>Welcome to Bester Zimmer,</h1>
-                        <h2 class="landing_page_subheading">
-                                The best
-                                <i class="landing_page_subheading_italics"
-                                        >Online Classroom</i
+                <div id="hero-section">
+                        <h3 id="logo">Zimmer</h3>
+                        <h1 id="hero-heading">
+                                An LMS platform that's <br /><i
+                                        >Built Different</i
                                 >
-                                platform
-                        </h2>
-                </article>
-                <button class="signup" type="button">
-                        <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="3"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-user icon-signup"
-                        >
-                                <path
-                                        stroke="none"
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                />
-                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                <path
-                                        d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"
-                                />
-                        </svg>
-                        <b>Sign Up</b>
-                </button>
+                        </h1>
+                        <p>
+                                Zimmer is a completely open-source Learning
+                                Management Software which is designed to be
+                                simple, minimalistic and bloat-free;
+                                <br />
+                                No AI nonsense, no data tracking, just stuff
+                                you'll actually use, all at your fingertips.
+                        </p>
+                        <div class="button-holder">
+                                <button id="sign-up-button" onclick="signup()">
+                                        Sign up
+                                </button>
+                                <button id="login-button" onclick="login()">
+                                        Login
+                                </button>
+                        </div>
+                </div>
         </body>
         <script src="/universal_actions.js" type="module"></script>
 </html>
