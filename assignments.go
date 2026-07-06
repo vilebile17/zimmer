@@ -183,3 +183,83 @@ func (cfg *apiConfig) deleteAssignmentHandler(response http.ResponseWriter, requ
 	respondWithJSON(response, request, assignment, http.StatusOK)
 	fmt.Println("Deleted an assignment")
 }
+
+func (cfg *apiConfig) updateAssignmentHandler(response http.ResponseWriter, request *http.Request) {
+	assignmentID, err := uuid.Parse(request.PathValue("assignmentID"))
+	if err != nil {
+		respondWithError(response, request, "There was an error parsing that assignmentID", err, http.StatusBadRequest)
+		return
+	}
+
+	statusCode, err := cfg.teacherActions(request)
+	if err != nil {
+		respondWithError(response, request, "You must be the teacher to update an assignment", err, statusCode)
+		return
+	}
+
+	dbAssignment, err := cfg.dbQueries.GetAssignmentFromID(request.Context(), assignmentID)
+	if err != nil {
+		respondWithError(response, request, "couldn't get an assignment from the database with that ID", err, http.StatusBadRequest)
+		return
+	}
+
+	type Params struct {
+		Title        string `json:"title"`
+		DueAt        string `json:"due_at"`
+		Instructions string `json:"instructions"`
+	}
+
+	var params Params
+	decoder := json.NewDecoder(request.Body)
+	err = decoder.Decode(&params)
+	if err != nil {
+		respondWithError(response, request, "There was an error decoding the parameters ({title:string, due_at:timestamp, instructions:string, allow_late:boolean})", err, http.StatusBadRequest)
+		return
+	}
+
+	var newTitle string
+	var newInstructions string
+	var newDueAt time.Time
+
+	if params.DueAt != "" {
+		fmt.Println(params.DueAt)
+		newDueAt, err = time.Parse(time.RFC3339, params.DueAt)
+		if err != nil {
+			respondWithError(response, request, "couldn't parse the due_at parameter (it uses RFC3339)", err, http.StatusBadRequest)
+			return
+		}
+	} else {
+		newDueAt = dbAssignment.DueAt.Time
+	}
+
+	if params.Instructions == "" {
+		newInstructions = dbAssignment.Instructions.String
+	} else {
+		newInstructions = params.Instructions
+	}
+
+	if params.Title == "" {
+		newTitle = dbAssignment.Title
+	} else {
+		newTitle = params.Title
+	}
+
+	newAssignment, err := cfg.dbQueries.UpdateAssignment(request.Context(), database.UpdateAssignmentParams{
+		ID:    assignmentID,
+		Title: newTitle,
+		Instructions: sql.NullString{
+			Valid:  newInstructions == "",
+			String: newInstructions,
+		},
+		DueAt: sql.NullTime{
+			Valid: newDueAt == time.Time{},
+			Time:  newDueAt,
+		},
+	})
+	if err != nil {
+		respondWithError(response, request, "Couldn't update the assignment information", err, http.StatusBadRequest)
+		return
+	}
+
+	respondWithJSON(response, request, newAssignment, http.StatusOK)
+}

@@ -152,3 +152,42 @@ func (q *Queries) GetNumAssignmentsToDo(ctx context.Context, studentID uuid.UUID
 	err := row.Scan(&count)
 	return count, err
 }
+
+const updateAssignment = `-- name: UpdateAssignment :one
+UPDATE assignments
+SET
+        updated_at = NOW(),
+        title = $2,
+        instructions = $3,
+        due_at = $4
+WHERE id = $1
+RETURNING id, class_id, created_at, updated_at, due_at, title, instructions, allow_late
+`
+
+type UpdateAssignmentParams struct {
+	ID           uuid.UUID
+	Title        string
+	Instructions sql.NullString
+	DueAt        sql.NullTime
+}
+
+func (q *Queries) UpdateAssignment(ctx context.Context, arg UpdateAssignmentParams) (Assignment, error) {
+	row := q.db.QueryRowContext(ctx, updateAssignment,
+		arg.ID,
+		arg.Title,
+		arg.Instructions,
+		arg.DueAt,
+	)
+	var i Assignment
+	err := row.Scan(
+		&i.ID,
+		&i.ClassID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DueAt,
+		&i.Title,
+		&i.Instructions,
+		&i.AllowLate,
+	)
+	return i, err
+}

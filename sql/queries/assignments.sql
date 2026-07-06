@@ -32,3 +32,13 @@ AND NOW() < assignments.due_at;
 DELETE FROM assignments
 WHERE id = $1
 RETURNING *;
+
+-- name: UpdateAssignment :one
+UPDATE assignments
+SET
+        updated_at = NOW(),
+        title = $2,
+        instructions = $3,
+        due_at = $4
+WHERE id = $1
+RETURNING *;
