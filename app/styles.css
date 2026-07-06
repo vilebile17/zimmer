@@ -9,8 +9,15 @@
         border: none;
 }
 
-#logo {
+.hero-svg {
+        display: block;
+        margin: 0 auto;
         color: var(--primary);
+}
+
+.hero-svg * {
+        fill: currentColor;
+        stroke: currentColor;
 }
 
 body {
