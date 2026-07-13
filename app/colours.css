@@ -151,3 +151,19 @@
         --success: oklch(0.5 0.05 160);
         --info: oklch(0.5 0.05 260);
 }
+[data-theme="no-colours"] {
+        --bg-dark: #fff;
+        --bg: #fff;
+        --bg-light: #fff;
+        --text: #000;
+        --text-muted: #111;
+        --highlight: #fff;
+        --border: #000;
+        --border-muted: #111;
+        --primary: #00f;
+        --secondary: #33f;
+        --danger: #f00;
+        --warning: #ff0;
+        --success: #0f0;
+        --info: #33f;
+}
