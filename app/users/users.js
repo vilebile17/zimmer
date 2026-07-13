@@ -76,7 +76,7 @@ async function main() {
         deleteButton.onclick = async () => {
                 if (
                         !window.confirm(
-                                "Are you 100% you want to delete your account?\nThis action CANNOT be undone.",
+                                "Are you 100% sure you want to delete your account?\nThis action CANNOT be undone.",
                         )
                 ) {
                         return;
