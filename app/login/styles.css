@@ -9,7 +9,7 @@ label {
                 color-mix(in srgb, var(--primary) 25%, transparent);
 }
 
-.login-card {
+#login-card {
         display: flex;
         flex-direction: column;
         align-items: center;

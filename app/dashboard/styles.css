@@ -16,11 +16,12 @@ b {
 
 .user-card {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
+        justify-content: center;
         gap: 10px;
         margin-top: 1rem;
         text-align: left;
-        padding-left: 15%;
 }
 
 .icon-tabler-user {
@@ -29,6 +30,7 @@ b {
 
 #classes-holder {
         display: flex;
+        flex-wrap: wrap;
         gap: 1rem;
 }
 

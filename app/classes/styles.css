@@ -6,7 +6,8 @@
 
 #top-info-section {
         display: flex;
-        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
 }
 
 #top-info-section > div {
@@ -29,9 +30,14 @@
         border-radius: 10px;
 
         margin: 1.5rem;
-        overflow: hidden;
         max-width: max-content;
         justify-content: space-between;
+}
+
+@media (max-width: 380px) {
+        .tab {
+                flex-direction: row;
+        }
 }
 
 /* Style the buttons that are used to open the tab content */
