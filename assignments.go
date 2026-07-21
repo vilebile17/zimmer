@@ -252,7 +252,7 @@ func (cfg *apiConfig) updateAssignmentHandler(response http.ResponseWriter, requ
 			String: newInstructions,
 		},
 		DueAt: sql.NullTime{
-			Valid: newDueAt == time.Time{},
+			Valid: newDueAt.Equal(time.Time{}),
 			Time:  newDueAt,
 		},
 	})
