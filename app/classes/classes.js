@@ -156,15 +156,31 @@ async function createAllStudents() {
 
         const studentsDiv = document.createElement("div");
         studentsDiv.classList.add("card");
+        const isTeacher = await isUserTeacher();
 
         for (const s of students) {
-                let studentPoint = document.createElement("ol");
+                let holderDiv = document.createElement("div");
+                holderDiv.classList.add("student-name-holder");
+
                 let studentName = document.createElement("a");
                 studentName.textContent = s.Name;
-                studentName.classList.add("card-heading");
+                studentName.classList.add("card-heading")
                 studentName.href = `/u/${s.ID}`;
-                studentPoint.appendChild(studentName);
-                studentsDiv.appendChild(studentPoint);
+
+                let bootButton = document.createElement("button");
+                if (isTeacher) {
+                        bootButton.textContent = "🥾";
+                        bootButton.id = s.ID;
+                        bootButton.onclick = makeBootFromClass(s.ID, s.Name);
+                        bootButton.classList.add("danger-button");
+                }
+
+                holderDiv.appendChild(studentName);
+
+                if (isTeacher) {
+                        holderDiv.appendChild(bootButton);
+                }
+                studentsDiv.appendChild(holderDiv);
         }
 
         const grandadDiv = document.createElement("div");
@@ -174,6 +190,27 @@ async function createAllStudents() {
                 grandadDiv,
                 document.getElementsByClassName("modal")[0],
         );
+}
+
+function makeBootFromClass(userID, username) {
+        return async () => {
+                if (!window.confirm(`Are you sure you want to boot ${username} from the class?`)) {
+                        return;
+                }
+
+                const classID = getClassID();
+                const response = await fetch(`/api/classes/${classID}/members/${userID}`, {
+                        credentials: "include",
+                        method: "Delete"
+                });
+
+                if (!response.ok) {
+                        snackbarWarning("Failed to boot user from class");
+                        return;
+                }
+                snackbarSuccess(`Successfully booted ${username} from class! 🥾`);
+                location.reload();
+        }
 }
 
 async function createDangerButton(outerDiv) {
