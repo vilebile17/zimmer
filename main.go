@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"database/sql"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	dotenv "github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/vilebile17/zimmer/internal/database"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type apiConfig struct {
@@ -41,6 +43,17 @@ func main() {
 	cfg.JWTSecret = os.Getenv("JWT_SECRET")
 	cfg.port = ":" + os.Getenv("PORT")
 
+	// Setup Let's Encrypt autocert manager for HTTPS
+	domain := os.Getenv("DOMAIN")
+	if domain == "" {
+		log.Fatal("DOMAIN environment variable not set")
+	}
+	certManager := autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist(domain),
+		Cache:      autocert.DirCache("certs"),
+	}
+
 	activeUsers, err := cfg.dbQueries.GetTotalUserCount(context.Background())
 	if err != nil {
 		log.Fatal(err)
@@ -49,8 +62,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	server := http.Server{
-		Addr:    cfg.port,
-		Handler: mux,
+		Addr:      cfg.port,
+		Handler:   mux,
+		TLSConfig: &tls.Config{GetCertificate: certManager.GetCertificate},
 	}
 
 	// general utility stuff
@@ -110,8 +124,12 @@ func main() {
 	mux.HandleFunc("GET /api/classes/{classID}/announcements/{contentID}", cfg.getAnnouncementHandler)
 	mux.HandleFunc("PUT /api/classes/{classID}/announcements/{contentID}", cfg.updateClassContentHandler)
 
-	fmt.Printf("Hosting Bester Zimmer at http://localhost%s\n", cfg.port)
-	if err := server.ListenAndServe(); err != nil {
+	fmt.Printf("Hosting Bester Zimmer at https://%s%s\n", os.Getenv("DOMAIN"), cfg.port)
+	go func() {
+		// HTTP server for redirect and ACME challenge responses
+		http.ListenAndServe(":80", certManager.HTTPHandler(nil))
+	}()
+	if err := server.ListenAndServeTLS("", ""); err != nil {
 		fmt.Println(err)
 	}
 }
