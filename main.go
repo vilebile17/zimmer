@@ -22,7 +22,7 @@ type apiConfig struct {
 	dbQueries     *database.Queries
 	platform      string
 	JWTSecret     string
-	port          string
+	httpPort      string
 }
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 	cfg.dbQueries = database.New(db)
 	cfg.platform = os.Getenv("PLATFORM")
 	cfg.JWTSecret = os.Getenv("JWT_SECRET")
-	cfg.port = ":" + os.Getenv("PORT")
+	cfg.httpPort = ":" + os.Getenv("PORT")
 
 	// Setup Let's Encrypt autocert manager for HTTPS
 	domain := os.Getenv("DOMAIN")
@@ -49,7 +49,7 @@ func main() {
 		log.Fatal("DOMAIN environment variable not set")
 	}
 
-	whitelist := []string{domain, "www." + domain}
+	whitelist := []string{domain, "www." + domain, "localhost"}
 
 	certManager := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
@@ -63,9 +63,19 @@ func main() {
 	}
 	cfg.activeUsers.Add(int32(activeUsers))
 
+	// HTTP server on 80 – handles ACME challenge and redirects to HTTPS.
+	go func() {
+		// certManager.HTTPHandler(nil) will serve /.well-known/acme-challenge/* automatically.
+		// For any other request we simply redirect to HTTPS.
+		http.ListenAndServe(":80", certManager.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			target := "https://" + r.Host + r.URL.RequestURI()
+			http.Redirect(w, r, target, http.StatusMovedPermanently)
+		})))
+	}()
+
 	mux := http.NewServeMux()
 	server := http.Server{
-		Addr:      cfg.port,
+		Addr:      ":443",
 		Handler:   mux,
 		TLSConfig: &tls.Config{GetCertificate: certManager.GetCertificate},
 	}
@@ -127,11 +137,7 @@ func main() {
 	mux.HandleFunc("GET /api/classes/{classID}/announcements/{contentID}", cfg.getAnnouncementHandler)
 	mux.HandleFunc("PUT /api/classes/{classID}/announcements/{contentID}", cfg.updateClassContentHandler)
 
-	fmt.Printf("Hosting Bester Zimmer at https://%s%s\n", os.Getenv("DOMAIN"), cfg.port)
-	go func() {
-		// HTTP server for redirect and ACME challenge responses
-		http.ListenAndServe(":80", certManager.HTTPHandler(nil))
-	}()
+	fmt.Printf("Hosting Bester Zimmer at https://%s%s\n", os.Getenv("DOMAIN"), ":443")
 	if err := server.ListenAndServeTLS("", ""); err != nil {
 		fmt.Println(err)
 	}
