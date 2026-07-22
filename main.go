@@ -48,9 +48,12 @@ func main() {
 	if domain == "" {
 		log.Fatal("DOMAIN environment variable not set")
 	}
+
+	whitelist := []string{domain, "www." + domain}
+
 	certManager := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist(domain),
+		HostPolicy: autocert.HostWhitelist(whitelist...),
 		Cache:      autocert.DirCache("certs"),
 	}
 
