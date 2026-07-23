@@ -17,31 +17,15 @@
   - [Goose](#goose)
   - [You’re almost done!](#youre-almost-done)
 - [Thank you](#thank-you)
+- [Acknowledgements](#acknowledgements)
 
 ## About
 
-Zimmer is an [LMS](https://en.wikipedia.org/wiki/Learning_management_system) built in Golang for my [boot.dev](https://boot.dev)
-[capstone project](https://www.boot.dev/courses/build-capstone-project) as a way to put all that I have learnt into one _giga-project_.
+Zimmer is a classroom platform [(LMS)](https://en.wikipedia.org/wiki/Learning_management_system) built in Golang for my [boot.dev](https://boot.dev)
+[capstone project](https://www.boot.dev/courses/build-capstone-project). It boasts all of the quintessential elements of an LMS platform such as **classes,
+assignments, submissions** etc. alongside more niche features like **user profiles** and **theme switching**.
 
-Zimmer is relatively simple in terms of features. Zimmer does only what is necessary:
-
-- Class creation
-- Assignment creation
-- Assignment submissions and grading them
-- Resources
-- Announcements
-
-This project was supposed to be a **backend** project, however, as I drew to the end of the backend development stage
-I knew that this would need some user interface. And of course, a website makes the most sense for a platform like this.
-Along the way I learnt _loads_ about frontend development and would like to mention a few _key resources_ that helped me
-create the website
-
-- [W3Schools](https://www.w3schools.com/howto/default.asp)
-- [boot.dev JS](https://www.boot.dev/courses/learn-javascript)
-- [Sajid](https://www.youtube.com/@whosajid) - YT channel on general css tips
-- [Coding2Go](https://www.youtube.com/watch?v=wsTv9y931o8) - YT video on flex boxes
-
-Without these resources it would be near impossible for me to make the site so I feel it's necessary to acknowledge them here :)
+![demo](/pics/demo.gif)
 
 ## Usage
 
@@ -143,3 +127,17 @@ If you seriously went through all of those steps and successfully installed zimm
 If you're looking to contribute to Zimmer, you're more than welcome to open a [pull request](https://github.com/vilebile17/zimmer/pulls)
 
 Or if you find a bug and don't know how to fix it yourself, you can simply create an [issue](https://github.com/vilebile17/zimmer/issues/new)
+
+## Acknowledgements
+
+This project was supposed to be a **backend** project, however, as I drew to the end of the backend development stage
+I knew that this would need some user interface. And of course, a website makes the most sense for a platform like this.
+Along the way I learnt _loads_ about frontend development and would like to mention a few _key resources_ that helped me
+create the website
+
+- [W3Schools](https://www.w3schools.com/howto/default.asp)
+- [boot.dev JS](https://www.boot.dev/courses/learn-javascript)
+- [Sajid](https://www.youtube.com/@whosajid) - YT channel on general css tips
+- [Coding2Go](https://www.youtube.com/watch?v=wsTv9y931o8) - YT video on flex boxes
+
+Without these resources it would be near impossible for me to make the site so I feel it's necessary to acknowledge them here :)
