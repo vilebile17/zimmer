@@ -164,12 +164,12 @@ func main() {
 	mux.HandleFunc("PUT /api/classes/{classID}/announcements/{contentID}", cfg.updateClassContentHandler)
 
 	if httpsMode {
-		fmt.Printf("Hosting Bester Zimmer at https://%s\n", cfg.domain)
+		fmt.Printf("Hosting Zimmer at https://%s\n", cfg.domain)
 		if err := server.ListenAndServeTLS("", ""); err != nil {
 			fmt.Println(err)
 		}
 	} else {
-		fmt.Printf("Hosting Bester Zimmer at http://%s%s\n", cfg.domain, cfg.port)
+		fmt.Printf("Hosting Zimmer at http://%s%s\n", cfg.domain, cfg.port)
 		if err := server.ListenAndServe(); err != nil {
 			fmt.Println(err)
 		}
