@@ -2,6 +2,12 @@
 
 ![Zimmer Slogan](/pics/zimmer_slogan.png)
 
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=go,js,html,css,postgres,aws,linux" />
+  </a>
+</p>
+
 ## Table of Contents
 
 - [About](#about)
@@ -10,7 +16,7 @@
   - [PostgreSQL – DB setup](#postgresql---db-setup)
   - [Goose](#goose)
   - [You’re almost done!](#youre-almost-done)
-  - [Thank you](#thank-you)
+- [Thank you](#thank-you)
 
 ## About
 
@@ -130,8 +136,10 @@ Once you've done that you're **good to go!** Just run `go run .` in the root dir
 the success message `Hosting Zimmer at http://localhost:PORT`, head to that address and (hopefully) it
 should work just fine. 
 
-### Thank you
+## Thank you
 
 If you seriously went through all of those steps and successfully installed zimmer, **I greatly appreciate it!**
+
 If you're looking to contribute to Zimmer, you're more than welcome to open a [pull request](https://github.com/vilebile17/zimmer/pulls)
+
 Or if you find a bug and don't know how to fix it yourself, you can simply create an [issue](https://github.com/vilebile17/zimmer/issues/new)
