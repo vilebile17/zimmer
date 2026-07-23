@@ -12,15 +12,16 @@
 
 - [About](#about)
 - [Motivation](#motivation)
-- [Usage](#usage)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
   - [Initial Steps](#initial-steps)
   - [PostgreSQL – DB setup](#postgresql---db-setup)
   - [Goose](#goose)
-  - [You’re almost done!](#youre-almost-done)
+  - [You're almost done!](#youre-almost-done)
 - [Thank you](#thank-you)
 - [Acknowledgements](#acknowledgements)
 
-## About
+## 📖 About
 
 Zimmer is a classroom platform [(LMS)](https://en.wikipedia.org/wiki/Learning_management_system) built in Golang for my [boot.dev](https://boot.dev)
 [capstone project](https://www.boot.dev/courses/build-capstone-project). It boasts all of the quintessential elements of an LMS platform such as **classes,
@@ -28,18 +29,28 @@ assignments, submissions** etc. alongside more niche features like **user profil
 
 ![demo](/pics/demo.gif)
 
-## Motivation
+## 🎯 Motivation
 
 As a student, I've used multiple _classroom management platforms_ but they all have their flaws: some are **expensive**, some are 
 **cluttered** and **overwhelming**, and some just steal your data (talking to you two [google classroom](https://classroom.google.com/)
 and [teams](https://teams.microsoft.com/v2/)) As a user these kinds of platforms, I felt like I was pretty well equipped to **build my own**
 
-## Usage
+## 🚀 Quick Start
 
-The site is currently being hosted on [AWS](https://aws.amazon.com/) and you can check out the website: [zimmer.vilebile.dev](https://zimmer.vilebile.dev)
-if you're just looking to use the platform.
+1. Navigate to [zimmer.vilebile.dev](https://zimmer.vilebile.dev)
+2. Create an Account
+3. Optionally join our **community class** to test out the features
+ 
+Our class ID is `59c22735-c941-4360-9e25-0f2346a5a83a`. Go to the dashboard, click **Join Class** and paste
+that ID in!
 
-If however, you're looking to **host the site locally**, there's a _few more step to do..._
+## 🖥️ API Usage
+
+Yep, the site also has an API that you can use. For more details see [API.md](https://github.com/vilebile17/zimmer/blob/main/API.md) 
+
+## 🛠️ Installation
+
+If you're looking to **host the site locally**, there's a _few more steps to do..._
 
 ### Initial Steps
 
@@ -76,7 +87,7 @@ CREATE DATABASE zimmer;
 
 You may also set a password using the following command:
 
-```
+```sql
 ALTER USER postgres WITH PASSWORD 'PASSWORD';
 ```
 
@@ -127,7 +138,7 @@ Once you've done that you're **good to go!** Just run `go run .` in the root dir
 the success message `Hosting Zimmer at http://localhost:PORT`, head to that address and (hopefully) it
 should work just fine. 
 
-## Thank you
+## 🤝 Contributing
 
 If you seriously went through all of those steps and successfully installed zimmer, **I greatly appreciate it!**
 
@@ -135,7 +146,7 @@ If you're looking to contribute to Zimmer, you're more than welcome to open a [p
 
 Or if you find a bug and don't know how to fix it yourself, you can simply create an [issue](https://github.com/vilebile17/zimmer/issues/new)
 
-## Acknowledgements
+## 🎉 Acknowledgements
 
 This project was supposed to be a **backend** project, however, as I drew to the end of the backend development stage
 I knew that this would need some user interface. And of course, a website makes the most sense for a platform like this.
