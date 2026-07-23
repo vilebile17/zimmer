@@ -79,7 +79,7 @@ func main() {
 
 	if httpsMode && !cfg.devMode {
 		// Production HTTPS using Let's Encrypt
-		whitelist := []string{cfg.domain, "www." + cfg.domain}
+		whitelist := []string{cfg.domain, "www." + cfg.domain, "zimmer." + cfg.domain}
 
 		certManager := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
