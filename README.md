@@ -11,6 +11,7 @@
 ## Table of Contents
 
 - [About](#about)
+- [Motivation](#motivation)
 - [Usage](#usage)
   - [Initial Steps](#initial-steps)
   - [PostgreSQL – DB setup](#postgresql---db-setup)
@@ -26,6 +27,12 @@ Zimmer is a classroom platform [(LMS)](https://en.wikipedia.org/wiki/Learning_ma
 assignments, submissions** etc. alongside more niche features like **user profiles** and **theme switching**.
 
 ![demo](/pics/demo.gif)
+
+## Motivation
+
+As a student, I've used multiple _classroom management platforms_ but they all have their flaws: some are **expensive**, some are 
+**cluttered** and **overwhelming**, and some just steal your data (talking to you two [google classroom](https://classroom.google.com/)
+and [teams](https://teams.microsoft.com/v2/)) As a user these kinds of platforms, I felt like I was pretty well equipped to **build my own**
 
 ## Usage
 
