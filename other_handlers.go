@@ -25,9 +25,8 @@ func (cfg *apiConfig) metricsHandler(response http.ResponseWriter, _ *http.Reque
 }
 
 func (cfg *apiConfig) resetHandler(response http.ResponseWriter, request *http.Request) {
-	if cfg.platform != "dev" {
-		respondWithError(response, request, "You must be a developer to reset the user database", nil, http.StatusForbidden)
-		fmt.Println(cfg.platform)
+	if !cfg.devMode {
+		respondWithError(response, request, "You must be in developer mode (running on localhost) to reset the database", nil, http.StatusForbidden)
 		return
 	}
 

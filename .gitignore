@@ -1,3 +1,5 @@
 .env
 .ideas.md
 /app/icons
+dev.crt
+dev.key

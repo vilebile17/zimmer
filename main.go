@@ -20,9 +20,10 @@ type apiConfig struct {
 	homePageViews atomic.Int32
 	activeUsers   atomic.Int32
 	dbQueries     *database.Queries
-	platform      string
 	JWTSecret     string
-	httpPort      string
+	port          string
+	domain        string
+	devMode       bool
 }
 
 func main() {
@@ -39,22 +40,23 @@ func main() {
 		log.Fatal(err)
 	}
 	cfg.dbQueries = database.New(db)
-	cfg.platform = os.Getenv("PLATFORM")
 	cfg.JWTSecret = os.Getenv("JWT_SECRET")
-	cfg.httpPort = ":" + os.Getenv("PORT")
+	cfg.port = ":" + os.Getenv("PORT")
+	httpsMode := false
 
-	// Setup Let's Encrypt autocert manager for HTTPS
-	domain := os.Getenv("DOMAIN")
-	if domain == "" {
-		log.Fatal("DOMAIN environment variable not set")
+	if cfg.port == ":" {
+		cfg.port = ":8080"
+		fmt.Println("Defaulting PORT env variable to ':8080'")
+	}
+	if cfg.port == ":443" {
+		httpsMode = true
+		fmt.Println("HTTPS mode initiated")
 	}
 
-	whitelist := []string{domain, "www." + domain, "localhost"}
-
-	certManager := autocert.Manager{
-		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist(whitelist...),
-		Cache:      autocert.DirCache("certs"),
+	cfg.domain = os.Getenv("DOMAIN")
+	if cfg.domain == "" {
+		cfg.domain = "localhost"
+		fmt.Println("Defaulting DOMAIN env variable to 'localhost'")
 	}
 
 	activeUsers, err := cfg.dbQueries.GetTotalUserCount(context.Background())
@@ -63,23 +65,47 @@ func main() {
 	}
 	cfg.activeUsers.Add(int32(activeUsers))
 
-	// HTTP server on 80 – handles ACME challenge and redirects to HTTPS.
-	go func() {
-		// certManager.HTTPHandler(nil) will serve /.well-known/acme-challenge/* automatically.
-		// For any other request we simply redirect to HTTPS.
-		http.ListenAndServe(":80", certManager.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			target := "https://" + r.Host + r.URL.RequestURI()
-			http.Redirect(w, r, target, http.StatusMovedPermanently)
-		})))
-	}()
-
 	mux := http.NewServeMux()
 	server := http.Server{
-		Addr:      ":443",
-		Handler:   mux,
-		TLSConfig: &tls.Config{GetCertificate: certManager.GetCertificate},
+		Addr:    cfg.port,
+		Handler: mux,
 	}
 
+	// Determine if we are running in local development mode (domain is localhost)
+	cfg.devMode = cfg.domain == "localhost"
+	if cfg.devMode {
+		fmt.Println("devMode initiated")
+	}
+
+	if httpsMode && !cfg.devMode {
+		// Production HTTPS using Let's Encrypt
+		whitelist := []string{cfg.domain, "www." + cfg.domain}
+
+		certManager := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: autocert.HostWhitelist(whitelist...),
+			Cache:      autocert.DirCache("certs"),
+		}
+
+		// HTTP → HTTPS redirect and ACME challenge handling.
+		go func() {
+			http.ListenAndServe(":80", certManager.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				target := "https://" + r.Host + r.URL.RequestURI()
+				http.Redirect(w, r, target, http.StatusMovedPermanently)
+			})))
+		}()
+
+		server.TLSConfig = &tls.Config{GetCertificate: certManager.GetCertificate}
+	} else if httpsMode && cfg.devMode {
+		// Development mode – load a self‑signed certificate for localhost.
+		cert, err := tls.LoadX509KeyPair("dev.crt", "dev.key")
+		if err != nil {
+			log.Fatalf("failed to load dev TLS certificate: %v", err)
+		}
+		server.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
+	}
+
+	// ======= API ENDPOINTS ========
 	// general utility stuff
 	mux.Handle("/", cfg.middlewareIncServerHits(http.FileServer(http.Dir("./app"))))
 	mux.HandleFunc("/healthz", http.HandlerFunc(healthzHandler))
@@ -137,8 +163,15 @@ func main() {
 	mux.HandleFunc("GET /api/classes/{classID}/announcements/{contentID}", cfg.getAnnouncementHandler)
 	mux.HandleFunc("PUT /api/classes/{classID}/announcements/{contentID}", cfg.updateClassContentHandler)
 
-	fmt.Printf("Hosting Bester Zimmer at https://%s%s\n", os.Getenv("DOMAIN"), ":443")
-	if err := server.ListenAndServeTLS("", ""); err != nil {
-		fmt.Println(err)
+	if httpsMode {
+		fmt.Printf("Hosting Bester Zimmer at https://%s\n", cfg.domain)
+		if err := server.ListenAndServeTLS("", ""); err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Printf("Hosting Bester Zimmer at http://%s%s\n", cfg.domain, cfg.port)
+		if err := server.ListenAndServe(); err != nil {
+			fmt.Println(err)
+		}
 	}
 }
